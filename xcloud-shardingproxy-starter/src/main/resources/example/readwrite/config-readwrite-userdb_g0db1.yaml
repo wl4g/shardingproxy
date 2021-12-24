@@ -1,0 +1,91 @@
+#
+# Licensed to the Apache Software Foundation (ASF) under one or more
+# contributor license agreements.  See the NOTICE file distributed with
+# this work for additional information regarding copyright ownership.
+# The ASF licenses this file to You under the Apache License, Version 2.0
+# (the "License"); you may not use this file except in compliance with
+# the License.  You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+
+##################### Configuration of 'userdb' by group sharding v5 #######################
+
+# External logical database schema.
+schemaName: userdb_g0db1
+
+# Default datasource configuration.
+# @see:com.wl4g.component.integration.sharding.config.ProxyConfigurationLoader2#loadRuleConfiguration
+defaultDataSource:
+  username: root
+  password: 123456
+  connectionTimeoutMilliseconds: 30000
+  idleTimeoutMilliseconds: 60000
+  maxLifetimeMilliseconds: 1800000
+  maxPoolSize: 50
+  minPoolSize: 1
+
+# Datasource configuration.
+dataSources:
+  ds_userdb_g0db1_0:
+    url: 'jdbc:mysql://n0.rds.local:3306/userdb_g0db1?serverTimezone=UTC&useSSL=false&allowMultiQueries=true&characterEncoding=utf-8'
+  ds_userdb_g0db1_1:
+    url: 'jdbc:mysql://n1.rds.local:3306/userdb_g0db1?serverTimezone=UTC&useSSL=false&allowMultiQueries=true&characterEncoding=utf-8'
+  ds_userdb_g0db1_2:
+    url: 'jdbc:mysql://n2.rds.local:3306/userdb_g0db1?serverTimezone=UTC&useSSL=false&allowMultiQueries=true&characterEncoding=utf-8'
+
+# Schema rules configuration.
+rules:
+ - !READWRITE_SPLITTING
+  dataSources:
+    ds_rw_userdb_g0db1:
+      writeDataSourceName: ds_userdb_g0db1_0
+      readDataSourceNames:
+        - ds_userdb_g0db1_1
+        - ds_userdb_g0db1_2
+      loadBalancerName: r_lb_0
+  loadBalancers:
+    r_lb_0:
+      type: RANDOM
+ - !DB_DISCOVERY
+   dataSources:
+     ha_userdb_g0db1:
+       discoveryTypeName: cn-south1-a1-mgr-g0-0
+       dataSourceNames:
+         - ds_userdb_g0db1_0
+         - ds_userdb_g0db1_1
+         - ds_userdb_g0db1_2
+   discoveryTypes:
+     # HA MGR architecture see: https://blog.csdn.net/n88Lpo/article/details/118315051
+     cn-south1-a1-mgr-g0-0:
+       type: MGR
+       props:
+         # Must be consistent with the MGR configuration group name.
+         # see: https://github.com/apache/shardingsphere/blob/5.0.0/shardingsphere-features/shardingsphere-db-discovery/shardingsphere-db-discovery-provider/shardingsphere-db-discovery-mgr/src/main/java/org/apache/shardingsphere/dbdiscovery/mgr/MGRDatabaseDiscoveryType.java#L104
+         # see: https://github.com/mysql/mysql-server/blob/mysql-5.7.30/rapid/plugin/group_replication/src/plugin.cc#L1726
+         # see: SELECT * FROM performance_schema.global_variables WHERE VARIABLE_NAME='group_replication_group_name'
+         groupName: 5db40c3c-180c-11e9-afbf-005056ac6820
+         zkServerLists: 'localhost:2181'
+         keepAliveCron: '0/5 * * * * ?'
+         extensionDiscoveryConfigJson: |-
+           {
+             "memberHostMappings": [{
+                 "rds-mgr-0:3306": [
+                     "n0.rds.local:3306"
+                 ]
+             }, {
+                 "rds-mgr-1:3306": [
+                     "n1.rds.local:3306"
+                 ]
+             }, {
+                 "rds-mgr-2:3306": [
+                     "n2.rds.local:3306"
+                 ]
+             }]
+           }

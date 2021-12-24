@@ -1,0 +1,72 @@
+#
+# Licensed to the Apache Software Foundation (ASF) under one or more
+# contributor license agreements.  See the NOTICE file distributed with
+# this work for additional information regarding copyright ownership.
+# The ASF licenses this file to You under the Apache License, Version 2.0
+# (the "License"); you may not use this file except in compliance with
+# the License.  You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+
+applicationName: cn-south1-a1-shardingproxy
+
+# Ignore plugins name to make it invalidation. (**Beware of null pointer exceptions**)
+# for example shardingsphere-agent-metrics-prometheus startup the flow sources code:
+# see:org.apache.shardingsphere.agent.bootstrap.ShardingSphereAgent#premain
+# see:org.apache.shardingsphere.agent.core.plugin.ApmPluginLoader#loadAllPlugins
+# see:org.apache.shardingsphere.agent.metrics.prometheus.service,PrometheusPluginBootService#startServer
+# see:io.prometheus.client.exporter.HTTPServer.HTTPMetricHandler#handle
+# see:io.prometheus.client.CollectorRegistry#filteredMetricFamilySamples
+# see:io.prometheus.client.CollectorRegistry#findNextElement
+# Notice: The agent plugins path is hard-coded as {agentPath}/plugins.
+# for example: /opt/agentlib/shardingsphere-agent-bootstrap-5.0.0.jar,/opt/agentlib/plugins/shardingsphere-agent-metrics-prometheus-5.0.0.jar
+ignoredPluginNames: [] # Otherwise a null pointer is reported when instantiating(5.0.0).
+  #- Logging
+  #- Prometheus
+  #- ExtensionPrometheus
+  #- Zipkin
+  #- Jaeger
+  #- Opentracing
+  #- OpenTelemetry
+
+plugins:
+  Logging:
+    props:
+      LEVEL: "DEBUG"
+  Prometheus:
+    host:  "localhost"
+    port: 9090
+    props:
+      JVM_INFORMATION_COLLECTOR_ENABLED : "true"
+  ExtensionPrometheus: {}
+  #Jaeger:
+  #  host: "localhost"
+  #  port: 5775
+  #  props:
+  #    SERVICE_NAME: "cn-south1-a1-shardingproxy"
+  #    JAEGER_SAMPLER_TYPE: "const"
+  #    JAEGER_SAMPLER_PARAM: "1"
+  #    JAEGER_REPORTER_LOG_SPANS: "true"
+  #    JAEGER_REPORTER_FLUSH_INTERVAL: "1"
+  #Zipkin:
+  #  host: "localhost"
+  #  port: 9411
+  #  props:
+  #    SERVICE_NAME: "cn-south1-a1-shardingproxy"
+  #    # Scrape span uri of zipkin service.
+  #    URL_VERSION: "/api/v2/spans"
+  #Opentracing:
+  #  props:
+  #    OPENTRACING_TRACER_CLASS_NAME: "org.apache.skywalking.apm.toolkit.opentracing.SkywalkingTracer"
+  #OpenTelemetry:
+  #  props:
+  #    # Resource info of opentelemetry, multiple configurations can be separated by ','
+  #    otel.resource.attributes: "service.name=cn-south1-a1-shardingproxy"
+  #    otel.traces.exporter: "zipkin"
