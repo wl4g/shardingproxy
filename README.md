@@ -8,89 +8,6 @@
 
 - You first need to prepare a multi-instance database cluster for testing, here is `MySQL Group Replication` as an example. Refer docs to: [Deploy MGR high-availability production cluster based on Docker](https://blogs.wl4g.com/archives/2477)
 
-### 1.2 Initialization MySQL
-
-Notice: The example of non average slicing is not recommended for production (scenario: slicing according to different machine performance weight), because shardingsphere:5.0.0, It is recommended to use average sharding.
-
-- Import exemple [userdb SQLs](xcloud-shardingproxy-starter/exampledata/sharding/userdb-sharding.sql)
-
-```bash
-cd $PROJECT_HOME/xcloud-shardingproxy-starter/
-echo "source exampledata/sharding/userdb-sharding.sql" | mysql -h172.8.8.111 -P3306 -uroot -p123456
-```
-
-### 1.3 for Docker(usually for testing)
-
-- Simple deploying
-
-```bash
-sudo mkdir -p /mnt/disk1/shardingproxy/{conf,ext-lib}
-sudo mkdir -p /mnt/disk1/log/shardingproxy/
-
-docker network create --subnet=172.8.8.0/24 mysqlnet
-
-docker run -d \
---name sp1 \
---net mysqlnet \
---restart no \
--p 3308:3308 \
--v /mnt/disk1/shardingproxy/conf:/opt/apps/ecm/shardingproxy-package.shardingsproxy-master-bin/conf/ \
--v /mnt/disk1/shardingproxy/ext-lib/:/opt/apps/ecm/shardingproxy-package/shardingproxy-master-bin/ext-lib/ \
--v /mnt/disk1/log/shardingproxy/:/opt/apps/ecm/shardingproxy-package/shardingproxy-master-bin/log/ \
--e JAVA_OPTS='-Djava.awt.headless=true' \
--e PORT=3308 \
-wl4g/shardingproxy:2.0.0
-```
-
-```sql
-$MYSQL_HOME/bin/mysql -h127.0.0.1 -P3308 -uroot -p123456
-
-use userdb;
-SELECT * FROM userdb.t_user;
-INSERT INTO userdb.t_user (id, name) VALUES (10000000, 'user-insert-1111');
-UPDATE userdb.t_user SET name='user-update-2222' WHERE id=10000000;
-DELETE FROM userdb.t_user WHERE id=10000000;
-```
-
-### 1.4 for Kubernetes(production recommend)
-
-```bash
-#TODO
-```
-
-## 2. Developer guide
-
-- 2.1 Compiling
-
-```bash
-# git clone https://github.com/wl4g/xcloud-component.git
-cd xcloud-component
-mvn clean install -DskipTests -Dmaven.test.skip=true -T 2C
-```
-
-- 2.2 Startup
-
-```bash
-java -jar shardingproxy-{version}-bin.jar 3308 /example/readwrite
-# java -cp xxx com.wl4g.ShardingProxy 3308 /example/readwrite
-```
-
-## 3. Failover integration
-
-### 3.1 for MySQL [MGR](https://dev.mysql.com/doc/refman/5.7/en/group-replication.html) failover
-
-- Reference docs
-
-- [https://dev.mysql.com/doc/refman/5.7/en/group-replication.html](https://dev.mysql.com/doc/refman/5.7/en/group-replication.html)
-
-- [org.apache.shardingsphere.dbdiscovery.mgr.MGRDatabaseDiscoveryType.java](https://github.com/apache/shardingsphere/blob/5.0.0/shardingsphere-features/shardingsphere-db-discovery/shardingsphere-db-discovery-provider/shardingsphere-db-discovery-mgr/src/main/java/org/apache/shardingsphere/dbdiscovery/mgr/MGRDatabaseDiscoveryType.java)
-
-- [https://github.com/apache/shardingsphere/blob/5.0.0/shardingsphere-proxy/shardingsphere-proxy-bootstrap/src/main/resources/conf/config-database-discovery.yaml](https://github.com/apache/shardingsphere/blob/5.0.0/shardingsphere-proxy/shardingsphere-proxy-bootstrap/src/main/resources/conf/config-database-discovery.yaml)
-
-- [Adjust discovery api feature. #13902](https://github.com/apache/shardingsphere/issues/13902)
-
-#### 3.1.1 First you need an MGR cluster for testing
-
 - Assuming that the MGR cluster is now ready as follows:
 
 ```sql
@@ -111,12 +28,92 @@ FROM
     `performance_schema`.`replication_group_members` rgm;
 
 GROUP_NAME                            NODE_ID                               NODE_HOST     NODE_PORT NODE_STATE  READ_ONLY  SUPER_READ_ONLY  NODE_ROLE
-5db40c3c-180c-11e9-afbf-005056ac6820  a7a2e5f2-60db-11ec-a680-0242ac08086f  n0.rds.local  3306      ONLINE      0          0                PRIMARY
-5db40c3c-180c-11e9-afbf-005056ac6820  a80be951-60db-11ec-b9a0-0242ac080870  n1.rds.local  3306      ONLINE      0          0                STANDBY
-5db40c3c-180c-11e9-afbf-005056ac6820  a88416b0-60db-11ec-939e-0242ac080871  n2.rds.local  3306      ONLINE      0          0                STANDBY
+5db40c3c-180c-11e9-afbf-005056ac6820  a7a2e5f2-60db-11ec-a680-0242ac08086f  rds-mgr-0     3306      ONLINE      0          0                PRIMARY
+5db40c3c-180c-11e9-afbf-005056ac6820  a80be951-60db-11ec-b9a0-0242ac080870  rds-mgr-1     3306      ONLINE      0          0                STANDBY
+5db40c3c-180c-11e9-afbf-005056ac6820  a88416b0-60db-11ec-939e-0242ac080871  rds-mgr-2     3306      ONLINE      0          0                STANDBY
 ```
 
-#### 3.1.2 Add MGR static DNS
+### 1.2 Initialization MySQL
+
+Notice: The example of non average slicing is not recommended for production (scenario: slicing according to different machine performance weight), because shardingsphere:5.0.0, It is recommended to use average sharding.
+
+- Import exemple [userdb SQLs](xcloud-shardingproxy-starter/exampledata/sharding/userdb-sharding.sql)
+
+```bash
+cd $PROJECT_HOME/xcloud-shardingproxy-starter/
+echo "source exampledata/sharding/userdb-sharding.sql" | mysql -h172.8.8.111 -P3306 -uroot -p123456
+```
+
+### 1.3 for Docker(usually for testing)
+
+```bash
+sudo mkdir -p /mnt/disk1/shardingproxy/{conf,ext-lib}
+sudo mkdir -p /mnt/disk1/log/shardingproxy/
+
+docker network create --subnet=172.8.8.0/24 mysqlnet
+
+docker run -d \
+--name sp1 \
+--net mysqlnet \
+--restart no \
+-p 3308:3308 \
+-v /mnt/disk1/shardingproxy/conf:/opt/apps/ecm/shardingproxy-package.shardingsproxy-master-bin/conf/ \
+-v /mnt/disk1/shardingproxy/ext-lib/:/opt/apps/ecm/shardingproxy-package/shardingproxy-master-bin/ext-lib/ \
+-v /mnt/disk1/log/shardingproxy/:/opt/apps/ecm/shardingproxy-package/shardingproxy-master-bin/log/ \
+-e JAVA_OPTS='-Djava.awt.headless=true' \
+-e PORT=3308 \
+wl4g/shardingproxy:2.0.0
+```
+
+- Testing the effect of sharding
+
+```sql
+mysql -h127.0.0.1 -P3308 -uroot -p123456
+
+use userdb;
+SELECT * FROM userdb.t_user;
+INSERT INTO userdb.t_user (id, name) VALUES (10000000, 'user-insert-1111');
+UPDATE userdb.t_user SET name='user-update-2222' WHERE id=10000000;
+DELETE FROM userdb.t_user WHERE id=10000000;
+```
+
+### 1.4 for Kubernetes(production recommend)
+
+```bash
+#TODO
+```
+
+## 2. Developer guide
+
+- 2.1 Compiling
+
+```bash
+# git clone https://github.com/wl4g/xcloud-shardingproxy.git # (Upstream is newer)
+git clone https://gitee.com/wl4g/xcloud-shardingproxy.git # (Domestic faster)
+cd xcloud-shardingproxy
+mvn clean install -DskipTests -Dmaven.test.skip=true -T 2C
+```
+
+- 2.2 Startup
+
+```bash
+java -jar shardingproxy-{version}-bin.jar 3308 /example/readwrite
+# java -cp xxx com.wl4g.ShardingProxy 3308 /example/readwrite
+```
+
+## 3. Failover integration
+
+### 3.1 for MySQL [MGR](https://dev.mysql.com/doc/refman/5.7/en/group-replication.html) failover
+
+- [https://dev.mysql.com/doc/refman/5.7/en/group-replication.html](https://dev.mysql.com/doc/refman/5.7/en/group-replication.html)
+
+- [org.apache.shardingsphere.dbdiscovery.mgr.MGRDatabaseDiscoveryType.java](https://github.com/apache/shardingsphere/blob/5.0.0/shardingsphere-features/shardingsphere-db-discovery/shardingsphere-db-discovery-provider/shardingsphere-db-discovery-mgr/src/main/java/org/apache/shardingsphere/dbdiscovery/mgr/MGRDatabaseDiscoveryType.java)
+
+- [https://github.com/apache/shardingsphere/blob/5.0.0/shardingsphere-proxy/shardingsphere-proxy-bootstrap/src/main/resources/conf/config-database-discovery.yaml](https://github.com/apache/shardingsphere/blob/5.0.0/shardingsphere-proxy/shardingsphere-proxy-bootstrap/src/main/resources/conf/config-database-discovery.yaml)
+
+- [Adjust discovery api feature. #13902](https://github.com/apache/shardingsphere/issues/13902)
+
+#### 3.1.1 Add MGR static DNS
 
 ```bash
 sudo cp /etc/hosts /etc/hosts.bak
@@ -128,7 +125,7 @@ sudo cat <<EOF >/etc/hosts
 EOF
 ```
 
-#### 3.1.3 Then need to modify the test configuration follows
+#### 3.1.2 Then need to modify the test configuration follows
 
 - Extension database discovery configuration refer to example: [config-sharding-readwrite-userdb.yaml](src/main/resources/example/sharding-readwrite/server.yaml), The prefix of the following key names is : `rules.discoveryTypes.<myDiscoveryName>.props.`
 
