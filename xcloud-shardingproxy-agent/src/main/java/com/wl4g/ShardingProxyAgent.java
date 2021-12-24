@@ -13,32 +13,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.component.integration.sharding.failover.exception;
+package com.wl4g;
+
+import java.io.IOException;
+import java.lang.instrument.Instrumentation;
+
+import org.apache.shardingsphere.agent.bootstrap.ShardingSphereAgent;
 
 /**
- * {@link UnreachablePrimaryNodeFailoverException}
+ * {@link ShardingProxyAgent}
  * 
  * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
- * @version 2021-07-27 v1.0.0
+ * @version 2021-12-24 v1.0.0
  * @since v1.0.0
  */
-public class UnreachablePrimaryNodeFailoverException extends FailoverException {
-    private static final long serialVersionUID = 841579612586305322L;
+public class ShardingProxyAgent {
 
-    public UnreachablePrimaryNodeFailoverException() {
-        this(null, null);
-    }
-
-    public UnreachablePrimaryNodeFailoverException(String message) {
-        this(message, null);
-    }
-
-    public UnreachablePrimaryNodeFailoverException(String message, Exception cause) {
-        super(message, cause);
-    }
-
-    public UnreachablePrimaryNodeFailoverException(Exception cause) {
-        super(cause);
+    public static void premain(final String arguments, final Instrumentation instrumentation) throws IOException {
+        ShardingSphereAgent.premain(arguments, instrumentation);
     }
 
 }

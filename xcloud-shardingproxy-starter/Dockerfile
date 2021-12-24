@@ -14,7 +14,6 @@
 #
 ## 1). for example:
 ##      export appName=myapp
-##      export appActive=pro
 ##      export appPort=8080
 ##      export appDataDir="/mnt/disk1/${appName}"
 ##      export appLogDir="/mnt/disk1/log/${appName}"
@@ -24,7 +23,6 @@
 ##      docker run -d \
 ##        -e SHARDING_NOHUP=y \
 ##        -e SHARDING_DEBUG=y \
-##        -e SHARDING_ACTIVE=${appActive} \
 ##        -e SHARDING_PORT=${appPort} \
 ##        -e SHARDING_DATA=${appDataDir} \
 ##        -e SHARDING_LOG=${appLogDir} \
@@ -75,8 +73,8 @@ export SHARDING_EXT_CLASSPATH=${SHARDING_EXT_CLASSPATH:-}\n\
 # Define app basic the mutable properties.\n\
 export SHARDING_NOHUP=\$(echo \$SHARDING_NOHUP|tr '[a-z]' '[A-Z]')\n\
 export SHARDING_DEBUG=\$(echo \$SHARDING_DEBUG|tr '[a-z]' '[A-Z]')\n\
-export SHARDING_PORT=\${SHARDING_PORT:-'<defaultPort>'}\n\
-export SHARDING_ACTIVE=\${SHARDING_ACTIVE:-pro}\n\
+export SHARDING_PORT=\${SHARDING_PORT:-'3308'}\n\
+export SHARDING_CONF=\${SHARDING_CONF:-${SHARDING_HOME}/conf/example/readwrite}\n\
 export SHARDING_DATA=\${SHARDING_DATA:-/mnt/disk1/\$SHARDING_NAME}\n\
 export SHARDING_LOG=\${SHARDING_LOG:-/mnt/disk1/log/\$SHARDING_NAME}\n\
 export SHARDING_OPTS=\${SHARDING_OPTS:-}\n\
@@ -85,7 +83,6 @@ export JAVA_OPTS=\${JAVA_OPTS:-'-Xms256M -Xmx1G'}\n\
 export JAVA_TOOL_OPTIONS=\${JAVA_TOOL_OPTIONS:-}\n\
 [[ \$SHARDING_NOHUP == 'TRUE' || \$SHARDING_NOHUP == 'YES' || \$SHARDING_NOHUP == 'Y' || \$SHARDING_NOHUP == 'ON' ]] && export CMD_NOHUP='nohup'\n\
 [[ \$SHARDING_DEBUG == 'TRUE' || \$SHARDING_DEBUG == 'YES' || \$SHARDING_DEBUG == 'Y' || \$SHARDING_DEBUG == 'ON' ]] && export SHARDING_DEBUG_OPTS='-Xdebug -Xrunjdwp:server=y,transport=dt_socket,address=8000,suspend=n'\n\
-[[ \$SHARDING_PORT != '' && \$SHARDING_PORT != '<defaultPort>' ]] && export SHARDING_PORT_OPTS='--server.port=\${SHARDING_PORT}'\n\
 # Initialization.\n\
 mkdir -p \${SHARDING_DATA} && mkdir -p \${SHARDING_LOG}\n\
 # Make run commands.\n\
@@ -96,19 +93,15 @@ export CMD_EXEC=\"\${CMD_NOHUP} java -server \${SHARDING_DEBUG_OPTS} \${JAVA_OPT
 -XX:+PrintGCTimeStamps -XX:+UseGCLogFileRotation -XX:NumberOfGCLogFiles=10 -XX:GCLogFileSize=100M \
 -Djava.awt.headless=true -Dfile.encoding=UTF-8 -Djava.security.egd=file:/dev/./urandom -cp \
 .:\${SHARDING_HOME}/conf:\${SHARDING_EXT_CLASSPATH}:\${SHARDING_HOME}/ext-lib/*:\${SHARDING_HOME}/lib/* \${SHARDING_MAINCLASS} \
---spring.application.name=\${SHARDING_NAME} \
---spring.profiles.active=\${SHARDING_ACTIVE} \
-\${SHARDING_PORT_OPTS} \
---server.tomcat.basedir=\${SHARDING_DATA} \
---logging.file.name=\${SHARDING_LOG}/\${SHARDING_NAME}_\${SHARDING_ACTIVE}.log \${SHARDING_OPTS} \
-1>\${SHARDING_LOG}/\${SHARDING_NAME}_\${SHARDING_ACTIVE}.stdout \
-2>\${SHARDING_LOG}/\${SHARDING_NAME}_\${SHARDING_ACTIVE}.stderr\"\n\
+\${SHARDING_PORT} \${SHARDING_CONF} \
+1>\${SHARDING_LOG}/\${SHARDING_NAME}.stdout \
+2>\${SHARDING_LOG}/\${SHARDING_NAME}.stderr\"\n\
 # Print run commands. (if debugging enabled)\n\
 [ -n \$SHARDING_DEBUG ] && echo \$CMD_EXEC\n\
 # Execution.\n\
-echo \"Starting \${SHARDING_NAME}:\${SHARDING_VERSION}(\${SHARDING_ACTIVE}) on \${SHARDING_PORT} ...\"\n\
+echo \"Starting \${SHARDING_NAME}:\${SHARDING_VERSION} on \${SHARDING_PORT} ...\"\n\
 exec \${CMD_EXEC}\n\
-echo \"Started \${SHARDING_NAME}:\${SHARDING_VERSION}(\${SHARDING_ACTIVE}) on \${SHARDING_PORT}\"\n" >>/startup.sh
+echo \"Started \${SHARDING_NAME}:\${SHARDING_VERSION} on \${SHARDING_PORT}\"\n" >>/startup.sh
 
 #EXPOSE ${SHARDING_PORT} # Mapping ports when delegating to a start container.
 

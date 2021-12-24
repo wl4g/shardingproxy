@@ -14,8 +14,8 @@
 			</includes>
 		</fileSet>
 		<fileSet>
-			<directory>src/main/resources/script/windows</directory>
-			<outputDirectory>bin/windows</outputDirectory>
+			<directory>src/main/resources/script/systemd</directory>
+			<outputDirectory>bin/systemd</outputDirectory>
 			<includes>
 				<include>*.*</include>
 			</includes>
@@ -24,13 +24,14 @@
 			<directory>src/main/resources</directory>
 			<outputDirectory>conf</outputDirectory>
 			<excludes>
+				<exclude>agent/**</exclude>
 				<exclude>script/**</exclude>
 				<exclude>static/**</exclude>
 				<exclude>META-INF/**</exclude>
 			</excludes>
 			<includes>
 				<include>**/**</include>
-				<include>example-conf/**.*</include>
+				<include>example/**.*</include>
 				<include>*.xml</include>
 				<include>*.yml</include>
 				<include>*.yaml</include>
@@ -70,6 +71,13 @@
 			</excludes>
 		</fileSet>
 		<fileSet>
+			<directory>src/main/resources/agent</directory>
+			<outputDirectory>ext-lib/agentlib/conf</outputDirectory>
+			<includes>
+				<include>*.*</include>
+			</includes>
+		</fileSet>
+		<fileSet>
 			<directory>.</directory>
 			<outputDirectory>log</outputDirectory>
 			<excludes>
@@ -98,6 +106,8 @@
 			<excludes>
 				<exclude>${groupId}:${artifactId}</exclude>
 				<exclude>org.apache.shardingsphere:shardingsphere-agent-bootstrap</exclude>
+				<exclude>org.apache.shardingsphere:shardingsphere-agent-api</exclude>
+				<exclude>org.apache.shardingsphere:shardingsphere-agent-core</exclude>
 				<exclude>org.apache.shardingsphere:shardingsphere-agent-metrics-prometheus</exclude>
 				<exclude>org.apache.shardingsphere:shardingsphere-agent-tracing-jaeger</exclude>
 				<exclude>org.apache.shardingsphere:shardingsphere-agent-tracing-opentelemetry</exclude>
@@ -117,6 +127,8 @@
 			<scope>runtime</scope>
 			<includes>
 				<include>${groupId}:xcloud-shardingproxy-agent</include>
+				<include>org.apache.shardingsphere:shardingsphere-agent-api</include>
+				<include>org.apache.shardingsphere:shardingsphere-agent-core</include>
 				<include>org.apache.shardingsphere:shardingsphere-agent-metrics-prometheus</include>
 				<include>org.apache.shardingsphere:shardingsphere-agent-tracing-jaeger</include>
 				<include>org.apache.shardingsphere:shardingsphere-agent-tracing-opentelemetry</include>
