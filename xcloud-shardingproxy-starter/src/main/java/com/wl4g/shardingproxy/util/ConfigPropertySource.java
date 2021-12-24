@@ -34,19 +34,19 @@ public class ConfigPropertySource extends Properties {
 
     @Override
     public String getProperty(String key) {
-        // The one priority is obtained from the configuration.
-        String value = super.getProperty(key);
-
-        // The second priority is to obtain from the environment variable
+        // The one priority is to obtain from the environment variable
         // with the same key name.
-        if (isNull(value)) {
-            value = getEnvironmentValue(key);
-        }
+        String value = getEnvironmentValue(key);
 
-        // The third priority is to obtain the key name from the environment
+        // The second priority is to obtain the key name from the environment
         // variable with all capital letters and underlined splicing.
         if (isNull(value)) {
             value = getEnvironmentValue(toUpperEnvironmentKey(key));
+        }
+
+        // The third priority is obtained from the configuration.
+        if (isNull(value)) {
+            value = super.getProperty(key);
         }
 
         return value;

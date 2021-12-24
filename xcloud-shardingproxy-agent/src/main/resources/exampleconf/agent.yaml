@@ -46,27 +46,27 @@ plugins:
     props:
       JVM_INFORMATION_COLLECTOR_ENABLED : "true"
   ExtensionPrometheus: {}
-  #Jaeger:
-  #  host: "localhost"
-  #  port: 5775
-  #  props:
-  #    SERVICE_NAME: "cn-south1-a1-shardingproxy"
-  #    JAEGER_SAMPLER_TYPE: "const"
-  #    JAEGER_SAMPLER_PARAM: "1"
-  #    JAEGER_REPORTER_LOG_SPANS: "true"
-  #    JAEGER_REPORTER_FLUSH_INTERVAL: "1"
-  #Zipkin:
-  #  host: "localhost"
-  #  port: 9411
-  #  props:
-  #    SERVICE_NAME: "cn-south1-a1-shardingproxy"
-  #    # Scrape span uri of zipkin service.
-  #    URL_VERSION: "/api/v2/spans"
-  #Opentracing:
-  #  props:
-  #    OPENTRACING_TRACER_CLASS_NAME: "org.apache.skywalking.apm.toolkit.opentracing.SkywalkingTracer"
-  #OpenTelemetry:
-  #  props:
-  #    # Resource info of opentelemetry, multiple configurations can be separated by ','
-  #    otel.resource.attributes: "service.name=cn-south1-a1-shardingproxy"
-  #    otel.traces.exporter: "zipkin"
+  Jaeger:
+    host: "localhost"
+    port: 5775
+    props:
+      SERVICE_NAME: "cn-south1-a1-shardingproxy"
+      JAEGER_SAMPLER_TYPE: "const"
+      JAEGER_SAMPLER_PARAM: "1"
+      JAEGER_REPORTER_LOG_SPANS: "true"
+      JAEGER_REPORTER_FLUSH_INTERVAL: "1"
+  Zipkin:
+    host: "localhost"
+    port: 9411
+    props:
+      SERVICE_NAME: "cn-south1-a1-shardingproxy"
+      # Scrape span uri of zipkin service.
+      URL_VERSION: "/api/v2/spans"
+  Opentracing:
+    props:
+      OPENTRACING_TRACER_CLASS_NAME: "org.apache.skywalking.apm.toolkit.opentracing.SkywalkingTracer"
+  OpenTelemetry:
+    props:
+      # Resource info of opentelemetry, multiple configurations can be separated by ','
+      otel.resource.attributes: "service.name=cn-south1-a1-shardingproxy"
+      otel.traces.exporter: "zipkin"

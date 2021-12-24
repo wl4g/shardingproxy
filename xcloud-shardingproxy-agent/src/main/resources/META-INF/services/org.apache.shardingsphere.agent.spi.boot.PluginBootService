@@ -15,4 +15,4 @@
 # limitations under the License.
 #
 
-com.wl4g.shardingproxy.plugins.service.ExtensionPluginBootService
+com.wl4g.shardingproxy.agent.service.ExtensionPluginBootService

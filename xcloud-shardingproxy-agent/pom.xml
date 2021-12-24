@@ -58,27 +58,45 @@
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<java.version>1.8</java.version>
+		<prometheus.version>0.11.0</prometheus.version>
 	</properties>
 	<dependencies>
 		<dependency>
-			<groupId>com.wl4g</groupId>
-			<artifactId>xcloud-component-common</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.shardingsphere</groupId>
-			<artifactId>shardingsphere-agent-metrics-prometheus</artifactId>
-			<version>${shardingsphere.version}</version>
+			<groupId>org.projectlombok</groupId>
+			<artifactId>lombok</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.shardingsphere</groupId>
 			<artifactId>shardingsphere-infra-common</artifactId>
 			<version>${shardingsphere.version}</version>
 		</dependency>
+		<!-- <dependency> -->
+		<!-- <groupId>org.apache.shardingsphere</groupId> -->
+		<!-- <artifactId>shardingsphere-agent-metrics-api</artifactId> -->
+		<!-- <version>${shardingsphere.version}</version> -->
+		<!-- </dependency> -->
+		<dependency>
+			<groupId>org.apache.shardingsphere</groupId>
+			<artifactId>shardingsphere-agent-metrics-prometheus</artifactId>
+			<version>${shardingsphere.version}</version>
+			<scope>provided</scope>
+		</dependency>
 		<dependency>
 			<groupId>org.apache.shardingsphere</groupId>
 			<artifactId>shardingsphere-agent-bootstrap</artifactId>
 			<version>${shardingsphere.version}</version>
+			<scope>provided</scope>
 		</dependency>
+		<!-- <dependency> -->
+		<!-- <groupId>io.prometheus</groupId> -->
+		<!-- <artifactId>simpleclient_httpserver</artifactId> -->
+		<!-- <version>${prometheus.version}</version> -->
+		<!-- </dependency> -->
+		<!-- <dependency> -->
+		<!-- <groupId>io.prometheus</groupId> -->
+		<!-- <artifactId>simpleclient</artifactId> -->
+		<!-- <version>${prometheus.version}</version> -->
+		<!-- </dependency> -->
 	</dependencies>
 	<build>
 		<resources>

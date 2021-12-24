@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.shardingproxy.plugins.metrics;
+package com.wl4g.shardingproxy.agent.metrics;
 
 /**
  * {@link MetricIds}

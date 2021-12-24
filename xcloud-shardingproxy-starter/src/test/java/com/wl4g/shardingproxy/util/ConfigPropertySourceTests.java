@@ -28,14 +28,14 @@ import java.util.Map;
 public class ConfigPropertySourceTests {
 
     public static void main(String[] args) {
-        Map<String, String> testEnvMap = new HashMap<>();
+        Map<String, String> envMap = new HashMap<>();
 
         ConfigPropertySource source = new ConfigPropertySource() {
             private static final long serialVersionUID = 8674366211323332009L;
 
             @Override
             protected String getEnvironmentValue(String key) {
-                return testEnvMap.get(key);
+                return envMap.get(key);
             }
         };
 
@@ -43,18 +43,19 @@ public class ConfigPropertySourceTests {
         System.out.println(source.getProperty("zkServerLists"));
 
         System.out.println("---------------------------------------------");
-        testEnvMap.clear();
+        envMap.clear();
         source.clear();
-        testEnvMap.put("ZK_SERVER_LISTS", "10.2.2.3:2181");
+        envMap.put("ZK_SERVER_LISTS", "10.2.2.3:2181");
+        source.put("zkServerLists", "10.2.2.4:2181");
         System.out.println(source.getProperty("zkServerLists"));
 
         System.out.println("---------------------------------------------");
-        testEnvMap.clear();
+        envMap.clear();
         source.clear();
-        testEnvMap.put("ZK_SERVER_LISTS", "10.2.2.4:2181");
-        testEnvMap.put("zkServerLists", "10.2.2.5:2181");
+        envMap.put("ZK_SERVER_LISTS", "10.2.2.5:2181");
+        envMap.put("zkServerLists", "10.2.2.6:2181");
+        source.put("zkServerLists", "10.2.2.7:2181");
         System.out.println(source.getProperty("zkServerLists"));
-
     }
 
 }

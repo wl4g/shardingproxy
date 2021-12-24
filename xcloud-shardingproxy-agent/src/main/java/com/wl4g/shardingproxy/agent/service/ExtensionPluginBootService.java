@@ -15,12 +15,12 @@
  * limitations under the License.
  */
 
-package com.wl4g.shardingproxy.plugins.service;
+package com.wl4g.shardingproxy.agent.service;
 
 import org.apache.shardingsphere.agent.config.PluginConfiguration;
 import org.apache.shardingsphere.agent.spi.boot.PluginBootService;
 
-import com.wl4g.shardingproxy.plugins.metrics.DbDiscoveryEventMetricsCollector;
+import com.wl4g.shardingproxy.agent.metrics.DbDiscoveryEventMetricsCollector;
 
 import lombok.extern.slf4j.Slf4j;
 

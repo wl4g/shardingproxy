@@ -13,10 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.shardingproxy.plugins.metrics;
-
-import static com.wl4g.component.common.log.SmartLoggerFactory.getLogger;
-import static com.wl4g.component.common.serialize.JacksonUtils.toJSONString;
+package com.wl4g.shardingproxy.agent.metrics;
 
 import java.util.Arrays;
 import java.util.LinkedList;
@@ -29,11 +26,11 @@ import org.apache.shardingsphere.infra.eventbus.ShardingSphereEventBus;
 import org.apache.shardingsphere.infra.rule.event.impl.PrimaryDataSourceChangedEvent;
 
 import com.google.common.eventbus.Subscribe;
-import com.wl4g.component.common.log.SmartLogger;
 
 import io.prometheus.client.Collector;
 import io.prometheus.client.CollectorRegistry;
 import io.prometheus.client.GaugeMetricFamily;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * {@link DbDiscoveryEventMetricsCollector}</br>
@@ -53,9 +50,8 @@ import io.prometheus.client.GaugeMetricFamily;
  * @see {@link org.apache.shardingsphere.dbdiscovery.mgr.MGRDatabaseDiscoveryType#updatePrimaryDataSource()}
  * @see {@link org.apache.shardingsphere.agent.metrics.prometheus.collector.ProxyInfoCollector}
  */
+@Slf4j
 public class DbDiscoveryEventMetricsCollector extends Collector {
-
-    private final SmartLogger log = getLogger(getClass());
 
     private static final LinkedList<PrimaryDataSourceChangedEvent> eventQueue = new LinkedList<>();
 
@@ -70,8 +66,8 @@ public class DbDiscoveryEventMetricsCollector extends Collector {
      */
     @Subscribe
     public void onPrimaryDataSourceChanged(PrimaryDataSourceChangedEvent event) {
-        log.warn("Processing event: ({}), queue: {}, - {}", PrimaryDataSourceChangedEvent.class.getSimpleName(),
-                eventQueue.size(), toJSONString(event));
+        log.warn("Processing event: ({}), queue: {}, - {}.{}.{}", PrimaryDataSourceChangedEvent.class.getSimpleName(),
+                eventQueue.size(), event.getSchemaName(), event.getGroupName(), event.getDataSourceName());
 
         // Add metrics queue.
         if (eventQueue.size() > 16) {

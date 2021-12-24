@@ -88,20 +88,55 @@
 			<artifactId>xcloud-component-common</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>org.apache.shardingsphere</groupId>
-			<artifactId>shardingsphere-proxy-bootstrap</artifactId>
-			<version>${shardingsphere.version}</version>
+			<groupId>com.wl4g</groupId>
+			<artifactId>xcloud-shardingproxy-agent</artifactId>
+			<version>${project.version}</version>
 		</dependency>
-		<!-- for agent debugging. Open only when you need to debug the agent. -->
 		<dependency>
 			<groupId>org.apache.shardingsphere</groupId>
-			<artifactId>shardingsphere-agent-metrics-prometheus</artifactId>
+			<artifactId>shardingsphere-proxy-bootstrap</artifactId>
 			<version>${shardingsphere.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.shardingsphere</groupId>
 			<artifactId>shardingsphere-agent-bootstrap</artifactId>
 			<version>${shardingsphere.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.shardingsphere</groupId>
+			<artifactId>shardingsphere-agent-logging-base</artifactId>
+			<version>${shardingsphere.version}</version>
+			<!-- <scope>provided</scope> -->
+		</dependency>
+		<dependency>
+			<groupId>org.apache.shardingsphere</groupId>
+			<artifactId>shardingsphere-agent-metrics-prometheus</artifactId>
+			<version>${shardingsphere.version}</version>
+			<!-- <scope>provided</scope> -->
+		</dependency>
+		<dependency>
+			<groupId>org.apache.shardingsphere</groupId>
+			<artifactId>shardingsphere-agent-tracing-jaeger</artifactId>
+			<version>${shardingsphere.version}</version>
+			<!-- <scope>provided</scope> -->
+		</dependency>
+		<dependency>
+			<groupId>org.apache.shardingsphere</groupId>
+			<artifactId>shardingsphere-agent-tracing-opentelemetry</artifactId>
+			<version>${shardingsphere.version}</version>
+			<!-- <scope>provided</scope> -->
+		</dependency>
+		<dependency>
+			<groupId>org.apache.shardingsphere</groupId>
+			<artifactId>shardingsphere-agent-tracing-opentracing</artifactId>
+			<version>${shardingsphere.version}</version>
+			<!-- <scope>provided</scope> -->
+		</dependency>
+		<dependency>
+			<groupId>org.apache.shardingsphere</groupId>
+			<artifactId>shardingsphere-agent-tracing-zipkin</artifactId>
+			<version>${shardingsphere.version}</version>
+			<!-- <scope>provided</scope> -->
 		</dependency>
 	</dependencies>
 	<build>

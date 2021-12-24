@@ -56,6 +56,20 @@
 			</includes>
 		</fileSet>
 		<fileSet>
+			<directory>target</directory>
+			<outputDirectory>ext-lib/agentlib</outputDirectory>
+			<excludes>
+				<exclude>*/**</exclude>
+			</excludes>
+		</fileSet>
+		<fileSet>
+			<directory>target</directory>
+			<outputDirectory>ext-lib/agentlib/plugins</outputDirectory>
+			<excludes>
+				<exclude>*/**</exclude>
+			</excludes>
+		</fileSet>
+		<fileSet>
 			<directory>.</directory>
 			<outputDirectory>log</outputDirectory>
 			<excludes>
@@ -83,7 +97,32 @@
 			<scope>runtime</scope>
 			<excludes>
 				<exclude>${groupId}:${artifactId}</exclude>
+				<exclude>org.apache.shardingsphere:shardingsphere-agent-bootstrap</exclude>
+				<exclude>org.apache.shardingsphere:shardingsphere-agent-metrics-prometheus</exclude>
+				<exclude>org.apache.shardingsphere:shardingsphere-agent-tracing-jaeger</exclude>
+				<exclude>org.apache.shardingsphere:shardingsphere-agent-tracing-opentelemetry</exclude>
+				<exclude>org.apache.shardingsphere:shardingsphere-agent-tracing-opentracing</exclude>
+				<exclude>org.apache.shardingsphere:shardingsphere-agent-tracing-zipkin</exclude>
 			</excludes>
+		</dependencySet>
+		<dependencySet>
+			<outputDirectory>ext-lib/agentlib</outputDirectory>
+			<scope>runtime</scope>
+			<includes>
+				<include>org.apache.shardingsphere:shardingsphere-agent-bootstrap</include>
+			</includes>
+		</dependencySet>
+		<dependencySet>
+			<outputDirectory>ext-lib/agentlib/plugins</outputDirectory>
+			<scope>runtime</scope>
+			<includes>
+				<include>${groupId}:xcloud-shardingproxy-agent</include>
+				<include>org.apache.shardingsphere:shardingsphere-agent-metrics-prometheus</include>
+				<include>org.apache.shardingsphere:shardingsphere-agent-tracing-jaeger</include>
+				<include>org.apache.shardingsphere:shardingsphere-agent-tracing-opentelemetry</include>
+				<include>org.apache.shardingsphere:shardingsphere-agent-tracing-opentracing</include>
+				<include>org.apache.shardingsphere:shardingsphere-agent-tracing-zipkin</include>
+			</includes>
 		</dependencySet>
 	</dependencySets>
 </assembly>
