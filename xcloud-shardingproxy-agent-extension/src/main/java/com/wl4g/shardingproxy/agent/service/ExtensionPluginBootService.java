@@ -20,7 +20,7 @@ package com.wl4g.shardingproxy.agent.service;
 import org.apache.shardingsphere.agent.config.PluginConfiguration;
 import org.apache.shardingsphere.agent.spi.boot.PluginBootService;
 
-import com.wl4g.shardingproxy.agent.metrics.DbDiscoveryEventMetricsCollector;
+import com.wl4g.shardingproxy.agent.metrics.DbDiscoveryMetricsCollector;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -46,7 +46,7 @@ public final class ExtensionPluginBootService implements PluginBootService {
     }
 
     private void registerCollectors() {
-        new DbDiscoveryEventMetricsCollector().register();
+        new DbDiscoveryMetricsCollector().register();
     }
 
 }

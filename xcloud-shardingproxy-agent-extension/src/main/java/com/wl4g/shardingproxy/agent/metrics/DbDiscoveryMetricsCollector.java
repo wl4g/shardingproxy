@@ -15,25 +15,26 @@
  */
 package com.wl4g.shardingproxy.agent.metrics;
 
+import static java.util.stream.Collectors.toList;
+
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 
-import org.apache.shardingsphere.agent.metrics.prometheus.wrapper.PrometheusWrapperFactory;
-import org.apache.shardingsphere.infra.eventbus.ShardingSphereEventBus;
 import org.apache.shardingsphere.infra.rule.event.impl.PrimaryDataSourceChangedEvent;
 
-import com.google.common.eventbus.Subscribe;
+import com.wl4g.shardingproxy.agent.event.DbDiscoveryEventHandler;
 
 import io.prometheus.client.Collector;
+import io.prometheus.client.Collector.Describable;
 import io.prometheus.client.CollectorRegistry;
 import io.prometheus.client.GaugeMetricFamily;
 import lombok.extern.slf4j.Slf4j;
 
 /**
- * {@link DbDiscoveryEventMetricsCollector}</br>
+ * {@link DbDiscoveryMetricsCollector}</br>
  * 
  * for example shardingsphere-agent-metrics-prometheus startup the flow sources
  * code:
@@ -47,35 +48,20 @@ import lombok.extern.slf4j.Slf4j;
  * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
  * @version 2021-12-19 v1.0.0
  * @since v1.0.0
- * @see {@link org.apache.shardingsphere.dbdiscovery.mgr.MGRDatabaseDiscoveryType#updatePrimaryDataSource()}
- * @see {@link org.apache.shardingsphere.agent.metrics.prometheus.collector.ProxyInfoCollector}
  */
 @Slf4j
-public class DbDiscoveryEventMetricsCollector extends Collector {
+public class DbDiscoveryMetricsCollector extends Collector implements Describable {
 
-    private static final LinkedList<PrimaryDataSourceChangedEvent> eventQueue = new LinkedList<>();
-
-    public DbDiscoveryEventMetricsCollector() {
-        ShardingSphereEventBus.getInstance().register(this);
+    public DbDiscoveryMetricsCollector() {
         CollectorRegistry.defaultRegistry.register(this);
     }
 
-    /**
-     * {@link org.apache.shardingsphere.mode.manager.cluster.coordinator.ClusterContextManagerCoordinator#renew()}
-     * {@link org.apache.shardingsphere.mode.manager.cluster.coordinator.registry.status.storage.subscriber.StorageNodeStatusSubscriber#update()}
-     */
-    @Subscribe
-    public void onPrimaryDataSourceChanged(PrimaryDataSourceChangedEvent event) {
-        log.warn("Processing event: ({}), queue: {}, - {}.{}.{}", PrimaryDataSourceChangedEvent.class.getSimpleName(),
-                eventQueue.size(), event.getSchemaName(), event.getGroupName(), event.getDataSourceName());
-
-        // Add metrics queue.
-        if (eventQueue.size() > 16) {
-            eventQueue.pollFirst();
-        }
-        eventQueue.add(event);
-
-        // TODO Event notification ...
+    @Override
+    public List<MetricFamilySamples> describe() {
+        return FACTORY.getDefinitionMetrics().stream().map(m -> {
+            Type type = Type.valueOf((String) m.get("type"));
+            return new MetricFamilySamples((String) m.get("name"), (String) m.get("unit"), type, (String) m.get("help"), null);
+        }).collect(toList());
     }
 
     /**
@@ -84,6 +70,9 @@ public class DbDiscoveryEventMetricsCollector extends Collector {
      */
     @Override
     public List<MetricFamilySamples> collect() {
+        log.debug("Collecting dbdiscovery metrics ...");
+
+        LinkedList<PrimaryDataSourceChangedEvent> eventQueue = DbDiscoveryEventHandler.getInstance().getEventQueue();
         List<MetricFamilySamples> result = new LinkedList<>();
         Optional<GaugeMetricFamily> writeDS = FACTORY.createGaugeMetricFamily(MetricIds.DB_DISCOVERY_WRITE_DS);
         writeDS.ifPresent(m -> {
@@ -97,7 +86,7 @@ public class DbDiscoveryEventMetricsCollector extends Collector {
         return result;
     }
 
-    private static final PrometheusWrapperFactory FACTORY = new PrometheusWrapperFactory();
+    private static final ExtensionPrometheusWrapperFactory FACTORY = new ExtensionPrometheusWrapperFactory();
     private static final ConcurrentHashMap<String, Integer> DS_STATE_MAP = new ConcurrentHashMap<>();
 
     static {
