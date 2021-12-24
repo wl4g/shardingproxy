@@ -107,8 +107,8 @@
 				<exclude>${groupId}:${artifactId}</exclude>
 				<exclude>${groupId}:xcloud-shardingproxy-agent-bootstrap</exclude>
 				<exclude>${groupId}:xcloud-shardingproxy-agent-extension</exclude>
-				<!-- <exclude>org.apache.shardingsphere:shardingsphere-agent-api</exclude> -->
-				<!-- <exclude>org.apache.shardingsphere:shardingsphere-agent-core</exclude> -->
+				<exclude>org.apache.shardingsphere:shardingsphere-agent-api</exclude>
+				<exclude>org.apache.shardingsphere:shardingsphere-agent-core</exclude>
 				<exclude>org.apache.shardingsphere:shardingsphere-agent-bootstrap</exclude>
 				<exclude>org.apache.shardingsphere:shardingsphere-agent-logging-base</exclude>
 				<exclude>org.apache.shardingsphere:shardingsphere-agent-metrics-api</exclude>
