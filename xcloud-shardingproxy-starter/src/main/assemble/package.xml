@@ -105,9 +105,13 @@
 			<scope>runtime</scope>
 			<excludes>
 				<exclude>${groupId}:${artifactId}</exclude>
+				<exclude>${groupId}:xcloud-shardingproxy-agent-bootstrap</exclude>
+				<exclude>${groupId}:xcloud-shardingproxy-agent-extension</exclude>
+				<!-- <exclude>org.apache.shardingsphere:shardingsphere-agent-api</exclude> -->
+				<!-- <exclude>org.apache.shardingsphere:shardingsphere-agent-core</exclude> -->
 				<exclude>org.apache.shardingsphere:shardingsphere-agent-bootstrap</exclude>
-				<exclude>org.apache.shardingsphere:shardingsphere-agent-api</exclude>
-				<exclude>org.apache.shardingsphere:shardingsphere-agent-core</exclude>
+				<exclude>org.apache.shardingsphere:shardingsphere-agent-logging-base</exclude>
+				<exclude>org.apache.shardingsphere:shardingsphere-agent-metrics-api</exclude>
 				<exclude>org.apache.shardingsphere:shardingsphere-agent-metrics-prometheus</exclude>
 				<exclude>org.apache.shardingsphere:shardingsphere-agent-tracing-jaeger</exclude>
 				<exclude>org.apache.shardingsphere:shardingsphere-agent-tracing-opentelemetry</exclude>
@@ -119,16 +123,19 @@
 			<outputDirectory>ext-lib/agentlib</outputDirectory>
 			<scope>runtime</scope>
 			<includes>
-				<include>org.apache.shardingsphere:shardingsphere-agent-bootstrap</include>
+				<!-- <include>org.apache.shardingsphere:shardingsphere-agent-bootstrap</include> -->
+				<include>${groupId}:xcloud-shardingproxy-agent-bootstrap</include>
 			</includes>
 		</dependencySet>
 		<dependencySet>
 			<outputDirectory>ext-lib/agentlib/plugins</outputDirectory>
 			<scope>runtime</scope>
 			<includes>
-				<include>${groupId}:xcloud-shardingproxy-agent</include>
-				<include>org.apache.shardingsphere:shardingsphere-agent-api</include>
-				<include>org.apache.shardingsphere:shardingsphere-agent-core</include>
+				<include>${groupId}:xcloud-shardingproxy-agent-extension</include>
+				<!-- <include>org.apache.shardingsphere:shardingsphere-agent-api</include> -->
+				<!-- <include>org.apache.shardingsphere:shardingsphere-agent-core</include> -->
+				<include>org.apache.shardingsphere:shardingsphere-agent-logging-base</include>
+				<include>org.apache.shardingsphere:shardingsphere-agent-metrics-api</include>
 				<include>org.apache.shardingsphere:shardingsphere-agent-metrics-prometheus</include>
 				<include>org.apache.shardingsphere:shardingsphere-agent-tracing-jaeger</include>
 				<include>org.apache.shardingsphere:shardingsphere-agent-tracing-opentelemetry</include>

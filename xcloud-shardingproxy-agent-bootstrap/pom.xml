@@ -1,11 +1,11 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<artifactId>xcloud-shardingproxy-agent</artifactId>
+	<artifactId>xcloud-shardingproxy-agent-bootstrap</artifactId>
 	<packaging>jar</packaging>
-	<name>XCloud ShardingProxy Agent</name>
+	<name>XCloud ShardingProxy Agent Bootstrap</name>
 	<url>http://xcloud.wl4g.com</url>
-	<description>A XCloud Integration Shardingsphere Agent.</description>
+	<description>A XCloud Integration Shardingsphere Agent Bootstrap.</description>
 	<organization>
 		<name>wl4g</name>
 		<url>https://xcloud.wl4g.com</url>
@@ -58,47 +58,31 @@
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<java.version>1.8</java.version>
-		<prometheus.version>0.11.0</prometheus.version>
-		<snakeyaml.version>1.16</snakeyaml.version>
-		<byte-buddy.version>1.11.18</byte-buddy.version>
-		<premain.class>org.apache.shardingsphere.ShardingSphereAgent</premain.class>
+		<premain.class>com.wl4g.shardingproxy.agent.ShardingProxyAgent</premain.class>
 		<can.redefine.classes>true</can.redefine.classes>
 		<can.retransform.classes>true</can.retransform.classes>
-		<shade.package>org.apache.shardingsphere.dependencies</shade.package>
+		<!-- <shade.package>org.apache.shardingsphere.dependencies</shade.package> -->
 	</properties>
-	<dependencyManagement>
-		<dependencies>
-			<dependency>
-				<groupId>org.yaml</groupId>
-				<artifactId>snakeyaml</artifactId>
-				<version>${snakeyaml.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>net.bytebuddy</groupId>
-				<artifactId>byte-buddy</artifactId>
-				<version>${byte-buddy.version}</version>
-			</dependency>
-		</dependencies>
-	</dependencyManagement>
 	<dependencies>
 		<dependency>
 			<groupId>org.projectlombok</groupId>
 			<artifactId>lombok</artifactId>
 		</dependency>
 		<dependency>
+			<groupId>net.bytebuddy</groupId>
+			<artifactId>byte-buddy</artifactId>
+		</dependency>
+		<!-- 坑1: 这里不直接引用 shardingsphere-agent-bootstrap 的原因是 它本身使用 shade 插件打出来的 jar 文件里会将 net.bytebuddy 等依赖的包名重命名为 org.apache.shardingsphere.dependencies 
+			下面，但是其他的插件模块如 shardingsphere-agent-tracing-opentracing 是独立打包的，生成的 jar 里面方法调用还是 net.bytebuddy，而导致了 NoSuchMethed 错误. 这里的解决措施是直接将 
+			shardingsphere-agent-bootstrap 模块的那一点点代码拷贝到此本模块，使用 shade 打包时去掉重命名即可。 -->
+		<dependency>
 			<groupId>org.apache.shardingsphere</groupId>
-			<artifactId>shardingsphere-infra-common</artifactId>
+			<artifactId>shardingsphere-agent-api</artifactId>
 			<version>${shardingsphere.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.shardingsphere</groupId>
-			<artifactId>shardingsphere-agent-metrics-prometheus</artifactId>
-			<version>${shardingsphere.version}</version>
-			<scope>provided</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.shardingsphere</groupId>
-			<artifactId>shardingsphere-agent-bootstrap</artifactId>
+			<artifactId>shardingsphere-agent-core</artifactId>
 			<version>${shardingsphere.version}</version>
 		</dependency>
 	</dependencies>
@@ -163,6 +147,10 @@
 								</transformer>
 							</transformers>
 							<artifactSet>
+								<includes>
+									<include>org.apache.shardingsphere:*</include>
+									<include>net.bytebuddy:byte-buddy</include>
+								</includes>
 								<excludes>
 									<exclude>com.google.*:*</exclude>
 									<exclude>com.google.guava:guava:*</exclude>
@@ -172,12 +160,12 @@
 									<exclude>org.apache.commons:logging:*</exclude>
 								</excludes>
 							</artifactSet>
-							<relocations>
-								<relocation>
-									<pattern>net.bytebuddy</pattern>
-									<shadedPattern>${shade.package}.net.bytebuddy</shadedPattern>
-								</relocation>
-							</relocations>
+							<!-- <relocations> -->
+							<!-- <relocation> -->
+							<!-- <pattern>net.bytebuddy</pattern> -->
+							<!-- <shadedPattern>${shade.package}.net.bytebuddy</shadedPattern> -->
+							<!-- </relocation> -->
+							<!-- </relocations> -->
 						</configuration>
 					</execution>
 				</executions>

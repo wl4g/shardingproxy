@@ -6,9 +6,9 @@
     <version>5.0.0</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
-  <artifactId>xcloud-shardingproxy-agent</artifactId>
-  <name>XCloud ShardingProxy Agent</name>
-  <description>A XCloud Integration Shardingsphere Agent.</description>
+  <artifactId>xcloud-shardingproxy-agent-bootstrap</artifactId>
+  <name>XCloud ShardingProxy Agent Bootstrap</name>
+  <description>A XCloud Integration Shardingsphere Agent Bootstrap.</description>
   <url>http://xcloud.wl4g.com</url>
   <issueManagement>
     <system>github</system>
@@ -110,6 +110,10 @@
                 </transformer>
               </transformers>
               <artifactSet>
+                <includes>
+                  <include>org.apache.shardingsphere:*</include>
+                  <include>net.bytebuddy:byte-buddy</include>
+                </includes>
                 <excludes>
                   <exclude>com.google.*:*</exclude>
                   <exclude>com.google.guava:guava:*</exclude>
@@ -119,12 +123,6 @@
                   <exclude>org.apache.commons:logging:*</exclude>
                 </excludes>
               </artifactSet>
-              <relocations>
-                <relocation>
-                  <pattern>net.bytebuddy</pattern>
-                  <shadedPattern>${shade.package}.net.bytebuddy</shadedPattern>
-                </relocation>
-              </relocations>
             </configuration>
           </execution>
         </executions>
@@ -133,57 +131,18 @@
   </build>
   <dependencies>
     <dependency>
-      <groupId>org.apache.shardingsphere</groupId>
-      <artifactId>shardingsphere-agent-metrics-prometheus</artifactId>
-      <version>5.0.0</version>
-      <scope>provided</scope>
-      <exclusions>
-        <exclusion>
-          <artifactId>shardingsphere-agent-metrics-api</artifactId>
-          <groupId>org.apache.shardingsphere</groupId>
-        </exclusion>
-        <exclusion>
-          <artifactId>simpleclient</artifactId>
-          <groupId>io.prometheus</groupId>
-        </exclusion>
-        <exclusion>
-          <artifactId>simpleclient_hotspot</artifactId>
-          <groupId>io.prometheus</groupId>
-        </exclusion>
-        <exclusion>
-          <artifactId>collector</artifactId>
-          <groupId>io.prometheus.jmx</groupId>
-        </exclusion>
-        <exclusion>
-          <artifactId>simpleclient_httpserver</artifactId>
-          <groupId>io.prometheus</groupId>
-        </exclusion>
-      </exclusions>
+      <groupId>org.projectlombok</groupId>
+      <artifactId>lombok</artifactId>
+      <version>1.18.4</version>
+      <scope>compile</scope>
     </dependency>
   </dependencies>
-  <dependencyManagement>
-    <dependencies>
-      <dependency>
-        <groupId>org.yaml</groupId>
-        <artifactId>snakeyaml</artifactId>
-        <version>${snakeyaml.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>net.bytebuddy</groupId>
-        <artifactId>byte-buddy</artifactId>
-        <version>${byte-buddy.version}</version>
-      </dependency>
-    </dependencies>
-  </dependencyManagement>
   <properties>
+    <java.version>1.8</java.version>
     <shade.package>org.apache.shardingsphere.dependencies</shade.package>
     <can.redefine.classes>true</can.redefine.classes>
-    <prometheus.version>0.11.0</prometheus.version>
-    <java.version>1.8</java.version>
-    <snakeyaml.version>1.16</snakeyaml.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <can.retransform.classes>true</can.retransform.classes>
-    <byte-buddy.version>1.11.18</byte-buddy.version>
-    <premain.class>org.apache.shardingsphere.ShardingSphereAgent</premain.class>
+    <premain.class>com.wl4g.shardingproxy.agent.ShardingProxyAgent</premain.class>
   </properties>
 </project>

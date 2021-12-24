@@ -60,28 +60,7 @@
 		<java.version>1.8</java.version>
 		<final.name>shardingproxy</final.name>
 		<bootstrap-classname>com.wl4g.ShardingProxy</bootstrap-classname>
-		<curator.version>5.1.0</curator.version>
 	</properties>
-	<dependencyManagement>
-		<dependencies>
-			<!-- <dependency> -->
-			<!-- <groupId>com.google.guava</groupId> -->
-			<!-- <artifactId>guava</artifactId> -->
-			<!-- <version>${guava.version}</version> -->
-			<!-- </dependency> -->
-			<!-- Conflict: shardingsphere-governance-repository-zookeeper-curator:5.0.0-alpha->spring-cloud-zookeeper-dependencies:2.2.4.RELEASE->curator-framework:4.0.1 -->
-			<dependency>
-				<groupId>org.apache.curator</groupId>
-				<artifactId>curator-framework</artifactId>
-				<version>${curator.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.apache.curator</groupId>
-				<artifactId>curator-recipes</artifactId>
-				<version>${curator.version}</version>
-			</dependency>
-		</dependencies>
-	</dependencyManagement>
 	<dependencies>
 		<dependency>
 			<groupId>com.wl4g</groupId>
@@ -89,7 +68,12 @@
 		</dependency>
 		<dependency>
 			<groupId>com.wl4g</groupId>
-			<artifactId>xcloud-shardingproxy-agent</artifactId>
+			<artifactId>xcloud-shardingproxy-agent-bootstrap</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.wl4g</groupId>
+			<artifactId>xcloud-shardingproxy-agent-extension</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>
@@ -97,32 +81,20 @@
 			<artifactId>snakeyaml</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>net.bytebuddy</groupId>
-			<artifactId>byte-buddy</artifactId>
-		</dependency>
-		<dependency>
 			<groupId>org.apache.shardingsphere</groupId>
 			<artifactId>shardingsphere-proxy-bootstrap</artifactId>
 			<version>${shardingsphere.version}</version>
 		</dependency>
-		<dependency>
-			<groupId>org.apache.shardingsphere</groupId>
-			<artifactId>shardingsphere-agent-bootstrap</artifactId>
-			<version>${shardingsphere.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.shardingsphere</groupId>
-			<artifactId>shardingsphere-agent-api</artifactId>
-			<version>${shardingsphere.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.shardingsphere</groupId>
-			<artifactId>shardingsphere-agent-core</artifactId>
-			<version>${shardingsphere.version}</version>
-		</dependency>
+		<!-- for packaging -->
 		<dependency>
 			<groupId>org.apache.shardingsphere</groupId>
 			<artifactId>shardingsphere-agent-logging-base</artifactId>
+			<version>${shardingsphere.version}</version>
+			<!-- <scope>provided</scope> -->
+		</dependency>
+		<dependency>
+			<groupId>org.apache.shardingsphere</groupId>
+			<artifactId>shardingsphere-agent-metrics-api</artifactId>
 			<version>${shardingsphere.version}</version>
 			<!-- <scope>provided</scope> -->
 		</dependency>
