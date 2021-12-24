@@ -1,36 +1,25 @@
-# Sharingproxy is an cloud-native db-sharding service based on [shardingsphere-proxy](https://github.com/apache/shardingsphere/tree/master/shardingsphere-proxy)
+# An cloud-native db-sharding service based on [shardingsphere-proxy](https://github.com/apache/shardingsphere/tree/master/shardingsphere-proxy)
 
 > It's an enhanced package that integrates shardingsphere-proxy and shardingsphere-scaling
 
 ## 1. Deployments
 
-### 1.1 Initialization example data
+## 1.1 Preparing db instances for testing
 
-> Notice: The example of non average slicing is not recommended for production (scenario: slicing according to different machine performance weight), because shardingsphere:5.0.0, It is recommended to use average sharding.
+- You first need to prepare a multi-instance database cluster for testing, here is `MySQL Group Replication` as an example. Refer docs to: [Deploy MGR high-availability production cluster based on Docker](https://blogs.wl4g.com/archives/2477)
 
-- Directories:
+### 1.2 Initialization MySQL
 
-```text
-├── exampledata
-│  ├── group_sharding
-│  │   ├── sharding1.jpg
-│  │   ├── sharding2.jpg
-│  │   └── userdb-sharding.sql
-│  └── sharding
-│      └── userdb-sharding.sql
+Notice: The example of non average slicing is not recommended for production (scenario: slicing according to different machine performance weight), because shardingsphere:5.0.0, It is recommended to use average sharding.
+
+- Import exemple [userdb SQLs](xcloud-shardingproxy-starter/exampledata/sharding/userdb-sharding.sql)
+
+```bash
+cd $PROJECT_HOME/xcloud-shardingproxy-starter/
+echo "source exampledata/sharding/userdb-sharding.sql" | mysql -h172.8.8.111 -P3306 -uroot -p123456
 ```
 
-```sql
-$MYSQL_HOME/bin/mysql -h127.0.0.1 -P3308 -uroot -p123456
-
-use userdb;
-SELECT * FROM userdb.t_user;
-INSERT INTO userdb.t_user (id, name) VALUES (10000000, 'user-insert-1111');
-UPDATE userdb.t_user SET name='user-update-2222' WHERE id=10000000;
-DELETE FROM userdb.t_user WHERE id=10000000;
-```
-
-### 1.2 for Docker(Generally used for testing)
+### 1.3 for Docker(usually for testing)
 
 - Simple deploying
 
@@ -53,34 +42,23 @@ docker run -d \
 wl4g/shardingproxy:2.0.0
 ```
 
-- If you want to test native [apache/shardingsphere/shardingsphere-proxy](https://github.com/apache/shardingsphere/tree/master/shardingsphere-proxy)
+```sql
+$MYSQL_HOME/bin/mysql -h127.0.0.1 -P3308 -uroot -p123456
 
-```bash
-sudo mkdir -p /mnt/disk1/shardingsphere-proxy/{conf,ext-lib}
-sudo mkdir -p /mnt/disk1/log/shardingsphere-proxy/
-
-docker network create --subnet=172.8.8.0/24 mysqlnet
-
-docker run -d \
---name ssp1 \
---net mysqlnet \
---restart no \
--p 3308:3308 \
--v /mnt/disk1/shardingsphere-proxy/conf:/opt/shardingsphere-proxy/conf/ \
--v /mnt/disk1/shardingsphere-proxy/ext-lib/:/opt/shardingsphere-proxy/ext-lib/ \
--v /mnt/disk1/log/shardingsphere-proxy/:/opt/shardingsphere-proxy/logs/ \
--e JVM_OPTS='-Djava.awt.headless=true' \
--e PORT=3308 \
-apache/shardingsphere-proxy:5.0.0
+use userdb;
+SELECT * FROM userdb.t_user;
+INSERT INTO userdb.t_user (id, name) VALUES (10000000, 'user-insert-1111');
+UPDATE userdb.t_user SET name='user-update-2222' WHERE id=10000000;
+DELETE FROM userdb.t_user WHERE id=10000000;
 ```
 
-### 1.2 for Kubernetes(Production recommend)
+### 1.4 for Kubernetes(production recommend)
 
 ```bash
 #TODO
 ```
 
-## 2. Developer Guide
+## 2. Developer guide
 
 - 2.1 Compiling
 
@@ -112,8 +90,6 @@ java -jar shardingproxy-{version}-bin.jar 3308 /example/readwrite
 - [Adjust discovery api feature. #13902](https://github.com/apache/shardingsphere/issues/13902)
 
 #### 3.1.1 First you need an MGR cluster for testing
-
-- Refer docs to: [Deploy MGR high-availability production cluster based on Docker](https://blogs.wl4g.com/archives/2477)
 
 - Assuming that the MGR cluster is now ready as follows:
 
@@ -163,11 +139,15 @@ EOF
 
 ### 3.2 for PostgreSQL Cluster failover
 
-TODO
+```bash
+#TODO
+```
 
 ### 3.3 for Oracle RAC failover
 
-TODO
+```bash
+#TODO
+```
 
 ## 4. Metircs integration
 
@@ -292,4 +272,25 @@ Under the same schemaName, multiple sharding databases must be the same. See sou
 /mgr-elasticjob/MGR-pr_userdb_g0db2/servers/192.168.0.101
 /mgr-elasticjob/MGR-pr_userdb_g0db2/sharding/0
 /mgr-elasticjob/MGR-pr_userdb_g0db2/sharding/0/instance
+```
+
+### 6.3 If you want to test native [apache/shardingsphere/shardingsphere-proxy](https://github.com/apache/shardingsphere/tree/master/shardingsphere-proxy)
+
+```bash
+sudo mkdir -p /mnt/disk1/shardingsphere-proxy/{conf,ext-lib}
+sudo mkdir -p /mnt/disk1/log/shardingsphere-proxy/
+
+docker network create --subnet=172.8.8.0/24 mysqlnet
+
+docker run -d \
+--name ssp1 \
+--net mysqlnet \
+--restart no \
+-p 3308:3308 \
+-v /mnt/disk1/shardingsphere-proxy/conf:/opt/shardingsphere-proxy/conf/ \
+-v /mnt/disk1/shardingsphere-proxy/ext-lib/:/opt/shardingsphere-proxy/ext-lib/ \
+-v /mnt/disk1/log/shardingsphere-proxy/:/opt/shardingsphere-proxy/logs/ \
+-e JVM_OPTS='-Djava.awt.headless=true' \
+-e PORT=3308 \
+apache/shardingsphere-proxy:5.0.0
 ```
