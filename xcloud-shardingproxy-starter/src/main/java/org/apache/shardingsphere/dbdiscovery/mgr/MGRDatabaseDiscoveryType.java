@@ -17,6 +17,7 @@
 
 package org.apache.shardingsphere.dbdiscovery.mgr;
 
+import static com.wl4g.component.common.collection.CollectionUtils2.isEmpty;
 import static com.wl4g.component.common.serialize.JacksonUtils.toJSONString;
 import static java.util.Objects.isNull;
 import static org.apache.commons.lang3.StringUtils.equalsAnyIgnoreCase;
@@ -85,12 +86,6 @@ public final class MGRDatabaseDiscoveryType implements DatabaseDiscoveryType {
     @Override
     public void checkDatabaseDiscoveryConfiguration(final String schemaName, final Map<String, DataSource> dataSourceMap)
             throws SQLException {
-        // [for ADD BUGFIX]
-        // DataSource
-        // defaultPrimaryDS=dataSourceMap.entrySet().iterator().next().getValue();
-        // try(Connection
-        // connection=dataSourceMap.getOrDefault(oldPrimaryDataSource,defaultPrimaryDS).getConnection();
-
         try (Connection connection = dataSourceMap.get(oldPrimaryDataSource).getConnection();
                 Statement statement = connection.createStatement()) {
             checkPluginIsActive(statement);
@@ -172,6 +167,9 @@ public final class MGRDatabaseDiscoveryType implements DatabaseDiscoveryType {
     }
 
     private String findPrimaryDataSourceURL(final Map<String, DataSource> dataSourceMap) {
+        //
+        // Old logic.
+        //
         // String result = "";
         // String sql = "SELECT MEMBER_HOST, MEMBER_PORT FROM
         // performance_schema.replication_group_members WHERE MEMBER_ID = "
@@ -192,7 +190,9 @@ public final class MGRDatabaseDiscoveryType implements DatabaseDiscoveryType {
         // }
         // return result;
 
-        // [for ADD check for MGR member(host/port)]
+        //
+        // [BUG FIX for ADD check for MGR member(host/port)]
+        //
         String result = "";
         String sql = "SELECT MEMBER_HOST, MEMBER_PORT FROM performance_schema.replication_group_members WHERE MEMBER_ID = "
                 + "(SELECT VARIABLE_VALUE FROM performance_schema.global_status WHERE VARIABLE_NAME = 'group_replication_primary_member')";
@@ -221,6 +221,9 @@ public final class MGRDatabaseDiscoveryType implements DatabaseDiscoveryType {
     }
 
     private String findPrimaryDataSourceName(final String primaryDataSourceURL, final Map<String, DataSource> dataSourceMap) {
+        //
+        // Old logic.
+        //
         // String result = "";
         // for (Entry<String, DataSource> entry : dataSourceMap.entrySet()) {
         // String url;
@@ -236,7 +239,12 @@ public final class MGRDatabaseDiscoveryType implements DatabaseDiscoveryType {
         // }
         // return result;
 
+        //
         // [for ADD DataSource URL addresses mapping matches]
+        //
+        if (isEmpty(dataSourceMap)) {
+            throw new IllegalStateException("The primary dataSource cannot be found because the datasourceMap is empty.");
+        }
         for (Entry<String, DataSource> entry : dataSourceMap.entrySet()) {
             String url;
             try (Connection connection = entry.getValue().getConnection()) {
@@ -251,7 +259,6 @@ public final class MGRDatabaseDiscoveryType implements DatabaseDiscoveryType {
                 log.error("An exception occurred while find primary data source name", ex);
             }
         }
-
         throw new NoFoundPrimaryDataSourceException(
                 "The datasource name is not matched when the database is discovered, please check whether the configuration of 'extensionDiscoveryConfigJson.memberHostMappings' is correct. - %s",
                 toJSONString(getExtDiscoveryConfig()));
@@ -275,13 +282,6 @@ public final class MGRDatabaseDiscoveryType implements DatabaseDiscoveryType {
 
     private List<String> findMemberDataSourceURLs(final Map<String, DataSource> activeDataSourceMap) {
         List<String> result = new LinkedList<>();
-
-        // [for ADD BUGFIX]
-        // DataSource
-        // defaultPrimaryDS=dataSourceMap.entrySet().iterator().next().getValue();
-        // try(Connection
-        // connection=dataSourceMap.getOrDefault(oldPrimaryDataSource,defaultPrimaryDS).getConnection();
-
         try (Connection connection = activeDataSourceMap.get(oldPrimaryDataSource).getConnection();
                 Statement statement = connection.createStatement()) {
             ResultSet resultSet = statement.executeQuery(MEMBER_LIST);

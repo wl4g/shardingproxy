@@ -24,7 +24,7 @@
 			<directory>src/main/resources</directory>
 			<outputDirectory>conf</outputDirectory>
 			<excludes>
-				<exclude>agent/**</exclude>
+				<exclude>conf/**</exclude>
 				<exclude>script/**</exclude>
 				<exclude>static/**</exclude>
 				<exclude>META-INF/**</exclude>

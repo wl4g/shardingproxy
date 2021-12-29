@@ -27,6 +27,10 @@ package com.wl4g.shardingproxy.agent.metrics;
  */
 public class MetricIds {
 
-    public static final String DB_DISCOVERY_WRITE_DS = "db_discovery_write_datasource";
+    public static final String DB_DISCOVERY_PRIMARY_DS = "dbdiscoveryPrimaryDatasource";
+
+    public static final String DB_DISCOVERY_DISABLE_DS = "dbdiscoveryDisableDatasource";
+
+    public static final String DB_DISCOVERY_DS = "dbdiscoveryDatasource";
 
 }

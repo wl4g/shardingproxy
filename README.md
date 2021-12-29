@@ -94,11 +94,18 @@ cd xcloud-shardingproxy
 mvn clean install -DskipTests -Dmaven.test.skip=true -T 2C
 ```
 
-- 2.2 Startup
+- 2.2 Example startup
 
 ```bash
-java -jar shardingproxy-{version}-bin.jar 3308 /example/readwrite
-# java -cp xxx com.wl4g.ShardingProxy 3308 /example/readwrite
+export SP_PROJECT_DIR=/opt/java-workspace/xcloud-shardingproxy
+export SP_CONF_DIR=${SP_PROJECT_DIR}/xcloud-shardingproxy-starter/src/main/resources/example/sharding-readwrite/
+export SP_JAVAAGENT=${SP_PROJECT_DIR}/xcloud-shardingproxy-agent-bootstrap/target/xcloud-shardingproxy-agent-bootstrap-5.0.0.jar
+# Extension environment configuration.
+export AGENT_PATH=${SP_PROJECT_DIR}/xcloud-shardingproxy-starter/src/main/resources/
+export PLUGINS_PATH=${SP_PROJECT_DIR}/xcloud-shardingproxy-agent-extension/target/
+
+java ${SP_JAVAAGENT} -jar shardingproxy-{version}-bin.jar 3308 ${SP_CONF_DIR}
+# java ${SP_JAVAAGENT} -cp xxx com.wl4g.ShardingProxy 3308 ${SP_CONF_DIR}
 ```
 
 ## 3. Failover integration
@@ -267,6 +274,33 @@ Under the same schemaName, multiple sharding databases must be the same. See sou
 /mgr-elasticjob/MGR-pr_userdb_g0db2/servers/192.168.0.101
 /mgr-elasticjob/MGR-pr_userdb_g0db2/sharding/0
 /mgr-elasticjob/MGR-pr_userdb_g0db2/sharding/0/instance
+/shardingproxy_ns_0/lock
+/shardingproxy_ns_0/metadata
+/shardingproxy_ns_0/props
+/shardingproxy_ns_0/rules
+/shardingproxy_ns_0/status
+/shardingproxy_ns_0/lock/ack
+/shardingproxy_ns_0/lock/locks
+/shardingproxy_ns_0/metadata/userdb
+/shardingproxy_ns_0/metadata/userdb/dataSources
+/shardingproxy_ns_0/metadata/userdb/rules
+/shardingproxy_ns_0/metadata/userdb/schema
+/shardingproxy_ns_0/status/compute_nodes
+/shardingproxy_ns_0/status/storage_nodes
+/shardingproxy_ns_0/status/compute_nodes/online
+/shardingproxy_ns_0/status/compute_nodes/online/172.8.8.1@3308
+/shardingproxy_ns_0/status/storage_nodes/disable
+/shardingproxy_ns_0/status/storage_nodes/primary
+/shardingproxy_ns_0/status/storage_nodes/disable/userdb.ds_userdb_g0db0_0
+/shardingproxy_ns_0/status/storage_nodes/disable/userdb.ds_userdb_g0db0_1
+/shardingproxy_ns_0/status/storage_nodes/disable/userdb.ds_userdb_g0db0_2
+/shardingproxy_ns_0/status/storage_nodes/disable/userdb.ds_userdb_g0db1_0
+/shardingproxy_ns_0/status/storage_nodes/disable/userdb.ds_userdb_g0db1_1
+/shardingproxy_ns_0/status/storage_nodes/disable/userdb.ds_userdb_g0db1_2
+/shardingproxy_ns_0/status/storage_nodes/disable/userdb.ds_userdb_g0db2_0
+/shardingproxy_ns_0/status/storage_nodes/disable/userdb.ds_userdb_g0db2_1
+/shardingproxy_ns_0/status/storage_nodes/disable/userdb.ds_userdb_g0db2_2
+/shardingproxy_ns_0/status/storage_nodes/primary/userdb.ha_userdb_g0db2
 ```
 
 ### 6.3 If you want to test native [apache/shardingsphere/shardingsphere-proxy](https://github.com/apache/shardingsphere/tree/master/shardingsphere-proxy)

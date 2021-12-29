@@ -65,35 +65,35 @@ rules:
       tableStrategy:
         standard:
           shardingColumn: id
-          shardingAlgorithmName: g0_table_volume_range
+          shardingAlgorithmName: alg_table_volume_range_g0_0
       keyGenerateStrategy:
         column: id
-        keyGeneratorName: group0_snowflake1
+        keyGeneratorName: gen_snowflake0
   bindingTables:
     - t_user
   defaultDatabaseStrategy:
     standard:
       shardingColumn: id
-      shardingAlgorithmName: g0_database_inline
-      #shardingAlgorithmName: composite_smart_mod1
+      shardingAlgorithmName: alg_database_inline_g0_0
+      #shardingAlgorithmName: alg_complex_smart_mod_g0_0
   defaultTableStrategy:
   shardingAlgorithms:
-    #composite_smart_mod1:
+    #alg_complex_smart_mod_g0_0:
     #  type: SMART_MOD
     #  props:
     #    algorithm-expression: '_g0db0->0,1,2,3|_g0db1->4,5,6|_g0db2->7,8,9'
-    g0_database_inline:
+    alg_database_inline_g0_0:
       type: INLINE
       props:
         algorithm-expression: rw_userdb_g0db${(id % 9) as int}
-    g0_table_volume_range: # see:org.apache.shardingsphere.sharding.algorithm.sharding.range.VolumeBasedRangeShardingAlgorithm
+    alg_table_volume_range_g0_0: # see:org.apache.shardingsphere.sharding.algorithm.sharding.range.VolumeBasedRangeShardingAlgorithm
       type: VOLUME_RANGE2
       props: # Must use quotation marks(string) or you cannot get them.
         range-lower: '0'
         range-upper: '40000000'
         sharding-volume: '10000000'
   keyGenerators:
-    group0_snowflake1:
+    gen_snowflake0:
       type: SNOWFLAKE
       props:
         worker-id: '1' # Range[0,1024),see:org.apache.shardingsphere.sharding.algorithm.keygen.SnowflakeKeyGenerateAlgorithm#getWorkerId()
@@ -123,26 +123,26 @@ rules:
  - !DB_DISCOVERY
    dataSources:
      ha_userdb_g0db0:
-       discoveryTypeName: cn-south1-a1-mgr-g0-0
+       discoveryTypeName: cn_south1_a1_mgr_g0_0
        dataSourceNames:
          - ds_userdb_g0db0_0
          - ds_userdb_g0db0_1
          - ds_userdb_g0db0_2
      ha_userdb_g0db1:
-       discoveryTypeName: cn-south1-a1-mgr-g0-0
+       discoveryTypeName: cn_south1_a1_mgr_g0_0
        dataSourceNames:
          - ds_userdb_g0db1_0
          - ds_userdb_g0db1_1
          - ds_userdb_g0db1_2
      ha_userdb_g0db2:
-       discoveryTypeName: cn-south1-a1-mgr-g0-0
+       discoveryTypeName: cn_south1_a1_mgr_g0_0
        dataSourceNames:
          - ds_userdb_g0db2_0
          - ds_userdb_g0db2_1
          - ds_userdb_g0db2_2
    discoveryTypes:
      # HA MGR architecture see: https://blog.csdn.net/n88Lpo/article/details/118315051
-     cn-south1-a1-mgr-g0-0:
+     cn_south1_a1_mgr_g0_0:
        type: MGR
        props:
          # Must be consistent with the MGR configuration group name.

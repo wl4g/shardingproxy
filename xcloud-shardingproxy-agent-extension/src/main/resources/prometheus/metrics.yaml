@@ -18,11 +18,25 @@
 # see:org.apache.shardingsphere.agent.metrics.prometheus.wrapper.PrometheusWrapperFactory#createById()
 
 metrics:
-  - id: db_discovery_write_datasource    
-    type: COUNTER # COUNTER|GAUGE|HISTOGRAM|SUMMARY
-    name: db_discovery_write_datasource
-    help: The shardingsphere db discovery current datasource state.
+  - id: dbdiscoveryPrimaryDatasource    
+    type: GAUGEMETRICFAMILY # COUNTER|GAUGE|GAUGEMETRICFAMILY|HISTOGRAM|SUMMARY
+    name: dbdiscovery_primary_datasource
+    help: The shardingproxy db discovery current primary datasources.
     labels: 
       - schema_name
-      - group_name
+      - discovery_group_name
+      - datasource_name
+  - id: dbdiscoveryDisableDatasource    
+    type: GAUGEMETRICFAMILY # COUNTER|GAUGE|GAUGEMETRICFAMILY|HISTOGRAM|SUMMARY
+    name: dbdiscovery_disable_datasource
+    help: The shardingproxy db discovery current disable datasources.
+    labels: 
+      - schema_name
+      - datasource_name
+  - id: dbdiscoveryDatasource    
+    type: GAUGEMETRICFAMILY # COUNTER|GAUGE|GAUGEMETRICFAMILY|HISTOGRAM|SUMMARY
+    name: dbdiscovery_datasource
+    help: The shardingproxy db discovery current all datasources.
+    labels: 
+      - schema_name
       - datasource_name

@@ -21,18 +21,18 @@
 # 
 ######################################################################################################
 
-#mode:
-#  type: Cluster
-#  repository:
-#    type: ZooKeeper
-#    props:
-#      namespace: governance_ds
-#      server-lists: localhost:2181
-#      retryIntervalMilliseconds: 500
-#      timeToLiveSeconds: 60
-#      maxRetries: 3
-#      operationTimeoutMilliseconds: 500
-#  overwrite: false
+mode:
+  type: Cluster
+  repository:
+    type: ZooKeeper
+    props:
+      namespace: shardingproxy_0
+      server-lists: localhost:2181
+      retryIntervalMilliseconds: 500
+      timeToLiveSeconds: 60
+      maxRetries: 3
+      operationTimeoutMilliseconds: 500
+  overwrite: false
 
 #scaling:
 #  blockQueueSize: 10000
