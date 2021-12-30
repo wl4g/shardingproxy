@@ -20,6 +20,7 @@ package org.apache.shardingsphere.dbdiscovery.mgr;
 import static com.wl4g.component.common.collection.CollectionUtils2.isEmpty;
 import static com.wl4g.component.common.serialize.JacksonUtils.toJSONString;
 import static java.util.Objects.isNull;
+import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.apache.commons.lang3.StringUtils.equalsAnyIgnoreCase;
 import static org.apache.commons.lang3.StringUtils.isAnyBlank;
 
@@ -49,7 +50,6 @@ import org.apache.shardingsphere.infra.rule.event.impl.DataSourceDisabledEvent;
 import org.apache.shardingsphere.infra.rule.event.impl.PrimaryDataSourceChangedEvent;
 
 import com.wl4g.shardingproxy.dbdiscovery.ExtensionDiscoveryConfiguration;
-import com.wl4g.shardingproxy.dbdiscovery.exception.NoFoundPrimaryDataSourceException;
 import com.wl4g.shardingproxy.util.ConfigPropertySource;
 
 import lombok.Getter;
@@ -71,16 +71,18 @@ public final class MGRDatabaseDiscoveryType implements DatabaseDiscoveryType {
     private static CoordinatorRegistryCenter coordinatorRegistryCenter;
     private static final Map<String, ScheduleJobBootstrap> SCHEDULE_JOB_BOOTSTRAP_MAP = new HashMap<>(16, 1);
 
-    // [for ADD BUGFIX]
-    // private String oldPrimaryDataSource="";
     private String oldPrimaryDataSource;
 
-    // [for ADD FEATURE]
+    //
+    // [FEATURE for ADD advance property source]
+    //
     @Getter
     @Setter
     private Properties props = new ConfigPropertySource();
 
-    // [for ADD EXTENSION property]
+    //
+    // [FEATURE for ADD extension configuration]
+    //
     private ExtensionDiscoveryConfiguration extDiscoveryConfig;
 
     @Override
@@ -146,6 +148,21 @@ public final class MGRDatabaseDiscoveryType implements DatabaseDiscoveryType {
         if (!disabledDataSourceNames.isEmpty()) {
             activeDataSourceMap.entrySet().removeIf(each -> disabledDataSourceNames.contains(each.getKey()));
         }
+
+        //
+        // [BUGFIX for ADD check no active dataSources]
+        //
+        /**
+         * Refer sources code:
+         * {@link org.apache.shardingsphere.mode.manager.cluster.ClusterContextManagerBuilder#afterBuildContextManager}
+         * {@link org.apache.shardingsphere.mode.manager.cluster.ClusterContextManagerBuilder#disableDataSources}
+         * {@link org.apache.shardingsphere.dbdiscovery.rule.DatabaseDiscoveryRule#updateStatus(DataSourceStatusChangedEvent)}
+         */
+        if (isEmpty(activeDataSourceMap)) {
+            log.warn("Cannot update primary dataSource, because any are no active dataSources.");
+            return;
+        }
+
         if (null == primaryDataSourceName || primaryDataSourceName.equals(oldPrimaryDataSource)) {
             String newPrimaryDataSource = determinePrimaryDataSource(activeDataSourceMap);
             if (newPrimaryDataSource.isEmpty()) {
@@ -191,7 +208,7 @@ public final class MGRDatabaseDiscoveryType implements DatabaseDiscoveryType {
         // return result;
 
         //
-        // [BUG FIX for ADD check for MGR member(host/port)]
+        // [BUGFIX for ADD check for MGR member(host/port)]
         //
         String result = "";
         String sql = "SELECT MEMBER_HOST, MEMBER_PORT FROM performance_schema.replication_group_members WHERE MEMBER_ID = "
@@ -240,11 +257,12 @@ public final class MGRDatabaseDiscoveryType implements DatabaseDiscoveryType {
         // return result;
 
         //
-        // [for ADD DataSource URL addresses mapping matches]
+        // [FEATURE for ADD DataSource URL addresses mapping matches]
         //
-        if (isEmpty(dataSourceMap)) {
-            throw new IllegalStateException("The primary dataSource cannot be found because the datasourceMap is empty.");
-        }
+        // if (isEmpty(dataSourceMap)) {
+        // throw new IllegalStateException("The primary dataSource cannot be
+        // found because the datasourceMap is empty.");
+        // }
         for (Entry<String, DataSource> entry : dataSourceMap.entrySet()) {
             String url;
             try (Connection connection = entry.getValue().getConnection()) {
@@ -259,9 +277,10 @@ public final class MGRDatabaseDiscoveryType implements DatabaseDiscoveryType {
                 log.error("An exception occurred while find primary data source name", ex);
             }
         }
-        throw new NoFoundPrimaryDataSourceException(
-                "The datasource name is not matched when the database is discovered, please check whether the configuration of 'extensionDiscoveryConfigJson.memberHostMappings' is correct. - %s",
+        log.warn(
+                "The datasource name is not matched when the database is discovered, or please check the extension configuration of 'memberHostMappings' is correct. - {}",
                 toJSONString(getExtDiscoveryConfig()));
+        return EMPTY;
     }
 
     @Override
@@ -271,6 +290,21 @@ public final class MGRDatabaseDiscoveryType implements DatabaseDiscoveryType {
         if (!disabledDataSourceNames.isEmpty()) {
             activeDataSourceMap.entrySet().removeIf(each -> disabledDataSourceNames.contains(each.getKey()));
         }
+
+        //
+        // [BUGFIX for ADD check no active dataSources]
+        //
+        /**
+         * Refer sources code:
+         * {@link org.apache.shardingsphere.mode.manager.cluster.ClusterContextManagerBuilder#afterBuildContextManager}
+         * {@link org.apache.shardingsphere.mode.manager.cluster.ClusterContextManagerBuilder#disableDataSources}
+         * {@link org.apache.shardingsphere.dbdiscovery.rule.DatabaseDiscoveryRule#updateStatus(DataSourceStatusChangedEvent)}
+         */
+        if (isEmpty(activeDataSourceMap)) {
+            log.warn("Cannot update member state, because any are no active dataSources.");
+            return;
+        }
+
         List<String> memberDataSourceURLs = findMemberDataSourceURLs(activeDataSourceMap);
         if (memberDataSourceURLs.isEmpty()) {
             return;
@@ -381,7 +415,9 @@ public final class MGRDatabaseDiscoveryType implements DatabaseDiscoveryType {
         return "MGR";
     }
 
-    // [for ADD EXTENSION property]
+    //
+    // [FEATURE for ADD EXTENSION property]
+    //
     private ExtensionDiscoveryConfiguration getExtDiscoveryConfig() {
         if (isNull(extDiscoveryConfig)) {
             synchronized (this) {
