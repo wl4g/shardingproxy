@@ -17,6 +17,11 @@ package com.wl4g.shardingproxy.util;
 
 import static com.wl4g.component.common.lang.Assert2.isTrue;
 import static com.wl4g.component.common.lang.Assert2.notNull;
+import static com.wl4g.component.common.lang.StringUtils2.startsWithIgnoreCase;
+import static com.wl4g.component.common.lang.TypeConverts.parseIntOrDefault;
+import static java.util.Objects.nonNull;
+import static org.apache.commons.lang3.StringUtils.containsIgnoreCase;
+import static org.apache.commons.lang3.StringUtils.split;
 import static org.apache.commons.lang3.StringUtils.startsWith;
 
 import java.net.URI;
@@ -24,6 +29,7 @@ import java.net.URI;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 
 /**
  * {@link JdbcUtil}
@@ -34,24 +40,44 @@ import lombok.Setter;
  */
 public abstract class JdbcUtil {
 
-    public static JdbcInformation resolve(String jdbcUrl) {
-        // e.g:jdbc:mysql://127.0.0.1:3306/userdb_g1db0?serverTimezone=UTC&useSSL=false&allowMultiQueries=true&characterEncoding=utf-8
-        URI uri = URI.create(jdbcUrl.substring(jdbcUrl.indexOf("jdbc:") + 5));
-        notNull(uri.getHost(), "Unable resolve jdbc url host from: %s", jdbcUrl);
-        isTrue(uri.getPort() > 0, "Unable resolve jdbc url port from: %s", jdbcUrl);
+    private static final String JDBC_PREFIX = "jdbc:";
+    private static final String URL_SEPAR_SLASH2 = "://";
 
-        String dbname = uri.getPath();
-        dbname = startsWith(dbname, "/") ? dbname.substring(1) : dbname;
-        return new JdbcInformation("jdbc:".concat(uri.getScheme()), uri.getHost(), uri.getPort(), dbname);
+    public static JdbcInformation resolve(String jdbcUrl) {
+        // e.g:jdbc:mysql://127.0.0.1:3306/userdb_g0db0?serverTimezone=UTC&useSSL=false&allowMultiQueries=true&characterEncoding=utf-8
+        if (startsWithIgnoreCase(jdbcUrl, JDBC_PREFIX)) {
+            jdbcUrl = jdbcUrl.substring(jdbcUrl.indexOf(JDBC_PREFIX) + JDBC_PREFIX.length());
+        }
+
+        // e.g:jdbc:mysql://127.0.0.1:3306/userdb_g0db0?serverTimezone=UTC&useSSL=false&allowMultiQueries=true&characterEncoding=utf-8
+        if (containsIgnoreCase(jdbcUrl, URL_SEPAR_SLASH2)) {
+            URI uri = URI.create(jdbcUrl);
+            notNull(uri.getHost(), "Unable resolve jdbc url host from: %s", jdbcUrl);
+            isTrue(uri.getPort() > 0, "Unable resolve jdbc url port from: %s", jdbcUrl);
+            String databaseName = uri.getPath();
+            databaseName = startsWith(databaseName, "/") ? databaseName.substring(1) : databaseName;
+            return new JdbcInformation(jdbcUrl, JDBC_PREFIX.concat(uri.getScheme()), uri.getHost(), uri.getPort(), databaseName);
+        }
+
+        // e.g: 127.0.0.1:3306
+        String[] parts = split(jdbcUrl, ":");
+        if (nonNull(parts) && parts.length == 2) {
+            return new JdbcInformation(jdbcUrl, null, parts[0], parseIntOrDefault(parts[1]), null);
+        }
+
+        return new JdbcInformation(jdbcUrl, null, null, 0, null);
     }
 
     @Getter
     @Setter
+    @ToString
     @AllArgsConstructor
     public static final class JdbcInformation {
+        private String raw;
         private String schema;
         private String host;
         private int port;
         private String database;
     }
+
 }

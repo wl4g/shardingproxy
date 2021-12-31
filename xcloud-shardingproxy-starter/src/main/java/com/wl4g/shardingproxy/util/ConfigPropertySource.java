@@ -16,7 +16,6 @@
 package com.wl4g.shardingproxy.util;
 
 import static java.util.Objects.isNull;
-import static org.apache.commons.lang3.StringUtils.trimToEmpty;
 
 import java.util.Properties;
 import java.util.regex.Matcher;
@@ -33,48 +32,74 @@ public class ConfigPropertySource extends Properties {
     private static final long serialVersionUID = -1021135946737652193L;
 
     @Override
+    public Object get(Object key) {
+        return getProperty((String) key);
+    }
+
+    @Override
     public String getProperty(String key) {
-        // The one priority is to obtain from the environment variable
-        // with the same key name.
-        String value = getEnvironmentValue(key);
+        String value = null;
 
-        // The second priority is to obtain the key name from the environment
-        // variable with all capital letters and underlined splicing.
+        // The one priority is to get from the environment.
+        value = findEnvironmentValue(key);
         if (isNull(value)) {
-            value = getEnvironmentValue(toUpperEnvironmentKey(key));
+            value = findEnvironmentValue(pointToHump(key));
+        } else if (isNull(value)) {
+            value = findEnvironmentValue(pointToLine(key));
+        } else if (isNull(value)) {
+            value = findEnvironmentValue(humpToLine(key));
+        } else if (isNull(value)) {
+            value = findEnvironmentValue(lineToHump(key));
         }
-
-        // The third priority is obtained from the configuration.
-        if (isNull(value)) {
+        // The secondary priority to get from the configuration.
+        else if (isNull(value)) {
             value = super.getProperty(key);
+        } else if (isNull(value)) {
+            value = super.getProperty(pointToHump(key));
+        } else if (isNull(value)) {
+            value = super.getProperty(pointToLine(key));
+        } else if (isNull(value)) {
+            value = super.getProperty(humpToLine(key));
+        } else if (isNull(value)) {
+            value = super.getProperty(lineToHump(key));
         }
 
         return value;
     }
 
-    @Override
-    public Object get(Object key) {
-        return getProperty((String) key);
-    }
-
-    protected String getEnvironmentValue(String key) {
+    protected String findEnvironmentValue(String key) {
         return System.getenv().get(key);
     }
 
-    public static String toUpperEnvironmentKey(String key) {
-        key = trimToEmpty(key);
-        if (key.contains(".")) {
-            return key.replace(".", "_").toUpperCase();
-        } else {
-            return humpToLine(key).toUpperCase();
+    public static String pointToHump(String key) {
+        if (!"".equals(key)) {
+            return lineToHump(pointToLine(key));
         }
+        return key;
+    }
+
+    public static String pointToLine(String key) {
+        if (!"".equals(key) && key.contains(".")) {
+            return key.replace(".", "_");
+        }
+        return key;
     }
 
     public static String humpToLine(String key) {
+        StringBuffer sb = new StringBuffer(64);
         Matcher matcher = Pattern.compile("[A-Z]").matcher(key);
-        StringBuffer sb = new StringBuffer();
         while (matcher.find()) {
             matcher.appendReplacement(sb, "_" + matcher.group(0).toLowerCase());
+        }
+        matcher.appendTail(sb);
+        return sb.toString();
+    }
+
+    public static String lineToHump(String key) {
+        StringBuffer sb = new StringBuffer(64);
+        Matcher matcher = Pattern.compile("_(\\w)").matcher(key.toLowerCase());
+        while (matcher.find()) {
+            matcher.appendReplacement(sb, matcher.group(1).toUpperCase());
         }
         matcher.appendTail(sb);
         return sb.toString();

@@ -53,7 +53,7 @@
 	<parent>
 		<groupId>com.wl4g</groupId>
 		<artifactId>xcloud-shardingproxy</artifactId>
-		<version>5.0.0</version>
+		<version>5.1.0</version>
 	</parent>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

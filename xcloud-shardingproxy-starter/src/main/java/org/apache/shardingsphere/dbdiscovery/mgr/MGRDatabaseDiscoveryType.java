@@ -17,7 +17,6 @@
 
 package org.apache.shardingsphere.dbdiscovery.mgr;
 
-import static com.wl4g.component.common.collection.CollectionUtils2.isEmpty;
 import static com.wl4g.component.common.serialize.JacksonUtils.toJSONString;
 import static java.util.Objects.isNull;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
@@ -39,11 +38,6 @@ import java.util.Properties;
 import javax.sql.DataSource;
 
 import org.apache.shardingsphere.dbdiscovery.spi.DatabaseDiscoveryType;
-import org.apache.shardingsphere.elasticjob.api.JobConfiguration;
-import org.apache.shardingsphere.elasticjob.lite.api.bootstrap.impl.ScheduleJobBootstrap;
-import org.apache.shardingsphere.elasticjob.reg.base.CoordinatorRegistryCenter;
-import org.apache.shardingsphere.elasticjob.reg.zookeeper.ZookeeperConfiguration;
-import org.apache.shardingsphere.elasticjob.reg.zookeeper.ZookeeperRegistryCenter;
 import org.apache.shardingsphere.infra.config.exception.ShardingSphereConfigurationException;
 import org.apache.shardingsphere.infra.eventbus.ShardingSphereEventBus;
 import org.apache.shardingsphere.infra.rule.event.impl.DataSourceDisabledEvent;
@@ -58,6 +52,9 @@ import lombok.extern.slf4j.Slf4j;
 
 /**
  * MGR data base discovery type.
+ * 
+ * @see {@link org.apache.shardingsphere.dbdiscovery.rule.DatabaseDiscoveryRule#initHeartBeatJobs}
+ * @see {@link org.apache.shardingsphere.mode.manager.cluster.coordinator.ClusterContextManagerCoordinator}
  */
 @Slf4j
 public final class MGRDatabaseDiscoveryType implements DatabaseDiscoveryType {
@@ -67,9 +64,6 @@ public final class MGRDatabaseDiscoveryType implements DatabaseDiscoveryType {
     private static final String GROUP_NAME = "SELECT * FROM performance_schema.global_variables WHERE VARIABLE_NAME='group_replication_group_name'";
     private static final String SINGLE_PRIMARY = "SELECT * FROM performance_schema.global_variables WHERE VARIABLE_NAME='group_replication_single_primary_mode'";
     private static final String MEMBER_LIST = "SELECT MEMBER_HOST, MEMBER_PORT, MEMBER_STATE FROM performance_schema.replication_group_members";
-
-    private static CoordinatorRegistryCenter coordinatorRegistryCenter;
-    private static final Map<String, ScheduleJobBootstrap> SCHEDULE_JOB_BOOTSTRAP_MAP = new HashMap<>(16, 1);
 
     private String oldPrimaryDataSource;
 
@@ -121,7 +115,7 @@ public final class MGRDatabaseDiscoveryType implements DatabaseDiscoveryType {
         try (ResultSet resultSet = statement.executeQuery(GROUP_NAME)) {
             while (resultSet.next()) {
                 String serverGroupName = resultSet.getString("VARIABLE_VALUE");
-                String ruleGroupName = props.getProperty("groupName");
+                String ruleGroupName = props.getProperty("group-name");
                 if (!serverGroupName.equals(ruleGroupName)) {
                     throw new ShardingSphereConfigurationException(
                             "MGR group name is not consistent\n" + "serverGroupName: %s\nruleGroupName: %s", serverGroupName,
@@ -142,39 +136,54 @@ public final class MGRDatabaseDiscoveryType implements DatabaseDiscoveryType {
     }
 
     @Override
-    public void updatePrimaryDataSource(final String schemaName, final Map<String, DataSource> dataSourceMap,
-            final Collection<String> disabledDataSourceNames, final String groupName, final String primaryDataSourceName) {
-        Map<String, DataSource> activeDataSourceMap = new HashMap<>(dataSourceMap);
+    public void updatePrimaryDataSource(final String schemaName, final Map<String, DataSource> allDataSourceMap,
+            final Collection<String> disabledDataSourceNames, final String groupName) {
+        Map<String, DataSource> activeDataSourceMap = new HashMap<>(allDataSourceMap);
         if (!disabledDataSourceNames.isEmpty()) {
             activeDataSourceMap.entrySet().removeIf(each -> disabledDataSourceNames.contains(each.getKey()));
         }
 
         //
+        // [Only at ShardingSphere-5.0.0]
         // [BUGFIX for ADD check no active dataSources]
+        // @see: https://github.com/apache/shardingsphere/issues/14450
         //
         /**
          * Refer sources code:
          * {@link org.apache.shardingsphere.mode.manager.cluster.ClusterContextManagerBuilder#afterBuildContextManager}
          * {@link org.apache.shardingsphere.mode.manager.cluster.ClusterContextManagerBuilder#disableDataSources}
          * {@link org.apache.shardingsphere.dbdiscovery.rule.DatabaseDiscoveryRule#updateStatus(DataSourceStatusChangedEvent)}
+         * {@link org.apache.shardingsphere.dbdiscovery.rule.DatabaseDiscoveryDataSourceRule#disableDataSource(String)}
          */
-        if (isEmpty(activeDataSourceMap)) {
-            log.warn("Cannot update primary dataSource, because any are no active dataSources.");
+        // In order to be compatible with this bug, disable filtering for the
+        // first time is excluded.
+        // if (!isBlank(oldPrimaryDataSource) &&
+        // !disabledDataSourceNames.isEmpty()) {
+        // activeDataSourceMap.entrySet().removeIf(each ->
+        // disabledDataSourceNames.contains(each.getKey()));
+        // }
+        // if (isEmpty(activeDataSourceMap)) {
+        // log.warn(
+        // "Cannot update primary dataSource, because any are no active
+        // dataSources. or you can manually force the deletion of the data path
+        // saved in the registry center, e.g:
+        // '/shardingproxy_ns_0/status/storage_nodes/disable/userdb.ds_userdb_0',
+        // but only if you fully understand what this means, otherwise, please
+        // be careful in the production environment!");
+        // return;
+        // }
+
+        String newPrimaryDataSource = determinePrimaryDataSource(activeDataSourceMap);
+        if (newPrimaryDataSource.isEmpty()) {
             return;
         }
-
-        if (null == primaryDataSourceName || primaryDataSourceName.equals(oldPrimaryDataSource)) {
-            String newPrimaryDataSource = determinePrimaryDataSource(activeDataSourceMap);
-            if (newPrimaryDataSource.isEmpty()) {
-                return;
-            }
-            if (!newPrimaryDataSource.equals(oldPrimaryDataSource)) {
-                oldPrimaryDataSource = newPrimaryDataSource;
-                ShardingSphereEventBus.getInstance()
-                        .post(new PrimaryDataSourceChangedEvent(schemaName, groupName, newPrimaryDataSource));
-            }
-        } else {
-            oldPrimaryDataSource = primaryDataSourceName;
+        if (!newPrimaryDataSource.equals(oldPrimaryDataSource)) {
+            oldPrimaryDataSource = newPrimaryDataSource;
+            // org.apache.shardingsphere.mode.manager.cluster.coordinator.ClusterContextManagerCoordinator
+            // org.apache.shardingsphere.mode.manager.cluster.coordinator.registry.status.storage.watcher.StorageNodeStateChangedWatcher#createGovernanceEvent()
+            // org.apache.shardingsphere.mode.manager.cluster.coordinator.registry.GovernanceWatcherFactory#watch()
+            ShardingSphereEventBus.getInstance()
+                    .post(new PrimaryDataSourceChangedEvent(schemaName, groupName, newPrimaryDataSource));
         }
     }
 
@@ -284,34 +293,82 @@ public final class MGRDatabaseDiscoveryType implements DatabaseDiscoveryType {
     }
 
     @Override
-    public void updateMemberState(final String schemaName, final Map<String, DataSource> dataSourceMap,
+    public void updateMemberState(final String schemaName, final Map<String, DataSource> allDataSourceMap,
             final Collection<String> disabledDataSourceNames) {
-        Map<String, DataSource> activeDataSourceMap = new HashMap<>(dataSourceMap);
+        Map<String, DataSource> activeDataSourceMap = new HashMap<>(allDataSourceMap);
         if (!disabledDataSourceNames.isEmpty()) {
             activeDataSourceMap.entrySet().removeIf(each -> disabledDataSourceNames.contains(each.getKey()));
         }
 
-        //
+        // [Only at ShardingSphere-5.0.0]
         // [BUGFIX for ADD check no active dataSources]
+        // @see: https://github.com/apache/shardingsphere/issues/14450
         //
         /**
          * Refer sources code:
          * {@link org.apache.shardingsphere.mode.manager.cluster.ClusterContextManagerBuilder#afterBuildContextManager}
          * {@link org.apache.shardingsphere.mode.manager.cluster.ClusterContextManagerBuilder#disableDataSources}
          * {@link org.apache.shardingsphere.dbdiscovery.rule.DatabaseDiscoveryRule#updateStatus(DataSourceStatusChangedEvent)}
+         * {@link org.apache.shardingsphere.dbdiscovery.rule.DatabaseDiscoveryDataSourceRule#disableDataSource(String)}
          */
-        if (isEmpty(activeDataSourceMap)) {
-            log.warn("Cannot update member state, because any are no active dataSources.");
-            return;
-        }
+        // In order to be compatible with this bug, disable filtering for the
+        // first time is excluded.
+        // if (!isBlank(oldPrimaryDataSource) &&
+        // !disabledDataSourceNames.isEmpty()) {
+        // activeDataSourceMap.entrySet().removeIf(each ->
+        // disabledDataSourceNames.contains(each.getKey()));
+        // }
+        // if (isEmpty(activeDataSourceMap)) {
+        // log.warn(
+        // "Cannot update member state, because any are no active dataSources.
+        // or you can manually force the deletion of the data path saved in the
+        // registry center, e.g:
+        // '/shardingproxy_ns_0/status/storage_nodes/disable/userdb.ds_userdb_0',
+        // but only if you fully understand what this means, otherwise, please
+        // be careful in the production environment!");
+        // return;
+        // }
 
+        //
+        // Old logic.
+        //
+        // List<String> memberDataSourceURLs =
+        // findMemberDataSourceURLs(activeDataSourceMap);
+        // if (memberDataSourceURLs.isEmpty()) {
+        // return;
+        // }
+        // Map<String, String> dataSourceURLs = new HashMap<>(16, 1);
+        // determineDisabledDataSource(schemaName, activeDataSourceMap,
+        // memberDataSourceURLs, dataSourceURLs);
+        // determineEnabledDataSource(dataSourceMap, schemaName,
+        // memberDataSourceURLs, dataSourceURLs);
+
+        //
+        // [FEATURE for ADD members dataSources URL to mapped addresses]
+        //
         List<String> memberDataSourceURLs = findMemberDataSourceURLs(activeDataSourceMap);
         if (memberDataSourceURLs.isEmpty()) {
             return;
         }
-        Map<String, String> dataSourceURLs = new HashMap<>(16, 1);
-        determineDisabledDataSource(schemaName, activeDataSourceMap, memberDataSourceURLs, dataSourceURLs);
-        determineEnabledDataSource(dataSourceMap, schemaName, memberDataSourceURLs, dataSourceURLs);
+        // Candidate enabled dataSources.
+        Map<String, String> enabledDataSourceURLs = new HashMap<>(16, 1);
+        List<String> flatMappedMemberDataSourceURLs = transformToFlatMappedMemberDataSourceURLs(memberDataSourceURLs);
+        determineDisabledDataSource(schemaName, activeDataSourceMap, flatMappedMemberDataSourceURLs, enabledDataSourceURLs);
+        determineEnabledDataSource(allDataSourceMap, schemaName, flatMappedMemberDataSourceURLs, enabledDataSourceURLs);
+    }
+
+    //
+    // [FEATURE for ADD members dataSources URL to mapped addresses]
+    //
+    private List<String> transformToFlatMappedMemberDataSourceURLs(List<String> memberDataSourceURLs) {
+        List<String> result = new LinkedList<>();
+        for (String url : memberDataSourceURLs) {
+            List<String> mappedDataSourceURLs = ExtensionDiscoveryConfiguration.Util
+                    .findMappingAddressesByMemberAddr(getExtDiscoveryConfig(), url);
+            result.addAll(mappedDataSourceURLs);
+            result.add(url);
+        }
+        return result;
     }
 
     private List<String> findMemberDataSourceURLs(final Map<String, DataSource> activeDataSourceMap) {
@@ -332,14 +389,18 @@ public final class MGRDatabaseDiscoveryType implements DatabaseDiscoveryType {
     }
 
     private void determineDisabledDataSource(final String schemaName, final Map<String, DataSource> activeDataSourceMap,
-            final List<String> memberDataSourceURLs, final Map<String, String> dataSourceURLs) {
+            final List<String> memberDataSourceURLs, final Map<String, String> enabledDataSourceURLs) {
         for (Entry<String, DataSource> entry : activeDataSourceMap.entrySet()) {
             boolean disable = true;
             String url = null;
             try (Connection connection = entry.getValue().getConnection()) {
                 url = connection.getMetaData().getURL();
                 for (String each : memberDataSourceURLs) {
-                    if (null != url && url.contains(each)) {
+                    //
+                    // [BUGFIX for ADD matches mapped addresses]
+                    //
+                    if (null != url && (url.contains(each)
+                            || ExtensionDiscoveryConfiguration.Util.matchs(getExtDiscoveryConfig(), url, each))) {
                         disable = false;
                         break;
                     }
@@ -350,59 +411,50 @@ public final class MGRDatabaseDiscoveryType implements DatabaseDiscoveryType {
             if (disable) {
                 ShardingSphereEventBus.getInstance().post(new DataSourceDisabledEvent(schemaName, entry.getKey(), true));
             } else if (!url.isEmpty()) {
-                dataSourceURLs.put(entry.getKey(), url);
+                enabledDataSourceURLs.put(entry.getKey(), url);
             }
         }
     }
 
-    private void determineEnabledDataSource(final Map<String, DataSource> dataSourceMap, final String schemaName,
-            final List<String> memberDataSourceURLs, final Map<String, String> dataSourceURLs) {
-        for (String each : memberDataSourceURLs) {
-            boolean enable = true;
-            for (Entry<String, String> entry : dataSourceURLs.entrySet()) {
-                if (entry.getValue().contains(each)) {
-                    enable = false;
-                    break;
-                }
-            }
-            if (!enable) {
-                continue;
-            }
-            for (Entry<String, DataSource> entry : dataSourceMap.entrySet()) {
-                String url;
-                try (Connection connection = entry.getValue().getConnection()) {
-                    url = connection.getMetaData().getURL();
-                    if (null != url && url.contains(each)) {
-                        ShardingSphereEventBus.getInstance().post(new DataSourceDisabledEvent(schemaName, entry.getKey(), false));
-                        break;
-                    }
-                } catch (final SQLException ex) {
-                    log.error("An exception occurred while find enable data source urls", ex);
-                }
-            }
-        }
-    }
+    private void determineEnabledDataSource(final Map<String, DataSource> allDataSourceMap, final String schemaName,
+            final List<String> memberDataSourceURLs, final Map<String, String> enabledDataSourceURLs) {
+        //
+        // Old logic.
+        //
+        // for (String each : memberDataSourceURLs) {
+        // boolean enable = true;
+        // for (Entry<String, String> entry : enabledDataSourceURLs.entrySet())
+        // {
+        // if (entry.getValue().contains(each)) {
+        // enable = false;
+        // break;
+        // }
+        // }
+        // if (!enable) {
+        // continue;
+        // }
+        // for (Entry<String, DataSource> entry : allDataSourceMap.entrySet()) {
+        // String url;
+        // try (Connection connection = entry.getValue().getConnection()) {
+        // url = connection.getMetaData().getURL();
+        // if (null != url && url.contains(each)) {
+        // ShardingSphereEventBus.getInstance().post(new
+        // DataSourceDisabledEvent(schemaName, entry.getKey(), false));
+        // break;
+        // }
+        // } catch (final SQLException ex) {
+        // log.error("An exception occurred while find enable data source urls",
+        // ex);
+        // }
+        // }
+        // }
 
-    /**
-     * {@link org.apache.shardingsphere.dbdiscovery.rule.DatabaseDiscoveryRule#startMonitor}
-     */
-    @Override
-    public void startPeriodicalUpdate(final String schemaName, final Map<String, DataSource> dataSourceMap,
-            final Collection<String> disabledDataSourceNames, final String groupName, final String primaryDataSourceName) {
-        if (null == coordinatorRegistryCenter) {
-            ZookeeperConfiguration zkConfig = new ZookeeperConfiguration(props.getProperty("zkServerLists"), "mgr-elasticjob");
-            coordinatorRegistryCenter = new ZookeeperRegistryCenter(zkConfig);
-            coordinatorRegistryCenter.init();
+        //
+        // [BUGFIX for checking re-enabled]
+        //
+        for (Entry<String, String> entry : enabledDataSourceURLs.entrySet()) {
+            ShardingSphereEventBus.getInstance().post(new DataSourceDisabledEvent(schemaName, entry.getKey(), false));
         }
-        if (null != SCHEDULE_JOB_BOOTSTRAP_MAP.get(groupName)) {
-            SCHEDULE_JOB_BOOTSTRAP_MAP.get(groupName).shutdown();
-        }
-        SCHEDULE_JOB_BOOTSTRAP_MAP.put(groupName,
-                new ScheduleJobBootstrap(coordinatorRegistryCenter,
-                        new MGRHeartbeatJob(this, schemaName, dataSourceMap, disabledDataSourceNames, groupName,
-                                primaryDataSourceName),
-                        JobConfiguration.newBuilder("MGR-" + groupName, 1).cron(props.getProperty("keepAliveCron")).build()));
-        SCHEDULE_JOB_BOOTSTRAP_MAP.get(groupName).schedule();
     }
 
     @Override

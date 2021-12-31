@@ -28,13 +28,18 @@ import java.util.Map;
 public class ConfigPropertySourceTests {
 
     public static void main(String[] args) {
+        System.out.println(ConfigPropertySource.humpToLine("keepAlivedTime"));
+        System.out.println(ConfigPropertySource.lineToHump("keep_alived_time"));
+        System.out.println(ConfigPropertySource.pointToHump("keep.alived.time"));
+        System.out.println(ConfigPropertySource.pointToLine("keep.alived.time"));
+
         Map<String, String> envMap = new HashMap<>();
 
         ConfigPropertySource source = new ConfigPropertySource() {
             private static final long serialVersionUID = 8674366211323332009L;
 
             @Override
-            protected String getEnvironmentValue(String key) {
+            protected String findEnvironmentValue(String key) {
                 return envMap.get(key);
             }
         };

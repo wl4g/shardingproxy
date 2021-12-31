@@ -35,7 +35,7 @@ GROUP_NAME                            NODE_ID                               NODE
 
 ### 1.2 Initialization MySQL
 
-Notice: The example of non average slicing is not recommended for production (scenario: slicing according to different machine performance weight), because shardingsphere:5.0.0, It is recommended to use average sharding.
+Notice: The example of non average slicing is not recommended for production (scenario: slicing according to different machine performance weight), because shardingsphere:5.1.0, It is recommended to use average sharding.
 
 - Import exemple [userdb SQLs](xcloud-shardingproxy-starter/exampledata/sharding/userdb-sharding.sql)
 
@@ -99,7 +99,7 @@ mvn clean install -DskipTests -Dmaven.test.skip=true -T 2C
 ```bash
 export SP_PROJECT_DIR=/opt/java-workspace/xcloud-shardingproxy
 export SP_CONF_DIR=${SP_PROJECT_DIR}/xcloud-shardingproxy-starter/src/main/resources/example/sharding-readwrite/
-export SP_JAVAAGENT=${SP_PROJECT_DIR}/xcloud-shardingproxy-agent-bootstrap/target/xcloud-shardingproxy-agent-bootstrap-5.0.0.jar
+export SP_JAVAAGENT=${SP_PROJECT_DIR}/xcloud-shardingproxy-agent-bootstrap/target/xcloud-shardingproxy-agent-bootstrap-5.1.0.jar
 # Extension environment configuration.
 export AGENT_PATH=${SP_PROJECT_DIR}/xcloud-shardingproxy-starter/src/main/resources/
 export PLUGINS_PATH=${SP_PROJECT_DIR}/xcloud-shardingproxy-agent-extension/target/
@@ -114,9 +114,9 @@ java ${SP_JAVAAGENT} -jar shardingproxy-{version}-bin.jar 3308 ${SP_CONF_DIR}
 
 - [https://dev.mysql.com/doc/refman/5.7/en/group-replication.html](https://dev.mysql.com/doc/refman/5.7/en/group-replication.html)
 
-- [org.apache.shardingsphere.dbdiscovery.mgr.MGRDatabaseDiscoveryType.java](https://github.com/apache/shardingsphere/blob/5.0.0/shardingsphere-features/shardingsphere-db-discovery/shardingsphere-db-discovery-provider/shardingsphere-db-discovery-mgr/src/main/java/org/apache/shardingsphere/dbdiscovery/mgr/MGRDatabaseDiscoveryType.java)
+- [org.apache.shardingsphere.dbdiscovery.mgr.MGRDatabaseDiscoveryType.java](https://github.com/apache/shardingsphere/blob/5.1.0/shardingsphere-features/shardingsphere-db-discovery/shardingsphere-db-discovery-provider/shardingsphere-db-discovery-mgr/src/main/java/org/apache/shardingsphere/dbdiscovery/mgr/MGRDatabaseDiscoveryType.java)
 
-- [https://github.com/apache/shardingsphere/blob/5.0.0/shardingsphere-proxy/shardingsphere-proxy-bootstrap/src/main/resources/conf/config-database-discovery.yaml](https://github.com/apache/shardingsphere/blob/5.0.0/shardingsphere-proxy/shardingsphere-proxy-bootstrap/src/main/resources/conf/config-database-discovery.yaml)
+- [https://github.com/apache/shardingsphere/blob/5.1.0/shardingsphere-proxy/shardingsphere-proxy-bootstrap/src/main/resources/conf/config-database-discovery.yaml](https://github.com/apache/shardingsphere/blob/5.1.0/shardingsphere-proxy/shardingsphere-proxy-bootstrap/src/main/resources/conf/config-database-discovery.yaml)
 
 - [Adjust discovery api feature. #13902](https://github.com/apache/shardingsphere/issues/13902)
 
@@ -155,11 +155,11 @@ EOF
 
 ## 4. Metircs integration
 
-- [https://shardingsphere.apache.org/document/5.0.0/cn/features/governance/observability/agent/](https://shardingsphere.apache.org/document/5.0.0/cn/features/governance/observability/agent/)
+- [https://shardingsphere.apache.org/document/5.1.0/cn/features/governance/observability/agent/](https://shardingsphere.apache.org/document/5.1.0/cn/features/governance/observability/agent/)
 
-- Source codes refer: [org.apache.shardingsphere.agent.metrics.prometheus.service.PrometheusPluginBootService.java](https://github.com/apache/shardingsphere/blob/5.0.0/shardingsphere-agent/shardingsphere-agent-plugins/shardingsphere-agent-plugin-metrics/shardingsphere-agent-metrics-prometheus/src/main/java/org/apache/shardingsphere/agent/metrics/prometheus/service/PrometheusPluginBootService.java)
+- Source codes refer: [org.apache.shardingsphere.agent.metrics.prometheus.service.PrometheusPluginBootService.java](https://github.com/apache/shardingsphere/blob/5.1.0/shardingsphere-agent/shardingsphere-agent-plugins/shardingsphere-agent-plugin-metrics/shardingsphere-agent-metrics-prometheus/src/main/java/org/apache/shardingsphere/agent/metrics/prometheus/service/PrometheusPluginBootService.java)
 
-- Source codes refer: [org.apache.shardingsphere.agent.core.config.loader.AgentConfigurationLoader.java](https://github1s.com/apache/shardingsphere/blob/5.0.0/shardingsphere-agent/shardingsphere-agent-core/src/main/java/org/apache/shardingsphere/agent/core/config/loader/AgentConfigurationLoader.java)
+- Source codes refer: [org.apache.shardingsphere.agent.core.config.loader.AgentConfigurationLoader.java](https://github1s.com/apache/shardingsphere/blob/5.1.0/shardingsphere-agent/shardingsphere-agent-core/src/main/java/org/apache/shardingsphere/agent/core/config/loader/AgentConfigurationLoader.java)
 
 - Agent configuration.
 
@@ -218,19 +218,19 @@ TODO
 
 ### 6.1 Can the same schema support different types of databases at the same time under read-write splitting and fragment splitting modes ?
 
-Under the same schemaName, multiple sharding databases must be the same. See source code: [org.apache.shardingsphere.infra.metadata.ShardingSphereMetaData](https://github.com/apache/shardingsphere/blob/5.0.0/shardingsphere-infra/shardingsphere-infra-common/src/main/java/org/apache/shardingsphere/infra/metadata/ShardingSphereMetaData.java#L35) and [org.apache.shardingsphere.infra.metadata.resource.ShardingSphereResource](https://github.com/apache/shardingsphere/blob/5.0.0/shardingsphere-infra/shardingsphere-infra-common/src/main/java/org/apache/shardingsphere/infra/metadata/resource/ShardingSphereResource.java#L48)
+Under the same schemaName, multiple sharding databases must be the same. See source code: [org.apache.shardingsphere.infra.metadata.ShardingSphereMetaData](https://github.com/apache/shardingsphere/blob/5.1.0/shardingsphere-infra/shardingsphere-infra-common/src/main/java/org/apache/shardingsphere/infra/metadata/ShardingSphereMetaData.java#L35) and [org.apache.shardingsphere.infra.metadata.resource.ShardingSphereResource](https://github.com/apache/shardingsphere/blob/5.1.0/shardingsphere-infra/shardingsphere-infra-common/src/main/java/org/apache/shardingsphere/infra/metadata/resource/ShardingSphereResource.java#L48)
 
 ### 6.2 What data is stored in zookeeper and where is the source code?
 
-- [org.apache.shardingsphere.mode.metadata.persist.node.SchemaMetaDataNode.java](https://github.com/apache/shardingsphere/blob/5.0.0/shardingsphere-mode/shardingsphere-mode-core/src/main/java/org/apache/shardingsphere/mode/metadata/persist/node/SchemaMetaDataNode.java)
+- [org.apache.shardingsphere.mode.metadata.persist.node.SchemaMetaDataNode.java](https://github.com/apache/shardingsphere/blob/5.1.0/shardingsphere-mode/shardingsphere-mode-core/src/main/java/org/apache/shardingsphere/mode/metadata/persist/node/SchemaMetaDataNode.java)
 
-- [org.apache.shardingsphere.mode.metadata.persist.node.GlobalNode.java](https://github.com/apache/shardingsphere/blob/5.0.0/shardingsphere-mode/shardingsphere-mode-core/src/main/java/org/apache/shardingsphere/mode/metadata/persist/node/GlobalNode.java)
+- [org.apache.shardingsphere.mode.metadata.persist.node.GlobalNode.java](https://github.com/apache/shardingsphere/blob/5.1.0/shardingsphere-mode/shardingsphere-mode-core/src/main/java/org/apache/shardingsphere/mode/metadata/persist/node/GlobalNode.java)
 
-- [org.apache.shardingsphere.mode.manager.cluster.coordinator.registry.process.node.ProcessNode.java](https://github.com/apache/shardingsphere/blob/5.0.0/shardingsphere-mode/shardingsphere-mode-type/shardingsphere-cluster-mode/shardingsphere-cluster-mode-core/src/main/java/org/apache/shardingsphere/mode/manager/cluster/coordinator/registry/process/node/ProcessNode.java)
+- [org.apache.shardingsphere.mode.manager.cluster.coordinator.registry.process.node.ProcessNode.java](https://github.com/apache/shardingsphere/blob/5.1.0/shardingsphere-mode/shardingsphere-mode-type/shardingsphere-cluster-mode/shardingsphere-cluster-mode-core/src/main/java/org/apache/shardingsphere/mode/manager/cluster/coordinator/registry/process/node/ProcessNode.java)
 
-- [org.apache.shardingsphere.mode.manager.cluster.coordinator.registry.status.StatusNode.java](https://github1s.com/apache/shardingsphere/blob/5.0.0/shardingsphere-mode/shardingsphere-mode-type/shardingsphere-cluster-mode/shardingsphere-cluster-mode-core/src/main/java/org/apache/shardingsphere/mode/manager/cluster/coordinator/registry/status/StatusNode.java)
+- [org.apache.shardingsphere.mode.manager.cluster.coordinator.registry.status.StatusNode.java](https://github1s.com/apache/shardingsphere/blob/5.1.0/shardingsphere-mode/shardingsphere-mode-type/shardingsphere-cluster-mode/shardingsphere-cluster-mode-core/src/main/java/org/apache/shardingsphere/mode/manager/cluster/coordinator/registry/status/StatusNode.java)
 
-- [org.apache.shardingsphere.mode.manager.cluster.coordinator.registry.status.storage.node.StorageStatusNode.java](https://github.com/apache/shardingsphere/blob/5.0.0/shardingsphere-mode/shardingsphere-mode-type/shardingsphere-cluster-mode/shardingsphere-cluster-mode-core/src/main/java/org/apache/shardingsphere/mode/manager/cluster/coordinator/registry/status/storage/node/StorageStatusNode.java)
+- [org.apache.shardingsphere.mode.manager.cluster.coordinator.registry.status.storage.node.StorageStatusNode.java](https://github.com/apache/shardingsphere/blob/5.1.0/shardingsphere-mode/shardingsphere-mode-type/shardingsphere-cluster-mode/shardingsphere-cluster-mode-core/src/main/java/org/apache/shardingsphere/mode/manager/cluster/coordinator/registry/status/storage/node/StorageStatusNode.java)
 
 - for example zookeeper storage data directories.
 
@@ -274,33 +274,33 @@ Under the same schemaName, multiple sharding databases must be the same. See sou
 /mgr-elasticjob/MGR-pr_userdb_g0db2/servers/192.168.0.101
 /mgr-elasticjob/MGR-pr_userdb_g0db2/sharding/0
 /mgr-elasticjob/MGR-pr_userdb_g0db2/sharding/0/instance
-/shardingproxy_ns_0/lock
-/shardingproxy_ns_0/metadata
-/shardingproxy_ns_0/props
-/shardingproxy_ns_0/rules
-/shardingproxy_ns_0/status
-/shardingproxy_ns_0/lock/ack
-/shardingproxy_ns_0/lock/locks
-/shardingproxy_ns_0/metadata/userdb
-/shardingproxy_ns_0/metadata/userdb/dataSources
-/shardingproxy_ns_0/metadata/userdb/rules
-/shardingproxy_ns_0/metadata/userdb/schema
-/shardingproxy_ns_0/status/compute_nodes
-/shardingproxy_ns_0/status/storage_nodes
-/shardingproxy_ns_0/status/compute_nodes/online
-/shardingproxy_ns_0/status/compute_nodes/online/172.8.8.1@3308
-/shardingproxy_ns_0/status/storage_nodes/disable
-/shardingproxy_ns_0/status/storage_nodes/primary
-/shardingproxy_ns_0/status/storage_nodes/disable/userdb.ds_userdb_g0db0_0
-/shardingproxy_ns_0/status/storage_nodes/disable/userdb.ds_userdb_g0db0_1
-/shardingproxy_ns_0/status/storage_nodes/disable/userdb.ds_userdb_g0db0_2
-/shardingproxy_ns_0/status/storage_nodes/disable/userdb.ds_userdb_g0db1_0
-/shardingproxy_ns_0/status/storage_nodes/disable/userdb.ds_userdb_g0db1_1
-/shardingproxy_ns_0/status/storage_nodes/disable/userdb.ds_userdb_g0db1_2
-/shardingproxy_ns_0/status/storage_nodes/disable/userdb.ds_userdb_g0db2_0
-/shardingproxy_ns_0/status/storage_nodes/disable/userdb.ds_userdb_g0db2_1
-/shardingproxy_ns_0/status/storage_nodes/disable/userdb.ds_userdb_g0db2_2
-/shardingproxy_ns_0/status/storage_nodes/primary/userdb.ha_userdb_g0db2
+/shardingproxy_cluster_0/lock
+/shardingproxy_cluster_0/metadata
+/shardingproxy_cluster_0/props
+/shardingproxy_cluster_0/rules
+/shardingproxy_cluster_0/status
+/shardingproxy_cluster_0/lock/ack
+/shardingproxy_cluster_0/lock/locks
+/shardingproxy_cluster_0/metadata/userdb
+/shardingproxy_cluster_0/metadata/userdb/dataSources
+/shardingproxy_cluster_0/metadata/userdb/rules
+/shardingproxy_cluster_0/metadata/userdb/schema
+/shardingproxy_cluster_0/status/compute_nodes
+/shardingproxy_cluster_0/status/storage_nodes
+/shardingproxy_cluster_0/status/compute_nodes/online
+/shardingproxy_cluster_0/status/compute_nodes/online/172.8.8.1@3308
+/shardingproxy_cluster_0/status/storage_nodes/disable
+/shardingproxy_cluster_0/status/storage_nodes/primary
+/shardingproxy_cluster_0/status/storage_nodes/disable/userdb.ds_userdb_g0db0_0
+/shardingproxy_cluster_0/status/storage_nodes/disable/userdb.ds_userdb_g0db0_1
+/shardingproxy_cluster_0/status/storage_nodes/disable/userdb.ds_userdb_g0db0_2
+/shardingproxy_cluster_0/status/storage_nodes/disable/userdb.ds_userdb_g0db1_0
+/shardingproxy_cluster_0/status/storage_nodes/disable/userdb.ds_userdb_g0db1_1
+/shardingproxy_cluster_0/status/storage_nodes/disable/userdb.ds_userdb_g0db1_2
+/shardingproxy_cluster_0/status/storage_nodes/disable/userdb.ds_userdb_g0db2_0
+/shardingproxy_cluster_0/status/storage_nodes/disable/userdb.ds_userdb_g0db2_1
+/shardingproxy_cluster_0/status/storage_nodes/disable/userdb.ds_userdb_g0db2_2
+/shardingproxy_cluster_0/status/storage_nodes/primary/userdb.ha_userdb_g0db2
 ```
 
 ### 6.3 If you want to test native [apache/shardingsphere/shardingsphere-proxy](https://github.com/apache/shardingsphere/tree/master/shardingsphere-proxy)
@@ -321,5 +321,5 @@ docker run -d \
 -v /mnt/disk1/log/shardingsphere-proxy/:/opt/shardingsphere-proxy/logs/ \
 -e JVM_OPTS='-Djava.awt.headless=true' \
 -e PORT=3308 \
-apache/shardingsphere-proxy:5.0.0
+apache/shardingsphere-proxy:5.1.0
 ```

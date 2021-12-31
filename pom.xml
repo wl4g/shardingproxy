@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.wl4g</groupId>
 	<artifactId>xcloud-shardingproxy</artifactId>
-	<version>5.0.0</version>
+	<version>5.1.0</version>
 	<packaging>pom</packaging>
 	<name>XCloud ShardingProxy</name>
 	<url>http://xcloud.wl4g.com</url>
@@ -65,7 +65,7 @@
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<java.version>1.8</java.version>
-		<shardingsphere.version>5.0.0</shardingsphere.version>
+		<shardingsphere.version>5.1.0</shardingsphere.version>
 		<prometheus.version>0.11.0</prometheus.version>
 		<snakeyaml.version>1.16</snakeyaml.version>
 		<curator.version>5.1.0</curator.version>

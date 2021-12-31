@@ -55,22 +55,23 @@ public class ExtensionDiscoveryConfiguration {
             return parseJSON(json, ExtensionDiscoveryConfiguration.class);
         }
 
-        public static boolean matchs(ExtensionDiscoveryConfiguration config, String jdbcUrl, String memberAddr) {
-            JdbcInformation info = JdbcUtil.resolve(jdbcUrl);
-            return safeList(findMappingAddressesByMemberAddr(config, memberAddr)).stream().anyMatch(addr -> {
-                HostAndPort address = HostAndPort.fromString(addr);
-                return info.getPort() == address.getPort() && HostUtils.isSameHost(info.getHost(), address.getHost());
+        public static boolean matchs(ExtensionDiscoveryConfiguration config, String jdbcUrl, String memberUrl) {
+            final JdbcInformation info = JdbcUtil.resolve(jdbcUrl);
+            return safeList(findMappingAddressesByMemberAddr(config, memberUrl)).stream().anyMatch(addr -> {
+                HostAndPort hap = HostAndPort.fromString(addr);
+                return info.getPort() == hap.getPort() && HostUtils.isSameHost(info.getHost(), hap.getHost());
             });
         }
 
-        public static List<String> findMappingAddressesByMemberAddr(ExtensionDiscoveryConfiguration config, String memberAddr) {
-            if (isNull(config) || isNull(memberAddr)) {
+        public static List<String> findMappingAddressesByMemberAddr(ExtensionDiscoveryConfiguration config,
+                String memberDataSourceURL) {
+            if (isNull(config) || isNull(memberDataSourceURL)) {
                 return emptyList();
             }
-            HostAndPort memberAddress = HostAndPort.fromString(memberAddr);
-            return safeList(config.getMemberHostMappings()).stream()
-                    .filter(mapping -> mapping.containsKey(memberAddress.toString())).findFirst().orElse(emptyMap()).values()
-                    .stream().flatMap(addrs -> addrs.stream()).collect(toList());
+            JdbcInformation info = JdbcUtil.resolve(memberDataSourceURL);
+            HostAndPort memberAddr = HostAndPort.fromParts(info.getHost(), info.getPort());
+            return safeList(config.getMemberHostMappings()).stream().filter(mapping -> mapping.containsKey(memberAddr.toString()))
+                    .findFirst().orElse(emptyMap()).values().stream().flatMap(addrs -> addrs.stream()).collect(toList());
         }
     }
 
