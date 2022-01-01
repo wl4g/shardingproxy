@@ -41,7 +41,7 @@ Notice: The example of non average slicing is not recommended for production (sc
 
 ```bash
 cd $PROJECT_HOME/xcloud-shardingproxy-starter/
-echo "source exampledata/sharding/userdb-sharding.sql" | mysql -h172.8.8.111 -P3306 -uroot -p123456
+echo "source exampledata/sharding/userdb-sharding.sql" | mysql -h172.8.8.111 -P3306 -uuserdb -p123456
 ```
 
 ### 1.3 for Docker(usually for testing)
@@ -68,7 +68,7 @@ wl4g/shardingproxy:2.0.0
 - Testing the effect of sharding
 
 ```sql
-mysql -h127.0.0.1 -P3308 -uroot -p123456
+mysql -h127.0.0.1 -P3308 -uuserdb -p123456
 
 use userdb;
 SELECT * FROM userdb.t_user;
@@ -161,53 +161,11 @@ EOF
 
 - Source codes refer: [org.apache.shardingsphere.agent.core.config.loader.AgentConfigurationLoader.java](https://github1s.com/apache/shardingsphere/blob/5.1.0/shardingsphere-agent/shardingsphere-agent-core/src/main/java/org/apache/shardingsphere/agent/core/config/loader/AgentConfigurationLoader.java)
 
-- Agent configuration.
+- Example agent.yaml [xcloud-shardingproxy-starter/src/main/resources/conf/agent.yaml](https://github.com/wl4g/xcloud-shardingproxy/blob/master/xcloud-shardingproxy-starter/src/main/resources/conf/agent.yaml)
 
 ```bash
-sudo cat <<-'EOF' >/opt/apps/ecm/shardingproxy-package/shardingproxy-master-bin/conf/agent.yaml
-applicationName: cn-south1-a1-shardingproxy
-ignoredPluginNames: # Ignored plugin set to make it invalidation.
-  - Logging
-  - Prometheus
-  #- Zipkin
-  #- Jaeger
-  #- Opentracing
-  #- OpenTelemetry
-
-plugins:
-  Logging:
-    props:
-      LEVEL: "DEBUG"
-  Prometheus:
-    host:  "localhost"
-    port: 9090
-    props:
-      JVM_INFORMATION_COLLECTOR_ENABLED : "true"
-  #Jaeger:
-  #  host: "localhost"
-  #  port: 5775
-  #  props:
-  #    SERVICE_NAME: "cn-south1-a1-shardingproxy"
-  #    JAEGER_SAMPLER_TYPE: "const"
-  #    JAEGER_SAMPLER_PARAM: "1"
-  #    JAEGER_REPORTER_LOG_SPANS: "true"
-  #    JAEGER_REPORTER_FLUSH_INTERVAL: "1"
-  #Zipkin:
-  #  host: "localhost"
-  #  port: 9411
-  #  props:
-  #    SERVICE_NAME: "cn-south1-a1-shardingproxy"
-  #    # Scrape span uri of zipkin service.
-  #    URL_VERSION: "/api/v2/spans"
-  #Opentracing:
-  #  props:
-  #    OPENTRACING_TRACER_CLASS_NAME: "org.apache.skywalking.apm.toolkit.opentracing.SkywalkingTracer"
-  #OpenTelemetry:
-  #  props:
-  #    # Resource info of opentelemetry, multiple configurations can be separated by ','
-  #    otel.resource.attributes: "service.name=cn-south1-a1-shardingproxy"
-  #    otel.traces.exporter: "zipkin"
-EOF
+# Gets prometheus metrics
+curl http://localhost:10105/metrics
 ```
 
 ## 5. Tracing integration

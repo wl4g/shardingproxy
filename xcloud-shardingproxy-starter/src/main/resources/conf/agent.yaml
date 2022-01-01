@@ -42,7 +42,7 @@ plugins:
       LEVEL: "DEBUG"
   Prometheus:
     host:  "localhost"
-    port: 9090
+    port: 10105
     props:
       JVM_INFORMATION_COLLECTOR_ENABLED : "true"
   ExtensionPrometheus: {}

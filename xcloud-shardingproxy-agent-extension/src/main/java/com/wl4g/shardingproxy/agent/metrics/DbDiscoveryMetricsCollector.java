@@ -66,7 +66,8 @@ public class DbDiscoveryMetricsCollector
     }
 
     //
-    // Registered on PrometheusWrapperFactory
+    // Registered on
+    // org.apache.shardingsphere.agent.metrics.prometheus.wrapper.PrometheusWrapperFactory
     //
     // @Override
     // public List<MetricFamilySamples> describe() {
@@ -161,17 +162,6 @@ public class DbDiscoveryMetricsCollector
                 return singletonMap(dataSourceName, schemaName);
             }).flatMap(map -> map.entrySet().stream()).collect(toMap(k -> k.getKey(), v -> v.getValue()));
 
-            // Gets all dataSourceNames. (ShardingSphere has watch the
-            // remote registry and kept it up to date.)
-            Collection<String> allDataSourceNames = safeMap(
-                    ProxyContext.getInstance().getContextManager().getMetaDataContexts().getMetaDataMap()).values().stream()
-                            .map(meta -> meta.getResource().getDataSources().keySet()).flatMap(names -> names.stream())
-                            .collect(toList());
-
-            // List<String> mergedDataSourceNames =
-            // Stream.of(remoteDisableDataSourceNames, localDataSourceNames)
-            // .flatMap(Collection::stream).distinct().collect(Collectors.toList());
-
             // Add disabled dataSources to metrics.
             disabledGauge.ifPresent(m -> {
                 disableDataSourceNames.stream().forEach(dsname -> {
@@ -192,6 +182,10 @@ public class DbDiscoveryMetricsCollector
                 result.add(m);
             });
 
+            // Gets all dataSourceNames. (ShardingSphere has watch the
+            // register center and kept it up to date.)
+            Collection<String> allDataSourceNames = safeMap(metaDataContexts.getMetaDataMap()).values().stream()
+                    .map(meta -> meta.getResource().getDataSources().keySet()).flatMap(names -> names.stream()).collect(toList());
             // Add all dataSources to metrics.
             allGauge.ifPresent(m -> {
                 allDataSourceNames.stream().forEach(dsname -> {
