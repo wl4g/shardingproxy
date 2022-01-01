@@ -28,6 +28,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 
 import org.apache.shardingsphere.agent.metrics.api.util.MetricsUtil;
 import org.apache.shardingsphere.mode.manager.cluster.coordinator.registry.status.storage.StorageNodeStatus;
@@ -182,17 +183,16 @@ public class DbDiscoveryMetricsCollector
                 result.add(m);
             });
 
-            // Gets all dataSourceNames. (ShardingSphere has watch the
-            // register center and kept it up to date.)
-            Collection<String> allDataSourceNames = safeMap(metaDataContexts.getMetaDataMap()).values().stream()
-                    .map(meta -> meta.getResource().getDataSources().keySet()).flatMap(names -> names.stream()).collect(toList());
             // Add all dataSources to metrics.
             allGauge.ifPresent(m -> {
-                allDataSourceNames.stream().forEach(dsname -> {
-                    Optional<String> schemaName = Optional.ofNullable(disabledSchemaDataSourcesMap.get(dsname));
-                    if (schemaName.isPresent()) {
-                        m.addMetric(Arrays.asList(schemaName.get(), dsname), 1);
-                    }
+                // Gets all dataSourceNames. (ShardingSphere has watch the
+                // register center and kept it up to date.)
+                safeMap(metaDataContexts.getMetaDataMap()).values().stream().forEach(meta -> {
+                    String schemaName = meta.getName();
+                    Set<String> dataSourceNames = meta.getResource().getDataSources().keySet();
+                    safeList(dataSourceNames).forEach(dsname -> {
+                        m.addMetric(Arrays.asList(schemaName, dsname), 1);
+                    });
                 });
                 result.add(m);
             });
