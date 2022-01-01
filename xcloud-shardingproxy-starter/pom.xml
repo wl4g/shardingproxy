@@ -61,6 +61,21 @@
 		<final.name>shardingproxy</final.name>
 		<bootstrap-classname>com.wl4g.ShardingProxy</bootstrap-classname>
 	</properties>
+	<dependencyManagement>
+		<dependencies>
+			<!-- BUGFIX: shardingsphere-transaction-xa-atomikos:5.1.0 depends on transaction-jta:4.0.6 and transaction-jdbc:4.0.6 -->
+			<dependency>
+				<groupId>com.atomikos</groupId>
+				<artifactId>transactions-jta</artifactId>
+				<version>5.0.8</version>
+			</dependency>
+			<dependency>
+				<groupId>com.atomikos</groupId>
+				<artifactId>transactions-jdbc</artifactId>
+				<version>5.0.8</version>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
 	<dependencies>
 		<dependency>
 			<groupId>com.wl4g</groupId>

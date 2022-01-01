@@ -56,23 +56,26 @@ rules:
  - !DB_DISCOVERY
    dataSources:
      ha_userdb_g0db2:
-       discoveryTypeName: cn-south1-a1-mgr-g0-0
+       discoveryTypeName: cn_south1_a1_mgr_g0_0
+       discoveryHeartbeatName: mgr_heartbeat_0
        dataSourceNames:
          - ds_userdb_g0db2_0
          - ds_userdb_g0db2_1
          - ds_userdb_g0db2_2
+   discoveryHeartbeats:
+     mgr_heartbeat_0:
+       props:
+         keep-alive-cron: '0/5 * * * * ?'
    discoveryTypes:
      # HA MGR architecture see: https://blog.csdn.net/n88Lpo/article/details/118315051
-     cn-south1-a1-mgr-g0-0:
+     cn_south1_a1_mgr_g0_0:
        type: MGR
        props:
          # Must be consistent with the MGR configuration group name.
-         # see: https://github.com/apache/shardingsphere/blob/5.0.0/shardingsphere-features/shardingsphere-db-discovery/shardingsphere-db-discovery-provider/shardingsphere-db-discovery-mgr/src/main/java/org/apache/shardingsphere/dbdiscovery/mgr/MGRDatabaseDiscoveryType.java#L104
+         # see: https://github.com/apache/shardingsphere/blob/5.1.0/shardingsphere-features/shardingsphere-db-discovery/shardingsphere-db-discovery-provider/shardingsphere-db-discovery-mgr/src/main/java/org/apache/shardingsphere/dbdiscovery/mgr/MGRDatabaseDiscoveryType.java#L104
          # see: https://github.com/mysql/mysql-server/blob/mysql-5.7.30/rapid/plugin/group_replication/src/plugin.cc#L1726
          # see: SELECT * FROM performance_schema.global_variables WHERE VARIABLE_NAME='group_replication_group_name'
-         groupName: 5db40c3c-180c-11e9-afbf-005056ac6820
-         zkServerLists: 'localhost:2181'
-         keepAliveCron: '0/5 * * * * ?'
+         group-name: 5db40c3c-180c-11e9-afbf-005056ac6820
          extensionDiscoveryConfigJson: |-
            {
              "memberHostMappings": [{
