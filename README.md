@@ -258,7 +258,9 @@ Under the same schemaName, multiple sharding databases must be the same. See sou
 /shardingproxy_0/status/storage_nodes/disable/userdb.ds_userdb_g0db2_0
 /shardingproxy_0/status/storage_nodes/disable/userdb.ds_userdb_g0db2_1
 /shardingproxy_0/status/storage_nodes/disable/userdb.ds_userdb_g0db2_2
-/shardingproxy_0/status/storage_nodes/primary/userdb.ha_userdb_g0db2
+/shardingproxy_0/status/storage_nodes/primary/userdb_g0db0.ha_userdb_g0db0
+/shardingproxy_0/status/storage_nodes/primary/userdb_g0db1.ha_userdb_g0db1
+/shardingproxy_0/status/storage_nodes/primary/userdb_g0db2.ha_userdb_g0db2
 ```
 
 ### 6.3 If you want to test native [apache/shardingsphere/shardingsphere-proxy](https://github.com/apache/shardingsphere/tree/master/shardingsphere-proxy)

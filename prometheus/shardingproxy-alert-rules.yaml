@@ -1,0 +1,35 @@
+groups:
+  - name: ShardingProxyAlertGroup
+    rules:
+      - alert: ShardingProxyDown
+        expr: 
+        for: 0m
+        labels:
+          severity: critical
+        annotations:
+          summary: ShardingProxy down (instance {{ $labels.instance }})
+          description: "ShardingProxy instance is down on {{ $labels.instance }}\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}"
+      - alert: ShardingProxyRestarted
+        expr: 
+        for: 0m
+        labels:
+          severity: info
+        annotations:
+          summary: ShardingProxy restarted (instance {{ $labels.instance }})
+          description: "ShardingProxy has just been restarted, less than one minute ago on {{ $labels.instance }}.\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}"
+      - alert: ShardingProxyPrimaryDataSourceChanged
+        expr: dbdiscovery_primary_datasource
+        for: 0m
+        labels:
+          severity: warning
+        annotations:
+          summary: ShardingProxy primary changed (instance {{ $labels.instance }})
+          description: "ShardingProxy primary dataSource is changed on {{ $labels.instance }}\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}"
+      - alert: ShardingProxyExecuteErrors
+        expr: proxy_execute_error_total > 0
+        for: 0m
+        labels:
+          severity: warning
+        annotations:
+          summary: ShardingProxy execute errors (instance {{ $labels.instance }})
+          description: "ShardingProxy execute errors total on {{ $labels.instance }}\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}"

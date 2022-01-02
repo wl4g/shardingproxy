@@ -26,15 +26,14 @@ applicationName: cn-south1-a1-shardingproxy
 # see:io.prometheus.client.CollectorRegistry#filteredMetricFamilySamples
 # see:io.prometheus.client.CollectorRegistry#findNextElement
 # Notice: The agent plugins path is hard-coded as {agentPath}/plugins.
-# for example: /opt/agentlib/shardingsphere-agent-bootstrap-5.0.0.jar,/opt/agentlib/plugins/shardingsphere-agent-metrics-prometheus-5.0.0.jar
-ignoredPluginNames: [] # Otherwise a null pointer is reported when instantiating(5.0.0).
+# for example: /opt/agentlib/shardingsphere-agent-bootstrap-5.1.0.jar,/opt/agentlib/plugins/shardingsphere-agent-metrics-prometheus-5.1.0.jar
+ignoredPluginNames: #[] # Otherwise a null pointer is reported when instantiating(5.1.0).
   #- Logging
   #- Prometheus
-  #- ExtensionPrometheus
-  #- Zipkin
-  #- Jaeger
+  - Zipkin
+  - Jaeger
   #- Opentracing
-  #- OpenTelemetry
+  - OpenTelemetry
 
 plugins:
   Logging:
@@ -45,7 +44,6 @@ plugins:
     port: 10105
     props:
       JVM_INFORMATION_COLLECTOR_ENABLED : "true"
-  ExtensionPrometheus: {}
   #Jaeger:
   #  host: "localhost"
   #  port: 5775
@@ -62,9 +60,9 @@ plugins:
   #    SERVICE_NAME: "cn-south1-a1-shardingproxy"
   #    # Scrape span uri of zipkin service.
   #    URL_VERSION: "/api/v2/spans"
-  #Opentracing:
-  #  props:
-  #    OPENTRACING_TRACER_CLASS_NAME: "org.apache.skywalking.apm.toolkit.opentracing.SkywalkingTracer"
+  Opentracing:
+    props:
+      OPENTRACING_TRACER_CLASS_NAME: "org.apache.skywalking.apm.toolkit.opentracing.SkywalkingTracer"
   #OpenTelemetry:
   #  props:
   #    # Resource info of opentelemetry, multiple configurations can be separated by ','

@@ -17,13 +17,17 @@ package com.wl4g.shardingproxy.agent.metrics;
 
 import static com.wl4g.component.common.collection.CollectionUtils2.safeList;
 import static com.wl4g.component.common.collection.CollectionUtils2.safeMap;
+import static java.util.Collections.singletonList;
 import static java.util.Collections.singletonMap;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
 import static org.apache.commons.lang3.StringUtils.split;
 
+import java.lang.management.ManagementFactory;
+import java.lang.management.RuntimeMXBean;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -38,17 +42,17 @@ import org.apache.shardingsphere.mode.metadata.persist.MetaDataPersistService;
 import org.apache.shardingsphere.proxy.backend.context.ProxyContext;
 
 import io.prometheus.client.Collector;
-import io.prometheus.client.CollectorRegistry;
 import io.prometheus.client.GaugeMetricFamily;
 import lombok.extern.slf4j.Slf4j;
 
 /**
- * {@link DbDiscoveryMetricsCollector}</br>
+ * {@link ExtensionMetricsCollector}</br>
  * 
  * for example shardingsphere-agent-metrics-prometheus startup the flow sources
  * code:
  * {@link org.apache.shardingsphere.agent.bootstrap.ShardingSphereAgent#premain()}
  * {@link org.apache.shardingsphere.agent.core.plugin.ApmPluginLoader#loadAllPlugins()}
+ * {@link org.apache.shardingsphere.agent.core.plugin.PluginBootServiceManager#startAllServices(Map)}
  * {@link org.apache.shardingsphere.agent.metrics.prometheus.service,PrometheusPluginBootService#startServer()}
  * {@link io.prometheus.client.exporter.HTTPServer.HTTPMetricHandler#handle()}
  * {@link io.prometheus.client.CollectorRegistry#filteredMetricFamilySamples()}
@@ -59,12 +63,8 @@ import lombok.extern.slf4j.Slf4j;
  * @since v1.0.0
  */
 @Slf4j
-public class DbDiscoveryMetricsCollector
+public class ExtensionMetricsCollector
         extends Collector /* implements Describable */ {
-
-    public DbDiscoveryMetricsCollector() {
-        CollectorRegistry.defaultRegistry.register(this);
-    }
 
     //
     // Registered on
@@ -110,16 +110,32 @@ public class DbDiscoveryMetricsCollector
         // }
         // });
 
+        collectBasicInformation(result);
         collectPrimaryDataSources(result);
         collectAllAndDisableDataSources(result);
         return result;
+    }
+
+    private void collectBasicInformation(final List<MetricFamilySamples> result) {
+        Optional<GaugeMetricFamily> gauge = FACTORY.createGaugeMetricFamily(MetricIds.EXT_BASIC_UPTIME_DS);
+        gauge.ifPresent(m -> {
+            String hostname = "unknown";
+            try {
+                hostname = InetAddress.getLocalHost().getCanonicalHostName();
+            } catch (UnknownHostException e) {
+                log.warn("Cannot get local hostname.", e);
+            }
+            RuntimeMXBean bean = ManagementFactory.getRuntimeMXBean();
+            m.addMetric(singletonList(hostname), bean.getStartTime());
+            result.add(m);
+        });
     }
 
     /**
      * {@link org.apache.shardingsphere.mode.manager.cluster.coordinator.registry.status.storage.subscriber.StorageNodeStatusSubscriber}
      */
     private void collectPrimaryDataSources(final List<MetricFamilySamples> result) {
-        Optional<GaugeMetricFamily> gauge = FACTORY.createGaugeMetricFamily(MetricIds.DB_DISCOVERY_PRIMARY_DS);
+        Optional<GaugeMetricFamily> gauge = FACTORY.createGaugeMetricFamily(MetricIds.EXT_DB_DISCOVERY_PRIMARY_DS);
         gauge.ifPresent(m -> {
             MetaDataContexts metaDataContexts = ProxyContext.getInstance().getContextManager().getMetaDataContexts();
             Optional<MetaDataPersistService> persistService = metaDataContexts.getMetaDataPersistService();
@@ -142,8 +158,8 @@ public class DbDiscoveryMetricsCollector
      * {@link org.apache.shardingsphere.mode.manager.cluster.coordinator.registry.status.storage.subscriber.StorageNodeStatusSubscriber}
      */
     private void collectAllAndDisableDataSources(final List<MetricFamilySamples> result) {
-        Optional<GaugeMetricFamily> disabledGauge = FACTORY.createGaugeMetricFamily(MetricIds.DB_DISCOVERY_DISABLE_DS);
-        Optional<GaugeMetricFamily> allGauge = FACTORY.createGaugeMetricFamily(MetricIds.DB_DISCOVERY_DS);
+        Optional<GaugeMetricFamily> disabledGauge = FACTORY.createGaugeMetricFamily(MetricIds.EXT_DB_DISCOVERY_DISABLE_DS);
+        Optional<GaugeMetricFamily> allGauge = FACTORY.createGaugeMetricFamily(MetricIds.EXT_DB_DISCOVERY_DS);
 
         MetaDataContexts metaDataContexts = ProxyContext.getInstance().getContextManager().getMetaDataContexts();
         Optional<MetaDataPersistService> persistService = metaDataContexts.getMetaDataPersistService();
@@ -200,7 +216,6 @@ public class DbDiscoveryMetricsCollector
     }
 
     private static final ExtensionPrometheusWrapperFactory FACTORY = new ExtensionPrometheusWrapperFactory();
-
     private static final String PROXY_CONTEXT_CLASS_STR = "org.apache.shardingsphere.proxy.backend.context.ProxyContext";
 
 }
