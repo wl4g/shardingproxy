@@ -26,7 +26,7 @@ mode:
   repository:
     type: ZooKeeper
     props:
-      namespace: shardingproxy_0
+      namespace: cn_south1_a1_shardingproxy_0
       server-lists: localhost:2181
       retryIntervalMilliseconds: 500
       timeToLiveSeconds: 60

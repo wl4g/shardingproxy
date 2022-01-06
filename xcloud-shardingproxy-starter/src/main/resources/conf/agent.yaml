@@ -1,4 +1,3 @@
-#
 # Licensed to the Apache Software Foundation (ASF) under one or more
 # contributor license agreements.  See the NOTICE file distributed with
 # this work for additional information regarding copyright ownership.
@@ -15,7 +14,7 @@
 # limitations under the License.
 #
 
-applicationName: cn-south1-a1-shardingproxy
+applicationName: cn_south1_a1_shardingproxy_0
 
 # Ignore plugins name to make it invalidation. (**Beware of null pointer exceptions**)
 # for example shardingsphere-agent-metrics-prometheus startup the flow sources code:
@@ -41,7 +40,7 @@ plugins:
       LEVEL: "DEBUG"
   Prometheus:
     host:  "localhost"
-    port: 10105
+    port: 10108
     props:
       JVM_INFORMATION_COLLECTOR_ENABLED : "true"
   #Jaeger:

@@ -20,29 +20,29 @@
 metrics:
   - id: proxyExtUptime
     type: GAUGEMETRICFAMILY # COUNTER|GAUGE|GAUGEMETRICFAMILY|HISTOGRAM|SUMMARY
-    name: proxy_ext_global_uptime
+    name: proxy_ext_uptime
     help: The shardingproxy instance started uptime seconds.
-    labels: 
+    labels:
       - hostname
   - id: proxyExtDbdiscoveryPrimaryDatasource
     type: GAUGEMETRICFAMILY
-    name: proxy_ext_global_dbdiscovery_primary_ds
+    name: proxy_ext_dbdiscovery_primary_datasource
     help: The shardingproxy db discovery current primary datasources.
-    labels: 
+    labels:
       - schema_name
       - discovery_group_name
       - datasource_name
   - id: proxyExtDbdiscoveryDisableDatasource
     type: GAUGEMETRICFAMILY
-    name: proxy_ext_global_dbdiscovery_disable_ds
+    name: proxy_ext_dbdiscovery_disable_datasource
     help: The shardingproxy db discovery current disable datasources.
-    labels: 
+    labels:
       - schema_name
       - datasource_name
   - id: proxyExtDbdiscoveryDatasource
     type: GAUGEMETRICFAMILY
-    name: proxy_ext_global_ds
+    name: proxy_ext_datasource
     help: The shardingproxy db discovery all datasources.
-    labels: 
+    labels:
       - schema_name
       - datasource_name
