@@ -27,9 +27,10 @@ package com.wl4g.shardingproxy.agent.metrics;
  */
 public class MetricIds {
 
-    public static final String EXT_BASIC_UPTIME_DS = "proxyExtUptime";
+    public static final String EXT_BASIC_UPTIME = "proxyExtUptime";
     public static final String EXT_DB_DISCOVERY_PRIMARY_DS = "proxyExtDbdiscoveryPrimaryDatasource";
+    public static final String EXT_DB_DISCOVERY_PRIMARY_DS_CHANGED_COUNTER = "proxyExtDbdiscoveryPrimaryDatasourceChangedTotal";
     public static final String EXT_DB_DISCOVERY_DISABLE_DS = "proxyExtDbdiscoveryDisableDatasource";
-    public static final String EXT_DB_DISCOVERY_DS = "proxyExtDbdiscoveryDatasource";
+    public static final String EXT_DB_DISCOVERY_ALL_DS = "proxyExtDbdiscoveryAllDatasource";
 
 }

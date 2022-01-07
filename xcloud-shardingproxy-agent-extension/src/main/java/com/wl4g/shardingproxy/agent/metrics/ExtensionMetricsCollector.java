@@ -17,12 +17,18 @@ package com.wl4g.shardingproxy.agent.metrics;
 
 import static com.wl4g.component.common.collection.CollectionUtils2.safeList;
 import static com.wl4g.component.common.collection.CollectionUtils2.safeMap;
-import static java.util.Collections.singletonList;
-import static java.util.Collections.singletonMap;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
+import static java.lang.System.currentTimeMillis;
+//import static java.util.stream.Collectors.groupingBy;
+//import static java.util.Collections.emptyList;
+import static java.util.Collections.singletonList;
+import static java.util.Collections.singletonMap;
 import static org.apache.commons.lang3.StringUtils.split;
+//import static org.apache.commons.lang3.StringUtils.equalsAnyIgnoreCase;
+//import static org.apache.commons.lang3.StringUtils.join;
 
+//import java.lang.reflect.Field;
 import java.lang.management.ManagementFactory;
 import java.lang.management.RuntimeMXBean;
 import java.net.InetAddress;
@@ -33,14 +39,25 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+//import java.util.LinkedHashMap;
+//import java.util.concurrent.atomic.AtomicBoolean;
 
+//import org.apache.shardingsphere.agent.metrics.prometheus.wrapper.CounterWrapper;
+import org.apache.shardingsphere.agent.metrics.api.MetricsWrapper;
 import org.apache.shardingsphere.agent.metrics.api.util.MetricsUtil;
+import org.apache.shardingsphere.infra.eventbus.ShardingSphereEventBus;
+import org.apache.shardingsphere.infra.rule.event.impl.PrimaryDataSourceChangedEvent;
 import org.apache.shardingsphere.mode.manager.cluster.coordinator.registry.status.storage.StorageNodeStatus;
 import org.apache.shardingsphere.mode.manager.cluster.coordinator.registry.status.storage.node.StorageStatusNode;
 import org.apache.shardingsphere.mode.metadata.MetaDataContexts;
 import org.apache.shardingsphere.mode.metadata.persist.MetaDataPersistService;
 import org.apache.shardingsphere.proxy.backend.context.ProxyContext;
 
+import com.google.common.eventbus.Subscribe;
+//import com.wl4g.component.common.reflect.ReflectionUtils2;
+//import com.wl4g.shardingproxy.agent.event.DatabaseDiscoveryEventHandler;
+
+//import io.prometheus.client.Counter;
 import io.prometheus.client.Collector;
 import io.prometheus.client.GaugeMetricFamily;
 import lombok.extern.slf4j.Slf4j;
@@ -66,6 +83,10 @@ import lombok.extern.slf4j.Slf4j;
 public class ExtensionMetricsCollector
         extends Collector /* implements Describable */ {
 
+    public ExtensionMetricsCollector() {
+        ShardingSphereEventBus.getInstance().register(this);
+    }
+
     //
     // Registered on
     // org.apache.shardingsphere.agent.metrics.prometheus.wrapper.PrometheusWrapperFactory
@@ -81,6 +102,17 @@ public class ExtensionMetricsCollector
     // }
 
     /**
+     * {@link org.apache.shardingsphere.mode.manager.cluster.coordinator.ClusterContextManagerCoordinator#renew()}
+     * {@link org.apache.shardingsphere.mode.manager.cluster.coordinator.registry.status.storage.subscriber.StorageNodeStatusSubscriber#update()}
+     */
+    @Subscribe
+    public void onPrimaryDataSourceChanged(PrimaryDataSourceChangedEvent event) {
+        log.warn("On changed primaryDataSource event: ({}) - {}.{}.{}", PrimaryDataSourceChangedEvent.class.getSimpleName(),
+                event.getSchemaName(), event.getGroupName(), event.getDataSourceName());
+        COUNTER_PRIMARY_DS_CHANGED.inc(1, event.getSchemaName(), event.getGroupName());
+    }
+
+    /**
      * Refer to:
      * {@link org.apache.shardingsphere.agent.metrics.prometheus.collector.ProxyInfoCollector#collect()}
      * {@link org.apache.shardingsphere.agent.metrics.prometheus.collector.MetaDataInfoCollector#collect()}
@@ -88,36 +120,18 @@ public class ExtensionMetricsCollector
     @Override
     public List<MetricFamilySamples> collect() {
         log.debug("Collecting dbdiscovery metrics ...");
-
         List<MetricFamilySamples> result = new LinkedList<>();
         if (MetricsUtil.classNotExist(PROXY_CONTEXT_CLASS_STR)) {
             return result;
         }
-
-        // Optional<GaugeMetricFamily> gauge =
-        // FACTORY.createGaugeMetricFamily(MetricIds.DB_DISCOVERY_PRIMARY_DS);
-        // if (MetricsUtil.classNotExist(PROXY_CONTEXT_CLASS_STR) ||
-        // !gauge.isPresent()) {
-        // return result;
-        // }
-        // LinkedList<PrimaryDataSourceChangedEvent> eventQueue =
-        // DbDiscoveryEventHandler.getInstance().getEventQueue();
-        // gauge.ifPresent(m -> {
-        // while (!eventQueue.isEmpty()) {
-        // PrimaryDataSourceChangedEvent event = eventQueue.pollFirst();
-        // m.addMetric(Arrays.asList(event.getSchemaName(),
-        // event.getGroupName(), event.getDataSourceName()), 1);
-        // }
-        // });
-
-        collectBasicInformation(result);
-        collectPrimaryDataSources(result);
-        collectAllAndDisableDataSources(result);
+        collectBasicMetrics(result);
+        collectPrimaryDataSourcesMetrics(result);
+        collectAllAndDisableDataSourcesMetrics(result);
         return result;
     }
 
-    private void collectBasicInformation(final List<MetricFamilySamples> result) {
-        Optional<GaugeMetricFamily> gauge = FACTORY.createGaugeMetricFamily(MetricIds.EXT_BASIC_UPTIME_DS);
+    private void collectBasicMetrics(final List<MetricFamilySamples> result) {
+        Optional<GaugeMetricFamily> gauge = FACTORY.createGaugeMetricFamily(MetricIds.EXT_BASIC_UPTIME);
         gauge.ifPresent(m -> {
             String hostname = "unknown";
             try {
@@ -126,7 +140,7 @@ public class ExtensionMetricsCollector
                 log.warn("Cannot get local hostname.", e);
             }
             RuntimeMXBean bean = ManagementFactory.getRuntimeMXBean();
-            m.addMetric(singletonList(hostname), bean.getStartTime());
+            m.addMetric(singletonList(hostname), (currentTimeMillis() - bean.getStartTime()) / 1000);
             result.add(m);
         });
     }
@@ -134,32 +148,81 @@ public class ExtensionMetricsCollector
     /**
      * {@link org.apache.shardingsphere.mode.manager.cluster.coordinator.registry.status.storage.subscriber.StorageNodeStatusSubscriber}
      */
-    private void collectPrimaryDataSources(final List<MetricFamilySamples> result) {
-        Optional<GaugeMetricFamily> gauge = FACTORY.createGaugeMetricFamily(MetricIds.EXT_DB_DISCOVERY_PRIMARY_DS);
-        gauge.ifPresent(m -> {
-            MetaDataContexts metaDataContexts = ProxyContext.getInstance().getContextManager().getMetaDataContexts();
-            Optional<MetaDataPersistService> persistService = metaDataContexts.getMetaDataPersistService();
-            if (persistService.isPresent()) {
+    private void collectPrimaryDataSourcesMetrics(final List<MetricFamilySamples> result) {
+        Optional<MetaDataPersistService> persistService = ProxyContext.getInstance().getContextManager().getMetaDataContexts()
+                .getMetaDataPersistService();
+
+        persistService.ifPresent(p -> {
+            // // Calculate current primary dataSources changed count metrics.
+            // LinkedList<PrimaryDataSourceChangedEvent> queue =
+            // DatabaseDiscoveryEventHandler.getInstance().getEventQueue();
+            // if (queue.size() == 0) {
+            // queue.add(new PrimaryDataSourceChangedEvent("userdb_g0db0",
+            // "ha_userdb_g0db0", "userdb_g0db0_0"));
+            // }
+            //
+            // LinkedHashMap<String, List<PrimaryDataSourceChangedEvent>>
+            // groupMap = queue.stream().collect(
+            // groupingBy(event -> join(event.getGroupName(), "@",
+            // event.getSchemaName()), LinkedHashMap::new, toList()));
+            // AtomicBoolean hasChanged = new AtomicBoolean(false);
+            // for (String key : groupMap.keySet()) {
+            // List<PrimaryDataSourceChangedEvent> events =
+            // groupMap.getOrDefault(key, emptyList());
+            // // A changed in the primary dataSources
+            // if (events.size() == 1) {
+            // hasChanged.set(true);
+            // COUNTER_PRIMARY_DS_CHANGED.inc(1, events.get(0).getSchemaName(),
+            // events.get(0).getGroupName());
+            // } else {
+            // for (int i = 1; i < events.size(); i++) {
+            // PrimaryDataSourceChangedEvent last = events.get(i - 1);
+            // PrimaryDataSourceChangedEvent event = events.get(i);
+            // if (!equalsAnyIgnoreCase(last.getDataSourceName(),
+            // event.getDataSourceName())) {
+            // hasChanged.set(true);
+            // COUNTER_PRIMARY_DS_CHANGED.inc(1, event.getSchemaName(),
+            // event.getGroupName());
+            // }
+            // }
+            // }
+            // }
+            // if (hasChanged.get()) {
+            // Counter c = ReflectionUtils2.getField(COUNTER_FIELD,
+            // COUNTER_PRIMARY_DS_CHANGED, true);
+            // result.addAll(c.collect());
+            // queue.clear();
+            // }
+
+            // Gets current primary dataSources metrics.
+            Optional<GaugeMetricFamily> gauge = FACTORY.createGaugeMetricFamily(MetricIds.EXT_DB_DISCOVERY_PRIMARY_DS);
+            gauge.ifPresent(m -> {
                 // persistService.get().getRepository().getProps().getProperty("namespace");
                 String statusPrimaryPath = StorageStatusNode.getStatusPath(StorageNodeStatus.PRIMARY);
-                List<String> primaryKeys = persistService.get().getRepository().getChildrenKeys(statusPrimaryPath);
+                List<String> primaryKeys = p.getRepository().getChildrenKeys(statusPrimaryPath);
                 safeList(primaryKeys).stream().forEach(schemaAndDiscoveryGroupName -> {
                     String path = statusPrimaryPath.concat("/").concat(schemaAndDiscoveryGroupName);
-                    String primaryDataSourceName = persistService.get().getRepository().get(path);
+                    String primaryDataSourceName = p.getRepository().get(path);
                     String[] parts = split(schemaAndDiscoveryGroupName, ".");
-                    m.addMetric(Arrays.asList(parts[0], parts[1], primaryDataSourceName), 1);
+                    String schemaName = parts[0];
+                    String discoveryGroupName = parts[1];
+                    m.addMetric(Arrays.asList(schemaName, discoveryGroupName, primaryDataSourceName), 1);
+
+                    // If the primary dataSources has never been changed, then
+                    // all DB-discovery metrics will be populated by default.
+                    COUNTER_PRIMARY_DS_CHANGED.inc(0, schemaName, discoveryGroupName);
                 });
                 result.add(m);
-            }
+            });
         });
     }
 
     /**
      * {@link org.apache.shardingsphere.mode.manager.cluster.coordinator.registry.status.storage.subscriber.StorageNodeStatusSubscriber}
      */
-    private void collectAllAndDisableDataSources(final List<MetricFamilySamples> result) {
+    private void collectAllAndDisableDataSourcesMetrics(final List<MetricFamilySamples> result) {
         Optional<GaugeMetricFamily> disabledGauge = FACTORY.createGaugeMetricFamily(MetricIds.EXT_DB_DISCOVERY_DISABLE_DS);
-        Optional<GaugeMetricFamily> allGauge = FACTORY.createGaugeMetricFamily(MetricIds.EXT_DB_DISCOVERY_DS);
+        Optional<GaugeMetricFamily> allGauge = FACTORY.createGaugeMetricFamily(MetricIds.EXT_DB_DISCOVERY_ALL_DS);
 
         MetaDataContexts metaDataContexts = ProxyContext.getInstance().getContextManager().getMetaDataContexts();
         Optional<MetaDataPersistService> persistService = metaDataContexts.getMetaDataPersistService();
@@ -215,7 +278,15 @@ public class ExtensionMetricsCollector
         }
     }
 
-    private static final ExtensionPrometheusWrapperFactory FACTORY = new ExtensionPrometheusWrapperFactory();
     private static final String PROXY_CONTEXT_CLASS_STR = "org.apache.shardingsphere.proxy.backend.context.ProxyContext";
+    // private static final Field
+    // COUNTER_FIELD=ReflectionUtils2.findField(CounterWrapper.class,"counter",Counter.class);
+
+    private static final ExtensionPrometheusWrapperFactory FACTORY = new ExtensionPrometheusWrapperFactory();
+    private static final MetricsWrapper COUNTER_PRIMARY_DS_CHANGED;
+
+    static {
+        COUNTER_PRIMARY_DS_CHANGED = FACTORY.create(MetricIds.EXT_DB_DISCOVERY_PRIMARY_DS_CHANGED_COUNTER).get();
+    }
 
 }

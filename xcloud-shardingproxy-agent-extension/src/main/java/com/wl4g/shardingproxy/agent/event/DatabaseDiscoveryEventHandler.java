@@ -27,7 +27,7 @@
 //import lombok.extern.slf4j.Slf4j;
 //
 ///**
-// * {@link DbDiscoveryEventHandler}
+// * {@link DatabaseDiscoveryEventHandler}
 // * 
 // * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
 // * @version 2021-12-24 v1.0.0
@@ -38,11 +38,11 @@
 //@Getter
 //@Slf4j
 //@Reserved
-//public class DbDiscoveryEventHandler {
+//public class DatabaseDiscoveryEventHandler {
 //
 //    private final LinkedList<PrimaryDataSourceChangedEvent> eventQueue = new LinkedList<>();
 //
-//    private DbDiscoveryEventHandler() {
+//    private DatabaseDiscoveryEventHandler() {
 //        ShardingSphereEventBus.getInstance().register(this);
 //    }
 //
@@ -64,12 +64,12 @@
 //        // TODO Event notification ...
 //    }
 //
-//    public static DbDiscoveryEventHandler getInstance() {
+//    public static DatabaseDiscoveryEventHandler getInstance() {
 //        return DbDiscoveryEventHandlerHolder.INSTANCE;
 //    }
 //
 //    private static final class DbDiscoveryEventHandlerHolder {
-//        private static final DbDiscoveryEventHandler INSTANCE = new DbDiscoveryEventHandler();
+//        private static final DatabaseDiscoveryEventHandler INSTANCE = new DatabaseDiscoveryEventHandler();
 //    }
 //
 //}
