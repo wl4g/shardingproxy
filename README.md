@@ -62,7 +62,7 @@ docker run -d \
 -v /mnt/disk1/log/shardingproxy/:/opt/apps/ecm/shardingproxy-package/shardingproxy-master-bin/log/ \
 -e JAVA_OPTS='-Djava.awt.headless=true' \
 -e PORT=3308 \
-wl4g/shardingproxy:2.0.0
+wl4g/shardingproxy:5.1.0
 ```
 
 - Testing the effect of sharding
