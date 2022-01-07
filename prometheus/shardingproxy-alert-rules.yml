@@ -16,16 +16,8 @@
 groups:
   - name: shardingproxy.alerting-prometheus.io
     rules:
-    - alert: ShardingProxyDown
-      expr: # TODO
-      for: 0m
-      labels:
-        severity: critical
-      annotations:
-        summary: ShardingProxy down (instance {{ $labels.instance }})
-        description: "ShardingProxy instance is down on {{ $labels.instance }}\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}"
     - alert: ShardingProxyRestarted
-      expr: # TODO
+      expr: proxy_ext_uptime < 60
       for: 0m
       labels:
         severity: info
@@ -33,7 +25,8 @@ groups:
         summary: ShardingProxy restarted (instance {{ $labels.instance }})
         description: "ShardingProxy has just been restarted, less than one minute ago on {{ $labels.instance }}.\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}"
     - alert: ShardingProxyPrimaryDataSourceChanged
-      expr: # TODO
+      # see:com.wl4g.shardingproxy.agent.metrics.ExtensionMetricsCollector
+      expr: changes(proxy_ext_dbdiscovery_primary_datasource_changed_total[1m]) > 1
       for: 0m
       labels:
         severity: warning
