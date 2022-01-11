@@ -17,7 +17,6 @@
 ##      export appPort=8080
 ##      export appDataDir="/mnt/disk1/${appName}"
 ##      export appLogDir="/mnt/disk1/log/${appName}"
-##      #export appOpts="--server.servlet.contextPath=/myapp"
 ##      #export javaOpts="-Xms1G -Xmx1G"
 ##      #export javaToolOptions='-javaagent:/opt/javaagent/jmx_prometheus_javaagent-0.16.1.jar=10105:/opt/javaagent/jmx-metrics.yml'
 ##      docker run -d \
@@ -26,7 +25,6 @@
 ##        -e SHARDING_PORT=${appPort} \
 ##        -e SHARDING_DATA=${appDataDir} \
 ##        -e SHARDING_LOG=${appLogDir} \
-##        -e SHARDING_OPTS=${appOpts} \
 ##        -e JAVA_OPTS=${javaOpts} \
 ##        -e JAVA_TOOL_OPTIONS=${javaToolOptions} \
 ##        -p ${appPort}:${appPort} \
@@ -52,14 +50,16 @@ ARG SHARDING_VERSION
 ARG SHARDING_MAINCLASS
 ARG SHARDING_EXT_CLASSPATH # Optional
 ENV SHARDING_BIN_NAME "${SHARDING_NAME}-${SHARDING_VERSION}-bin"
-ENV SHARDING_HOME_PARENT "/opt/apps/ecm/${SHARDING_NAME}-package/"
-ENV SHARDING_HOME "${SHARDING_HOME_PARENT}/${SHARDING_BIN_NAME}"
+#ENV SHARDING_HOME_PARENT "/opt/apps/ecm/${SHARDING_NAME}-package/"
+ENV SHARDING_HOME_PARENT "/opt"
+#ENV SHARDING_HOME "${SHARDING_HOME_PARENT}/${SHARDING_BIN_NAME}"
+ENV SHARDING_HOME "${SHARDING_HOME_PARENT}/${SHARDING_NAME}"
 
 # Installcation app files.
 COPY target/${SHARDING_BIN_NAME}.tar /tmp/${SHARDING_BIN_NAME}.tar
 
-RUN mkdir -p ${SHARDING_HOME_PARENT} \
-&& tar -xf /tmp/${SHARDING_BIN_NAME}.tar -C ${SHARDING_HOME_PARENT} \
+RUN mkdir -p ${SHARDING_HOME} \
+&& tar -xf /tmp/${SHARDING_BIN_NAME}.tar --strip-components=1 -C ${SHARDING_HOME} \
 && rm -rf /tmp/${SHARDING_BIN_NAME}.tar \
 # Make control script.
 && touch /startup.sh && chmod +x /startup.sh \
@@ -74,19 +74,18 @@ export SHARDING_EXT_CLASSPATH=${SHARDING_EXT_CLASSPATH:-}\n\
 export SHARDING_NOHUP=\$(echo \$SHARDING_NOHUP|tr '[a-z]' '[A-Z]')\n\
 export SHARDING_DEBUG=\$(echo \$SHARDING_DEBUG|tr '[a-z]' '[A-Z]')\n\
 export SHARDING_PORT=\${SHARDING_PORT:-'3308'}\n\
-export SHARDING_CONF=\${SHARDING_CONF:-${SHARDING_HOME}/conf/example/readwrite}\n\
+export SHARDING_CONF=\${SHARDING_CONF:-${SHARDING_HOME}/conf/}\n\
 export SHARDING_DATA=\${SHARDING_DATA:-/mnt/disk1/\$SHARDING_NAME}\n\
-export SHARDING_LOG=\${SHARDING_LOG:-/mnt/disk1/log/\$SHARDING_NAME}\n\
-export SHARDING_OPTS=\${SHARDING_OPTS:-}\n\
+export SHARDING_LOG=\${SHARDING_LOG:-/var/log/\$SHARDING_NAME}\n\
 # Define JVM options.\n\
 export JAVA_OPTS=\${JAVA_OPTS:-'-Xms256M -Xmx1G'}\n\
 export JAVA_TOOL_OPTIONS=\${JAVA_TOOL_OPTIONS:-}\n\
 [[ \$SHARDING_NOHUP == 'TRUE' || \$SHARDING_NOHUP == 'YES' || \$SHARDING_NOHUP == 'Y' || \$SHARDING_NOHUP == 'ON' ]] && export CMD_NOHUP='nohup'\n\
-[[ \$SHARDING_DEBUG == 'TRUE' || \$SHARDING_DEBUG == 'YES' || \$SHARDING_DEBUG == 'Y' || \$SHARDING_DEBUG == 'ON' ]] && export SHARDING_DEBUG_OPTS='-Xdebug -Xrunjdwp:server=y,transport=dt_socket,address=8000,suspend=n'\n\
+[[ \$SHARDING_DEBUG == 'TRUE' || \$SHARDING_DEBUG == 'YES' || \$SHARDING_DEBUG == 'Y' || \$SHARDING_DEBUG == 'ON' ]] && export DEBUG_OPTS='-Xdebug -Xrunjdwp:server=y,transport=dt_socket,address=8000,suspend=n'\n\
 # Initialization.\n\
 mkdir -p \${SHARDING_DATA} && mkdir -p \${SHARDING_LOG}\n\
 # Make run commands.\n\
-export CMD_EXEC=\"\${CMD_NOHUP} java -server \${SHARDING_DEBUG_OPTS} \${JAVA_OPTS} -XX:HeapDumpPath=\${SHARDING_LOG}/jvm_dump.hprof \
+export CMD_EXEC=\"\${CMD_NOHUP} java -server -Djava.net.preferIPv4Stack=true \${JAVA_OPTS} \${DEBUG_OPTS} -XX:HeapDumpPath=\${SHARDING_LOG}/jvm_dump.hprof \
 -XX:InitiatingHeapOccupancyPercent=35 -XX:+DisableExplicitGC -XX:+HeapDumpOnOutOfMemoryError \
 -XX:-OmitStackTraceInFastThrow -XX:+UseG1GC -XX:MaxGCPauseMillis=20 \
 -Xloggc:\${SHARDING_LOG}/\${SHARDING_NAME}-gc.log -verbose:gc -XX:+PrintGCDetails -XX:+PrintGCDateStamps \

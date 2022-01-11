@@ -44,28 +44,47 @@ cd $PROJECT_HOME/xcloud-shardingproxy-starter/
 echo "source exampledata/sharding/userdb-sharding.sql" | mysql -h172.8.8.111 -P3306 -uuserdb -p123456
 ```
 
-### 1.3 for Docker(usually for testing)
+### 1.3 Deploy on Docker(Testing recommend)
+
+- [https://hub.docker.com/_/zookeeper?tab=description](https://hub.docker.com/_/zookeeper?tab=description)
+
+- Run zookeeper simple container
+
+```bash
+docker run -d \
+--name zk1 \
+--net host \
+--restart no \
+-e JVMFLAGS="-Djava.net.preferIPv4Stack=true -Xmx512m" \
+-e ZOO_MAX_CLIENT_CNXNS=60 \
+zookeeper:3.6.0
+```
+
+- Run shardingproxy simple container
 
 ```bash
 sudo mkdir -p /mnt/disk1/shardingproxy/{conf,ext-lib}
 sudo mkdir -p /mnt/disk1/log/shardingproxy/
 
-docker network create --subnet=172.8.8.0/24 mysqlnet
+# The MySQL group replication network for demonstration. see: https://blogs.wl4g.com/archives/2477
+#docker network create --subnet=172.8.8.0/24 mysqlnet
 
 docker run -d \
 --name sp1 \
---net mysqlnet \
+--net host \
 --restart no \
--p 3308:3308 \
--v /mnt/disk1/shardingproxy/conf:/opt/apps/ecm/shardingproxy-package.shardingsproxy-master-bin/conf/ \
--v /mnt/disk1/shardingproxy/ext-lib/:/opt/apps/ecm/shardingproxy-package/shardingproxy-master-bin/ext-lib/ \
--v /mnt/disk1/log/shardingproxy/:/opt/apps/ecm/shardingproxy-package/shardingproxy-master-bin/log/ \
+--add-host n0.rds.local:172.8.8.111 \
+--add-host n1.rds.local:172.8.8.112 \
+--add-host n2.rds.local:172.8.8.113 \
 -e JAVA_OPTS='-Djava.awt.headless=true' \
--e PORT=3308 \
+-e SHARDING_PORT=3308 \
+-v /mnt/disk1/shardingproxy/conf:/opt/shardingproxy/conf/ \
+-v /mnt/disk1/log/shardingproxy/:/var/log/shardingproxy/ \
+-p 3308:3308 \
 wl4g/shardingproxy:5.1.0
 ```
 
-- Testing the effect of sharding
+- Testing for valid
 
 ```sql
 mysql -h127.0.0.1 -P3308 -uuserdb -p123456
@@ -77,7 +96,7 @@ UPDATE userdb.t_user SET name='user-update-2222' WHERE id=10000000;
 DELETE FROM userdb.t_user WHERE id=10000000;
 ```
 
-### 1.4 for Kubernetes(production recommend)
+### 1.4 Deploy on Kubernetes(Production recommend)
 
 ```bash
 #TODO
