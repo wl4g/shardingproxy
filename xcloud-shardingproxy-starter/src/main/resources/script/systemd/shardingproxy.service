@@ -6,21 +6,21 @@ After=network.target remote-fs.target nss-lookup.target
 [Service]
 Type=simple
 Environment=SHARDING_HOME=/opt/apps/shardingproxy-2.0.0-bin
-Environment=SHARDING_LOG_DIR=/mnt/disk1/log/shardingproxy
-Environment=SHARDING_DATA_DIR=/mnt/disk1/shardingproxy
-Environment=SHARDING_ARGS=3307 example-conf/sharding-readwrite
-PIDFile=${SHARDING_DATA_DIR}/shardingproxy.pid
-ExecStartPre=/bin/bash -c "/bin/mkdir -p ${SHARDING_DATA_DIR} && /bin/rm -f ${SHARDING_DATA_DIR}/shardingproxy.pid"
-ExecStart=/bin/bash -c ". /etc/bashrc && . /etc/profile && exec java -server -Xms256M -Xmx1G -XX:MaxGCPauseMillis=20 -XX:+DisableExplicitGC -XX:+UseConcMarkSweepGC -XX:+CMSParallelRemarkEnabled -XX:LargePageSizeInBytes=128m -XX:+UseFastAccessorMethods -XX:+UseCMSInitiatingOccupancyOnly -XX:CMSInitiatingOccupancyFraction=70 -XX:InitiatingHeapOccupancyPercent=35 -XX:+HeapDumpOnOutOfMemoryError -XX:HeapDumpPath=${SHARDING_LOG_DIR}/jvm_dump.hprof -Xloggc:${SHARDING_LOG_DIR}/shardingproxy-gc.log -verbose:gc -XX:+PrintGCDetails -XX:+PrintGCDateStamps -XX:+PrintGCTimeStamps -XX:+UseGCLogFileRotation -XX:NumberOfGCLogFiles=10 -XX:GCLogFileSize=100M -Dfile.encoding=UTF-8 -Djava.awt.headless=true -Djava.security.egd=file:/dev/./urandom -cp .:${SHARDING_HOME}/conf:${SHARDING_HOME}/ext-lib/*:${SHARDING_HOME}/lib/* com.wl4g.ShardingProxy ${SHARDING_ARGS} > /dev/null 2>&1"
-ExecStartPost=/bin/bash -c "/bin/echo $MAINPID > ${SHARDING_DATA_DIR}/shardingproxy.pid"
+Environment=SHARDING_LOG=/mnt/disk1/log/shardingproxy
+Environment=SHARDING_DATA=/mnt/disk1/shardingproxy
+Environment=SHARDING_ARGS=3308 /etc/shardingproxy
+PIDFile=${SHARDING_DATA}/shardingproxy.pid
+ExecStartPre=/bin/bash -c "/bin/mkdir -p ${SHARDING_DATA} && /bin/rm -f ${SHARDING_DATA}/shardingproxy.pid"
+ExecStart=/bin/bash -c ". /etc/bashrc && . /etc/profile && exec java -server -Xms256M -Xmx1G -XX:MaxGCPauseMillis=20 -XX:+DisableExplicitGC -XX:+UseConcMarkSweepGC -XX:+CMSParallelRemarkEnabled -XX:LargePageSizeInBytes=128m -XX:+UseFastAccessorMethods -XX:+UseCMSInitiatingOccupancyOnly -XX:CMSInitiatingOccupancyFraction=70 -XX:InitiatingHeapOccupancyPercent=35 -XX:+HeapDumpOnOutOfMemoryError -XX:HeapDumpPath=${SHARDING_LOG}/jvm_dump.hprof -Xloggc:${SHARDING_LOG}/shardingproxy-gc.log -verbose:gc -XX:+PrintGCDetails -XX:+PrintGCDateStamps -XX:+PrintGCTimeStamps -XX:+UseGCLogFileRotation -XX:NumberOfGCLogFiles=10 -XX:GCLogFileSize=100M -Dfile.encoding=UTF-8 -Djava.awt.headless=true -Djava.security.egd=file:/dev/./urandom -cp .:${SHARDING_HOME}/conf:${SHARDING_HOME}/ext-lib/*:${SHARDING_HOME}/lib/* com.wl4g.ShardingProxy ${SHARDING_ARGS} > /dev/null 2>&1"
+ExecStartPost=/bin/bash -c "/bin/echo $MAINPID > ${SHARDING_DATA}/shardingproxy.pid"
 ExecReload=/bin/kill -s HUP $MAINPID
 
 # Will it cause 'Restart=on-abnormal' to be invalid?
 #ExecStop=/bin/kill -s TERM $MAINPID
 #StandardOutput=null
 StandardError=journal
-LimitNOFILE=1048576
-LimitNPROC=1048576
+LimitNOFILE=65535
+LimitNPROC=65535
 LimitCORE=infinity
 TimeoutStartSec=5
 Restart=on-abnormal

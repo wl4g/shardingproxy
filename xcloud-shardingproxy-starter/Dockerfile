@@ -18,7 +18,6 @@
 ##      export appDataDir="/mnt/disk1/${appName}"
 ##      export appLogDir="/mnt/disk1/log/${appName}"
 ##      #export javaOpts="-Xms1G -Xmx1G"
-##      #export javaToolOptions='-javaagent:/opt/javaagent/jmx_prometheus_javaagent-0.16.1.jar=10105:/opt/javaagent/jmx-metrics.yml'
 ##      docker run -d \
 ##        -e SHARDING_NOHUP=y \
 ##        -e SHARDING_DEBUG=y \
@@ -26,7 +25,6 @@
 ##        -e SHARDING_DATA=${appDataDir} \
 ##        -e SHARDING_LOG=${appLogDir} \
 ##        -e JAVA_OPTS=${javaOpts} \
-##        -e JAVA_TOOL_OPTIONS=${javaToolOptions} \
 ##        -p ${appPort}:${appPort} \
 ##        -v ${appDataDir}:${appDataDir} \
 ##        -v ${appLogDir}:${appLogDir} \
@@ -79,13 +77,14 @@ export SHARDING_DATA=\${SHARDING_DATA:-/mnt/disk1/\$SHARDING_NAME}\n\
 export SHARDING_LOG=\${SHARDING_LOG:-/var/log/\$SHARDING_NAME}\n\
 # Define JVM options.\n\
 export JAVA_OPTS=\${JAVA_OPTS:-'-Xms256M -Xmx1G'}\n\
-export JAVA_TOOL_OPTIONS=\${JAVA_TOOL_OPTIONS:-}\n\
 [[ \$SHARDING_NOHUP == 'TRUE' || \$SHARDING_NOHUP == 'YES' || \$SHARDING_NOHUP == 'Y' || \$SHARDING_NOHUP == 'ON' ]] && export CMD_NOHUP='nohup'\n\
 [[ \$SHARDING_DEBUG == 'TRUE' || \$SHARDING_DEBUG == 'YES' || \$SHARDING_DEBUG == 'Y' || \$SHARDING_DEBUG == 'ON' ]] && export DEBUG_OPTS='-Xdebug -Xrunjdwp:server=y,transport=dt_socket,address=8000,suspend=n'\n\
 # Initialization.\n\
 mkdir -p \${SHARDING_DATA} && mkdir -p \${SHARDING_LOG}\n\
 # Make run commands.\n\
-export CMD_EXEC=\"\${CMD_NOHUP} java -server -Djava.net.preferIPv4Stack=true \${JAVA_OPTS} \${DEBUG_OPTS} -XX:HeapDumpPath=\${SHARDING_LOG}/jvm_dump.hprof \
+export CMD_EXEC=\"\${CMD_NOHUP} java -server \
+-javaagent:\${SHARDING_HOME}/ext-lib/agentlib/xcloud-shardingproxy-agent-bootstrap-\${SHARDING_VERSION}.jar \
+-Djava.net.preferIPv4Stack=true \${JAVA_OPTS} \${DEBUG_OPTS} -XX:HeapDumpPath=\${SHARDING_LOG}/jvm_dump.hprof \
 -XX:InitiatingHeapOccupancyPercent=35 -XX:+DisableExplicitGC -XX:+HeapDumpOnOutOfMemoryError \
 -XX:-OmitStackTraceInFastThrow -XX:+UseG1GC -XX:MaxGCPauseMillis=20 \
 -Xloggc:\${SHARDING_LOG}/\${SHARDING_NAME}-gc.log -verbose:gc -XX:+PrintGCDetails -XX:+PrintGCDateStamps \

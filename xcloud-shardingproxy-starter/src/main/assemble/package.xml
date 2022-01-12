@@ -71,7 +71,7 @@
 			</excludes>
 		</fileSet>
 		<fileSet>
-			<directory>src/main/resources/agent</directory>
+			<directory>src/main/resources/agent/conf</directory>
 			<outputDirectory>ext-lib/agentlib/conf</outputDirectory>
 			<includes>
 				<include>*.*</include>
