@@ -110,20 +110,45 @@
 				<exclude>org.apache.shardingsphere:shardingsphere-agent-api</exclude>
 				<exclude>org.apache.shardingsphere:shardingsphere-agent-core</exclude>
 				<exclude>org.apache.shardingsphere:shardingsphere-agent-bootstrap</exclude>
+				<!-- logging -->
 				<exclude>org.apache.shardingsphere:shardingsphere-agent-logging-base</exclude>
+				<!-- prometheus -->
 				<exclude>org.apache.shardingsphere:shardingsphere-agent-metrics-api</exclude>
 				<exclude>org.apache.shardingsphere:shardingsphere-agent-metrics-prometheus</exclude>
+				<!-- jaeger -->
 				<exclude>org.apache.shardingsphere:shardingsphere-agent-tracing-jaeger</exclude>
-				<exclude>org.apache.shardingsphere:shardingsphere-agent-tracing-opentelemetry</exclude>
-				<exclude>org.apache.shardingsphere:shardingsphere-agent-tracing-opentracing</exclude>
+				<!-- zipkin -->
 				<exclude>org.apache.shardingsphere:shardingsphere-agent-tracing-zipkin</exclude>
+				<!-- opentracing -->
+				<exclude>org.apache.shardingsphere:shardingsphere-agent-tracing-opentracing</exclude>
+				<exclude>org.apache.skywalking:apm-toolkit-opentracing</exclude>
+				<exclude>io.opentracing:opentracing-api</exclude>
+				<exclude>io.opentracing:opentracing-mock</exclude>
+				<exclude>io.opentracing:opentracing-noop</exclude>
+				<exclude>io.opentracing:opentracing-tracerresolver</exclude>
+				<exclude>io.opentracing:opentracing-util</exclude>
+				<!-- opentelemety -->
+				<exclude>org.apache.shardingsphere:shardingsphere-agent-tracing-opentelemetry</exclude>
+				<exclude>io.opentelemetry:api</exclude>
+				<exclude>io.opentelemetry:api-metrics</exclude>
+				<exclude>io.opentelemetry:context</exclude>
+				<exclude>io.opentelemetry:exporter-jaeger</exclude>
+				<exclude>io.opentelemetry:exporter-otlp-common</exclude>
+				<exclude>io.opentelemetry:exporter-otlp-trace</exclude>
+				<exclude>io.opentelemetry:exporter-zipkin</exclude>
+				<exclude>io.opentelemetry:proto</exclude>
+				<exclude>io.opentelemetry:sdk</exclude>
+				<exclude>io.opentelemetry:sdk-common</exclude>
+				<exclude>io.opentelemetry:sdk-extension-autoconfigure</exclude>
+				<exclude>io.opentelemetry:sdk-metrics</exclude>
+				<exclude>io.opentelemetry:sdk-trace</exclude>
+				<exclude>io.opentelemetry:semconv</exclude>
 			</excludes>
 		</dependencySet>
 		<dependencySet>
 			<outputDirectory>ext-lib/agentlib</outputDirectory>
 			<scope>runtime</scope>
 			<includes>
-				<!-- <include>org.apache.shardingsphere:shardingsphere-agent-bootstrap</include> -->
 				<include>${groupId}:xcloud-shardingproxy-agent-bootstrap</include>
 			</includes>
 		</dependencySet>
@@ -132,15 +157,39 @@
 			<scope>runtime</scope>
 			<includes>
 				<include>${groupId}:xcloud-shardingproxy-agent-extension</include>
-				<!-- <include>org.apache.shardingsphere:shardingsphere-agent-api</include> -->
-				<!-- <include>org.apache.shardingsphere:shardingsphere-agent-core</include> -->
+				<!-- logging -->
 				<include>org.apache.shardingsphere:shardingsphere-agent-logging-base</include>
+				<!-- prometheus -->
 				<include>org.apache.shardingsphere:shardingsphere-agent-metrics-api</include>
 				<include>org.apache.shardingsphere:shardingsphere-agent-metrics-prometheus</include>
-				<include>org.apache.shardingsphere:shardingsphere-agent-tracing-jaeger</include>
-				<include>org.apache.shardingsphere:shardingsphere-agent-tracing-opentelemetry</include>
-				<include>org.apache.shardingsphere:shardingsphere-agent-tracing-opentracing</include>
+				<!-- jaeger -->
+				<!-- <include>org.apache.shardingsphere:shardingsphere-agent-tracing-jaeger</include> -->
+				<!-- zipkin -->
 				<include>org.apache.shardingsphere:shardingsphere-agent-tracing-zipkin</include>
+				<!-- opentracing -->
+				<!-- <include>org.apache.shardingsphere:shardingsphere-agent-tracing-opentracing</include> -->
+				<!-- <include>org.apache.skywalking:apm-toolkit-opentracing</include> -->
+				<!-- <include>io.opentracing:opentracing-api</include> -->
+				<!-- <include>io.opentracing:opentracing-mock</include> -->
+				<!-- <include>io.opentracing:opentracing-noop</include> -->
+				<!-- <include>io.opentracing:opentracing-tracerresolver</include> -->
+				<!-- <include>io.opentracing:opentracing-util</include> -->
+				<!-- opentelemety -->
+				<!-- <include>org.apache.shardingsphere:shardingsphere-agent-tracing-opentelemetry</include> -->
+				<!-- <include>io.opentelemetry:api</include> -->
+				<!-- <include>io.opentelemetry:api-metrics</include> -->
+				<!-- <include>io.opentelemetry:context</include> -->
+				<!-- <include>io.opentelemetry:exporter-jaeger</include> -->
+				<!-- <include>io.opentelemetry:exporter-otlp-common</include> -->
+				<!-- <include>io.opentelemetry:exporter-otlp-trace</include> -->
+				<!-- <include>io.opentelemetry:exporter-zipkin</include> -->
+				<!-- <include>io.opentelemetry:proto</include> -->
+				<!-- <include>io.opentelemetry:sdk</include> -->
+				<!-- <include>io.opentelemetry:sdk-common</include> -->
+				<!-- <include>io.opentelemetry:sdk-extension-autoconfigure</include> -->
+				<!-- <include>io.opentelemetry:sdk-metrics</include> -->
+				<!-- <include>io.opentelemetry:sdk-trace</include> -->
+				<!-- <include>io.opentelemetry:semconv</include> -->
 			</includes>
 		</dependencySet>
 	</dependencySets>

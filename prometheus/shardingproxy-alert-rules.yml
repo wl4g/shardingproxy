@@ -41,3 +41,11 @@ groups:
       annotations:
         summary: ShardingProxy execute errors (instance {{ $labels.instance }})
         description: "ShardingProxy execute errors total on {{ $labels.instance }}\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}"
+    - alert: ShardingProxyExecuteLatencySum
+      expr: proxy_execute_latency_millis_sum >= 3000
+      for: 0m
+      labels:
+        severity: warning
+      annotations:
+        summary: ShardingProxy execute latency time to long (instance {{ $labels.instance }})
+        description: "ShardingProxy execute latency time cost >=3000ms on {{ $labels.instance }}\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}"

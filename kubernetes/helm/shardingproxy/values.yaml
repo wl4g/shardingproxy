@@ -1,0 +1,156 @@
+## Default values for shardingproxy.
+## This is a YAML-formatted file.
+## Declare variables to be passed into your templates.
+
+## It is recommended to have odd number of nodes in a cluster, otherwise the shardingproxy cluster cannot be automatically healed in case of net-split.
+autoscaling:
+  enabled: true
+  replicaCount: 2
+
+image:
+  repository: wl4g/shardingproxy:5.1.0
+  pullPolicy: IfNotPresent
+  ## Optionally specify an array of imagePullSecrets.
+  ## Secrets must be manually created in the namespace.
+  ## ref: https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/
+  ##
+  # pullSecrets:
+  # - myRegistryKeySecretName
+
+# The name of a secret in the same kubernetes namespace which contains values to
+# be added to the environment (must be manually created)
+# This can be useful for passwords and logins, etc.
+
+# envFromSecret: "shardingproxy-secrets"
+
+## Forces the recreation of pods during helm upgrades. This can be useful to update configuration values even if the container image did not change.
+recreatePods: false
+
+# Pod deployment policy
+# value: OrderedReady | Parallel
+# To redeploy a chart with existing PVC(s), the value must be set to Parallel to avoid deadlock
+podManagementPolicy: Parallel
+
+persistence:
+  enabled: false
+  size: 20Mi
+  ## If defined, volume.beta.kubernetes.io/storage-class: <storageClass>
+  ## Default: volume.alpha.kubernetes.io/storage-class: default
+  # storageClass: "-"
+  accessMode: ReadWriteOnce
+  ## Existing PersistentVolumeClaims
+  ## The value is evaluated as a template
+  ## So, for example, the name can depend on .Release or .Chart
+  # existingClaim: ""
+
+resources: {}
+  # limits:
+  #   cpu: 500m
+  #   memory: 512Mi
+  # requests:
+  #   cpu: 500m
+  #   memory: 512Mi
+
+# Containers that run before the creation of ShardingProxy containers. They can contain utilities or setup scripts.
+initContainers: {}
+  # - name: mysql-probe
+  #   image: alpine
+  #   command: ["sh", "-c", "for i in $(seq 1 300); do nc -zvw1 mysql 3306 && exit 0 || sleep 3; done; exit 1"]
+
+## ShardingProxy configuration item, see the documentation (https://hub.docker.com/r/wl4g/shardingproxy)
+shardingproxyConfig:
+  SHARDINGPROXY_CLUSTER__K8S__APISERVER: "https://kubernetes.default.svc:443"
+  ## The address type is used to extract host from k8s service.
+  ## Value: ip | dns | hostname
+  ## Note：Hostname is only supported after v4.0-rc.2
+  SHARDINGPROXY_CLUSTER__K8S__ADDRESS_TYPE: "hostname"
+  SHARDINGPROXY_CLUSTER__K8S__SUFFIX: "svc.cluster.local"
+  ## if SHARDINGPROXY_CLUSTER__K8S__ADDRESS_TYPE eq dns
+  # SHARDINGPROXY_CLUSSHARDINGPROXY_K8S__SUFFIX: "pod.cluster.local"
+
+## ShardingProxy Enterprise Edition requires manual creation of a Secret containing the licensed content. Write the name of Secret to the value of "shardingproxyLicneseSecretName"
+## Example:
+##   kubectl create secret generic shardingproxy-license-secret-name --from-file=/path/to/shardingproxy.lic
+shardingproxyLicneseSecretName:
+
+service:
+  ## Service type
+  ##
+  type: ClusterIP
+  ## Port for Proxy JDBC
+  ##
+  proxy: 3308
+  ## Port for dashboard
+  ##
+  dashboard: 18083
+  ## Port for prometheus API
+  ##
+  prometheus: 8081
+  ## Specify the nodePort(s) value for the LoadBalancer and NodePort service types.
+  ## ref: https://kubernetes.io/docs/concepts/services-networking/service/#type-nodeport
+  ##
+  nodePorts:
+    proxy:
+    dashboard:
+    prometheus:
+  ## Set the LoadBalancer service type to internal only.
+  ## ref: https://kubernetes.io/docs/concepts/services-networking/service/#internal-load-balancer
+  ##
+  # loadBalancerIP:
+  ## Load Balancer sources
+  ## ref: https://kubernetes.io/docs/tasks/access-application-cluster/configure-cloud-provider-firewall/#restrict-access-for-loadbalancer-service
+  ## Example:
+  ## loadBalancerSourceRanges:
+  ## - 10.10.10.0/24
+  ##
+  loadBalancerSourceRanges: []
+  ## Set the ExternalIPs
+  ##
+  externalIPs: []
+  ## Provide any additional annotations which may be required. Evaluated as a template
+  ##
+  annotations: {}
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}
+
+ingress:
+  ## ingress for ShardingProxy Dashboard
+  dashboard:
+    enabled: false
+    # ingressClassName: nginx
+    annotations: {}
+      # kubernetes.io/ingress.class: nginx
+      # kubernetes.io/tls-acme: "true"
+    path: /
+    hosts:
+    - dashboard.shardingproxy.local
+    tls: []
+
+  ## ingress for ShardingProxy Mgmt API
+  prometheus:
+    enabled: false
+    # ingressClassName: nginx
+    annotations: {}
+      # kubernetes.io/ingress.class: nginx
+      # kubernetes.io/tls-acme: "true"
+    path: /
+    hosts:
+    - prometheus.shardingproxy.local
+    tls: []
+
+podSecurityContext:
+  enabled: true
+  fsGroup: 1000
+  fsGroupChangePolicy: Always
+  runAsUser: 1000
+  supplementalGroups:
+    - 1000
+
+containerSecurityContext:
+  enabled: true
+  runAsNonRoot: true
+  runAsUser: 1000

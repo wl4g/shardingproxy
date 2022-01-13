@@ -1,0 +1,117 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "shardingproxy.fullname" . }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app.kubernetes.io/name: {{ include "shardingproxy.name" . }}
+    helm.sh/chart: {{ include "shardingproxy.chart" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+
+spec:
+  {{- if not .Values.autoscaling.enabled }}
+  replicas: {{ .Values.autoscaling.replicaCount }}
+  {{- end }}
+
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: {{ include "shardingproxy.name" . }}
+      app.kubernetes.io/instance: {{ .Release.Name }}
+
+  template:
+    # TODO
+    metadata:
+      {{- with .Values.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        app: {{ include "shardingproxy.name" . }}
+        version: {{ .Chart.AppVersion }}
+        app.kubernetes.io/name: {{ include "shardingproxy.name" . }}
+        app.kubernetes.io/instance: {{ .Release.Name }}
+
+    # TODO
+    spec:
+      {{- if .Values.image.pullSecrets }}
+      imagePullSecrets:
+        {{- range .Values.image.pullSecrets }}
+        - name: {{ . }}
+      {{- end }}
+
+      serviceAccountName: {{ include "shardingproxy.fullname" . }}
+
+      {{- if .Values.podSecurityContext.enabled }}
+      securityContext: {{- omit .Values.podSecurityContext "enabled" | toYaml | nindent 8 }}
+      {{- end }}
+
+      volumes:
+      {{- if not .Values.persistence.enabled }}
+      - name: shardingproxy-data
+        emptyDir: {}
+      {{- else if .Values.persistence.existingClaim }}
+      - name: shardingproxy-data
+        persistentVolumeClaim:
+        {{- with .Values.persistence.existingClaim }}
+          claimName: {{ tpl . $ }}
+        {{- end }}
+      {{- end }}
+
+      containers:
+        - name: {{ .Chart.Name }}
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - name: proxy
+              containerPort: 3308
+              protocol: TCP
+            - name: prometheus
+              containerPort: 10108
+              protocol: TCP
+
+          envFrom:
+          - configMapRef:
+            name: {{ include "shardingproxy.fullname" . }}-env
+
+          env:
+          - name: SHARDINGPROXY_NAME
+            value: {{ .Release.Name }}
+          volumeMounts:
+          # TODO see: https://github.com/emqx/emqx/blob/master/deploy/charts/emqx/templates/StatefulSet.yaml#L135
+          - name: shardingproxy-data
+            mountPath: "/mnt/disk1/shardingproxy/data"
+
+          livenessProbe:
+            initialDelaySeconds: 10
+            periodSeconds: 5
+            timeoutSeconds: 10
+            httpGet:
+              scheme: HTTP
+              path: /-/healthy
+              port: prometheus
+
+          readinessProbe:
+            initialDelaySeconds: 15
+            periodSeconds: 20
+            tcpSocket:
+              port: proxy
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}

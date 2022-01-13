@@ -74,6 +74,7 @@
 			<artifactId>shardingsphere-infra-common</artifactId>
 			<version>${shardingsphere.version}</version>
 		</dependency>
+		<!-- for extension metrics and tracing, logging -->
 		<dependency>
 			<groupId>org.apache.shardingsphere</groupId>
 			<artifactId>shardingsphere-agent-api</artifactId>
@@ -83,6 +84,13 @@
 		<dependency>
 			<groupId>org.apache.shardingsphere</groupId>
 			<artifactId>shardingsphere-agent-metrics-prometheus</artifactId>
+			<version>${shardingsphere.version}</version>
+			<scope>provided</scope>
+		</dependency>
+		<!-- TODO for temporary -->
+		<dependency>
+			<groupId>org.apache.shardingsphere</groupId>
+			<artifactId>shardingsphere-agent-tracing-opentracing</artifactId>
 			<version>${shardingsphere.version}</version>
 			<scope>provided</scope>
 		</dependency>
