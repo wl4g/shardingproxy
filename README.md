@@ -63,8 +63,12 @@ zookeeper:3.6.0
 - Run shardingproxy simple container
 
 ```bash
-sudo mkdir -p /mnt/disk1/shardingproxy/{conf,ext-lib}
+sudo mkdir -p /mnt/disk1/shardingproxy/{conf/agent,ext-lib}
 sudo mkdir -p /mnt/disk1/log/shardingproxy/
+
+# Prepare a example sharding configuration.
+cp xcloud-shardingproxy-starter/src/main/resources/agent/conf/*.yaml /mnt/disk1/shardingproxy/ext-lib/agentlib/conf/
+cp xcloud-shardingproxy-starter/src/main/resources/example/sharding-readwrite/*.yaml /mnt/disk1/shardingproxy/conf/
 
 # The MySQL group replication network for demonstration. see: https://blogs.wl4g.com/archives/2477
 #docker network create --subnet=172.8.8.0/24 mysqlnet
@@ -78,7 +82,8 @@ docker run -d \
 --add-host n2.rds.local:172.8.8.113 \
 -e JAVA_OPTS='-Djava.awt.headless=true' \
 -e SHARDING_PORT=3308 \
--v /mnt/disk1/shardingproxy/conf:/opt/shardingproxy/conf/ \
+-v /mnt/disk1/shardingproxy/ext-lib/agentlib/conf/:/opt/shardingproxy/ext-lib/agentlib/conf/ \
+-v /mnt/disk1/shardingproxy/conf/:/opt/shardingproxy/conf/ \
 -v /mnt/disk1/log/shardingproxy/:/var/log/shardingproxy/ \
 -p 3308:3308 \
 wl4g/shardingproxy:5.1.0
