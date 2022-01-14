@@ -63,8 +63,8 @@ zookeeper:3.6.0
 - Run shardingproxy simple container
 
 ```bash
-sudo mkdir -p /mnt/disk1/shardingproxy/{conf/agent,ext-lib}
-sudo mkdir -p /mnt/disk1/log/shardingproxy/
+mkdir -p /mnt/disk1/shardingproxy/{ext-lib/agentlib/conf,conf,ext-lib}
+mkdir -p /mnt/disk1/log/shardingproxy/
 
 # Prepare a example sharding configuration.
 cp xcloud-shardingproxy-starter/src/main/resources/agent/conf/*.yaml /mnt/disk1/shardingproxy/ext-lib/agentlib/conf/
