@@ -27,6 +27,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
+import org.apache.shardingsphere.agent.core.plugin.ApmPluginLoader;
 import org.apache.shardingsphere.agent.metrics.api.MetricsWrapper;
 import org.apache.shardingsphere.agent.metrics.api.MetricsWrapperFactory;
 import org.yaml.snakeyaml.Yaml;
@@ -77,7 +78,8 @@ public class PrometheusWrapperFactory implements MetricsWrapperFactory {
         List<Map<String, Object>> mergedMetrics = new ArrayList<>(32);
         try {
             Yaml yaml = new Yaml();
-            Set<StreamResource> res = new ClassPathResourcePatternResolver().getResources("classpath*:/prometheus/metrics.yaml");
+            ClassPathResourcePatternResolver resolver = new ClassPathResourcePatternResolver(ApmPluginLoader.getInstance());
+            Set<StreamResource> res = resolver.getResources("classpath*:/prometheus/metrics.yaml");
             log.info("Loading prometheus metrics for - {}", res);
             for (StreamResource r : res) {
                 Map<String, List<Map<String, Object>>> map = yaml.loadAs(r.getInputStream(), LinkedHashMap.class);

@@ -17,6 +17,7 @@
 
 package org.apache.shardingsphere.agent.core.plugin;
 
+import static java.util.Arrays.asList;
 import static java.util.Collections.emptyMap;
 
 import java.io.ByteArrayOutputStream;
@@ -117,6 +118,16 @@ public final class ApmPluginLoader extends ClassLoader implements Closeable, Plu
             log.warn("No plugins was found for path: {}", AgentPathBuilder.getPluginPath());
             return;
         }
+
+        //
+        // FEAT: ADD agent extension first priority order.
+        //
+        List<File> files = asList(jarFiles);
+        // TODO use environment configuration.
+        // High priority loading custom agent extension module. (only then
+        // the JVM will use it first)
+        Collections.sort(files, (f1, f2) -> (f1.getAbsolutePath().contains("shardingproxy-agent-extension")) ? -1 : 0);
+
         Map<String, PluginInterceptorPoint> pointMap = new HashMap<>();
         Set<String> ignoredPluginNames = AgentConfigurationRegistry.INSTANCE.get(AgentConfiguration.class)
                 .getIgnoredPluginNames();

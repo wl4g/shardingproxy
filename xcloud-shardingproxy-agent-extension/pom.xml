@@ -74,6 +74,13 @@
 			<artifactId>shardingsphere-infra-common</artifactId>
 			<version>${shardingsphere.version}</version>
 		</dependency>
+		<!-- for org.apache.shardingsphere.agent.metrics.prometheus.wrapper.PrometheusWrapperFactory#loadAndMergeMetricsConfiguration -->
+		<dependency>
+			<groupId>org.apache.shardingsphere</groupId>
+			<artifactId>shardingsphere-agent-core</artifactId>
+			<version>${shardingsphere.version}</version>
+			<scope>provided</scope>
+		</dependency>
 		<!-- for extension metrics, tracing, logging -->
 		<dependency>
 			<groupId>org.apache.shardingsphere</groupId>
