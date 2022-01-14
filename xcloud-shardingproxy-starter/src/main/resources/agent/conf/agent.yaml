@@ -52,18 +52,24 @@ plugins:
   #    JAEGER_SAMPLER_PARAM: "1"
   #    JAEGER_REPORTER_LOG_SPANS: "true"
   #    JAEGER_REPORTER_FLUSH_INTERVAL: "1"
-  Zipkin:
-    host: "localhost"
-    port: 9411
-    props:
-      SERVICE_NAME: "cn-south1-a1-shardingproxy"
-      # Scrape span uri of zipkin service.
-      URL_VERSION: "/api/v2/spans"
+  #Zipkin:
+  #  host: "localhost"
+  #  port: 9411
+  #  props:
+  #    SERVICE_NAME: "cn-south1-a1-shardingproxy"
+  #    # Scrape span uri of zipkin service.
+  #    URL_VERSION: "/api/v2/spans"
   #Opentracing:
   #  props:
   #    OPENTRACING_TRACER_CLASS_NAME: "org.apache.skywalking.apm.toolkit.opentracing.SkywalkingTracer"
   OpenTelemetry:
+    # see:org.apache.shardingsphere.agent.plugin.tracing.opentelemetry.service.OpenTelemetryTracingPluginBootService
     props:
       # Resource info of opentelemetry, multiple configurations can be separated by ','
       otel.resource.attributes: "service.name=cn-south1-a1-shardingproxy"
       otel.traces.exporter: "zipkin"
+      # see:io.opentelemetry.sdk.autoconfigure.SpanExporterConfiguration
+      #otel.exporter.jaeger.endpoint: "http://localhost:5775"
+      #otel.exporter.jaeger.timeout: "10000"
+      otel.exporter.zipkin.endpoint: "http://10.0.0.162:9411/api/v2/spans"
+      otel.exporter.zipkin.timeout: "10000"

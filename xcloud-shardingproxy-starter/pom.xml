@@ -58,6 +58,9 @@
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<java.version>1.8</java.version>
+		<prometheus.version>0.11.0</prometheus.version>
+		<prometheus.jmx.version>0.16.1</prometheus.jmx.version>
+		<zipkin.version>2.16.3</zipkin.version>
 		<!-- <opentracing.version>0.31.0</opentracing.version> -->
 		<!-- <skywalking.version>8.8.0</skywalking.version> -->
 		<opentelemetry.version>1.3.0</opentelemetry.version>
@@ -120,6 +123,7 @@
 			<artifactId>shardingsphere-proxy-bootstrap</artifactId>
 			<version>${shardingsphere.version}</version>
 		</dependency>
+
 		<!-- The purpose of the following dependencies is to library packing to: ext-lib/agentlib/plugins. see:src/main/assemble/package.xml -->
 		<dependency>
 			<groupId>com.wl4g</groupId>
@@ -136,6 +140,8 @@
 			<artifactId>shardingsphere-agent-logging-base</artifactId>
 			<version>${shardingsphere.version}</version>
 		</dependency>
+
+		<!-- prometheus -->
 		<dependency>
 			<groupId>org.apache.shardingsphere</groupId>
 			<artifactId>shardingsphere-agent-metrics-api</artifactId>
@@ -146,22 +152,52 @@
 			<artifactId>shardingsphere-agent-metrics-prometheus</artifactId>
 			<version>${shardingsphere.version}</version>
 		</dependency>
+		<dependency>
+			<groupId>io.prometheus</groupId>
+			<artifactId>simpleclient</artifactId>
+			<version>${prometheus.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>io.prometheus</groupId>
+			<artifactId>simpleclient_hotspot</artifactId>
+			<version>${prometheus.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>io.prometheus.jmx</groupId>
+			<artifactId>collector</artifactId>
+			<version>${prometheus.jmx.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>io.prometheus</groupId>
+			<artifactId>simpleclient_httpserver</artifactId>
+			<version>${prometheus.version}</version>
+		</dependency>
 
-		<!-- jaeger -->
+		<!-- jaeger / opentelemetry-jaeger -->
 		<!-- <dependency> -->
 		<!-- <groupId>org.apache.shardingsphere</groupId> -->
 		<!-- <artifactId>shardingsphere-agent-tracing-jaeger</artifactId> -->
 		<!-- <version>${shardingsphere.version}</version> -->
 		<!-- </dependency> -->
 
-		<!-- zipkin -->
+		<!-- zipkin / opentelemetry-zipkin -->
 		<!-- <dependency> -->
 		<!-- <groupId>org.apache.shardingsphere</groupId> -->
 		<!-- <artifactId>shardingsphere-agent-tracing-zipkin</artifactId> -->
 		<!-- <version>${shardingsphere.version}</version> -->
 		<!-- </dependency> -->
+		<dependency>
+			<groupId>io.zipkin.reporter2</groupId>
+			<artifactId>zipkin-reporter</artifactId>
+			<!-- <version>${zipkin.version}</version> -->
+		</dependency>
+		<dependency>
+			<groupId>io.zipkin.reporter2</groupId>
+			<artifactId>zipkin-sender-okhttp3</artifactId>
+			<!-- <version>${zipkin.version}</version> -->
+		</dependency>
 
-		<!-- opentracing -->
+		<!-- opentracing / opentracing-skywalking -->
 		<!-- <dependency> -->
 		<!-- <groupId>org.apache.shardingsphere</groupId> -->
 		<!-- <artifactId>shardingsphere-agent-tracing-opentracing</artifactId> -->

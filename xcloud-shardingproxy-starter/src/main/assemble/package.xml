@@ -115,6 +115,8 @@
 				<!-- prometheus -->
 				<exclude>org.apache.shardingsphere:shardingsphere-agent-metrics-api</exclude>
 				<exclude>org.apache.shardingsphere:shardingsphere-agent-metrics-prometheus</exclude>
+				<exclude>io.prometheus:*</exclude>
+				<exclude>io.prometheus.jmx:*</exclude>
 				<!-- jaeger / opentracing -->
 				<exclude>org.apache.shardingsphere:shardingsphere-agent-tracing-jaeger</exclude>
 				<exclude>io.jaegertracing:*</exclude>
@@ -150,15 +152,17 @@
 				<!-- prometheus -->
 				<include>org.apache.shardingsphere:shardingsphere-agent-metrics-api</include>
 				<include>org.apache.shardingsphere:shardingsphere-agent-metrics-prometheus</include>
+				<include>io.prometheus:*</include>
+				<include>io.prometheus.jmx:*</include>
 				<!-- jaeger -->
 				<!-- <include>org.apache.shardingsphere:shardingsphere-agent-tracing-jaeger</include> -->
 				<!-- <include>io.jaegertracing:*</include> -->
 				<!-- <include>io.opentracing:*</include> -->
 				<!-- zipkin -->
 				<!-- <include>org.apache.shardingsphere:shardingsphere-agent-tracing-zipkin</include> -->
-				<!-- <include>io.zipkin:*</include> -->
-				<!-- <include>io.zipkin.zipkin2:*</include> -->
-				<!-- <include>io.zipkin.reporter2:*</include> -->
+				<include>io.zipkin:*</include>
+				<include>io.zipkin.zipkin2:*</include>
+				<include>io.zipkin.reporter2:*</include>
 				<!-- opentracing -->
 				<!-- <include>org.apache.shardingsphere:shardingsphere-agent-tracing-opentracing</include> -->
 				<!-- <include>org.apache.skywalking:apm-toolkit-opentracing</include> -->
