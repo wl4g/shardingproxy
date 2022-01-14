@@ -9,6 +9,6 @@ metadata:
     app.kubernetes.io/instance: {{ .Release.Name }}
     app.kubernetes.io/managed-by: {{ .Release.Service }}
 data:
-  {{- range $index, $value := .Values.shardingproxyConfig}}
+  {{- range $index, $value := .Values.shardingproxy.shardingproxyConfig}}
     {{$index}}: "{{ $value }}" 
   {{- end}}

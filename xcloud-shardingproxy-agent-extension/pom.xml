@@ -74,7 +74,7 @@
 			<artifactId>shardingsphere-infra-common</artifactId>
 			<version>${shardingsphere.version}</version>
 		</dependency>
-		<!-- for extension metrics and tracing, logging -->
+		<!-- for extension metrics, tracing, logging -->
 		<dependency>
 			<groupId>org.apache.shardingsphere</groupId>
 			<artifactId>shardingsphere-agent-api</artifactId>
@@ -87,13 +87,31 @@
 			<version>${shardingsphere.version}</version>
 			<scope>provided</scope>
 		</dependency>
-		<!-- TODO for temporary -->
-		<dependency>
-			<groupId>org.apache.shardingsphere</groupId>
-			<artifactId>shardingsphere-agent-tracing-opentracing</artifactId>
-			<version>${shardingsphere.version}</version>
-			<scope>provided</scope>
-		</dependency>
+		<!-- The purpose of the following dependencies is to rewrite the source code of the agent module. -->
+		<!-- <dependency> -->
+		<!-- <groupId>org.apache.shardingsphere</groupId> -->
+		<!-- <artifactId>shardingsphere-agent-tracing-jaeger</artifactId> -->
+		<!-- <version>${shardingsphere.version}</version> -->
+		<!-- <scope>provided</scope> -->
+		<!-- </dependency> -->
+		<!-- <dependency> -->
+		<!-- <groupId>org.apache.shardingsphere</groupId> -->
+		<!-- <artifactId>shardingsphere-agent-tracing-zipkin</artifactId> -->
+		<!-- <version>${shardingsphere.version}</version> -->
+		<!-- <scope>provided</scope> -->
+		<!-- </dependency> -->
+		<!-- <dependency> -->
+		<!-- <groupId>org.apache.shardingsphere</groupId> -->
+		<!-- <artifactId>shardingsphere-agent-tracing-opentracing</artifactId> -->
+		<!-- <version>${shardingsphere.version}</version> -->
+		<!-- <scope>provided</scope> -->
+		<!-- </dependency> -->
+		<!-- <dependency> -->
+		<!-- <groupId>org.apache.shardingsphere</groupId> -->
+		<!-- <artifactId>shardingsphere-agent-tracing-opentelemetry</artifactId> -->
+		<!-- <version>${shardingsphere.version}</version> -->
+		<!-- <scope>provided</scope> -->
+		<!-- </dependency> -->
 		<!-- for collecting ProxyContext metrics -->
 		<dependency>
 			<groupId>org.apache.shardingsphere</groupId>

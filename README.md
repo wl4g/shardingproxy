@@ -98,9 +98,7 @@ DELETE FROM userdb.t_user WHERE id=10000000;
 
 ### 1.4 Deploy on Kubernetes(Production recommend)
 
-```bash
-#TODO
-```
+- [Installation with helm](kubernetes/helm/README.md)
 
 ## 2. Developer guide
 

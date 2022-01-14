@@ -10,9 +10,17 @@ metadata:
     app.kubernetes.io/managed-by: {{ .Release.Service }}
 
 spec:
-  {{- if not .Values.autoscaling.enabled }}
-  replicas: {{ .Values.autoscaling.replicaCount }}
+  {{- if .Values.shardingproxy.autoscaling.enabled }}
+  replicas: {{ .Values.shardingproxy.autoscaling.replicaCount }}
+  {{- else }}
+  replicas: 2
   {{- end }}
+
+  strategy:
+    type: {{ .Values.shardingproxy.updateStrategy.type }}
+    {{- if eq .Values.shardingproxy.updateStrategy.type "Recreate" }}
+    rollingUpdate: null
+    {{- end }}
 
   selector:
     matchLabels:
@@ -20,9 +28,8 @@ spec:
       app.kubernetes.io/instance: {{ .Release.Name }}
 
   template:
-    # TODO
     metadata:
-      {{- with .Values.podAnnotations }}
+      {{- with .Values.shardingproxy.podAnnotations }}
       annotations:
         {{- toYaml . | nindent 8 }}
       {{- end }}
@@ -32,38 +39,38 @@ spec:
         app.kubernetes.io/name: {{ include "shardingproxy.name" . }}
         app.kubernetes.io/instance: {{ .Release.Name }}
 
-    # TODO
     spec:
-      {{- if .Values.image.pullSecrets }}
+      {{- if .Values.shardingproxy.image.pullSecrets }}
       imagePullSecrets:
-        {{- range .Values.image.pullSecrets }}
+        {{- range .Values.shardingproxy.image.pullSecrets }}
         - name: {{ . }}
       {{- end }}
 
       serviceAccountName: {{ include "shardingproxy.fullname" . }}
 
-      {{- if .Values.podSecurityContext.enabled }}
-      securityContext: {{- omit .Values.podSecurityContext "enabled" | toYaml | nindent 8 }}
+      {{- if .Values.shardingproxy.podSecurityContext.enabled }}
+      securityContext: {{- omit .Values.shardingproxy.podSecurityContext "enabled" | toYaml | nindent 8 }}
       {{- end }}
 
       volumes:
-      {{- if not .Values.persistence.enabled }}
-      - name: shardingproxy-data
+      {{- if not .Values.shardingproxy.persistence.enabled }}
+      - name: shardingproxy-workspace
         emptyDir: {}
-      {{- else if .Values.persistence.existingClaim }}
-      - name: shardingproxy-data
+      {{- else if .Values.shardingproxy.persistence.existingClaim }}
+      - name: shardingproxy-workspace
         persistentVolumeClaim:
-        {{- with .Values.persistence.existingClaim }}
+        {{- with .Values.shardingproxy.persistence.existingClaim }}
           claimName: {{ tpl . $ }}
         {{- end }}
       {{- end }}
 
       containers:
         - name: {{ .Chart.Name }}
-          securityContext:
-            {{- toYaml .Values.securityContext | nindent 12 }}
-          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
-          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          {{- if .Values.shardingproxy.containerSecurityContext.enabled }}
+          securityContext: {{- omit .Values.shardingproxy.containerSecurityContext "enabled" | toYaml | nindent 12 }}
+          {{- end }}
+          image: "{{ .Values.shardingproxy.image.repository }}:{{ .Values.shardingproxy.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.shardingproxy.image.pullPolicy }}
           ports:
             - name: proxy
               containerPort: 3308
@@ -80,8 +87,7 @@ spec:
           - name: SHARDINGPROXY_NAME
             value: {{ .Release.Name }}
           volumeMounts:
-          # TODO see: https://github.com/emqx/emqx/blob/master/deploy/charts/emqx/templates/StatefulSet.yaml#L135
-          - name: shardingproxy-data
+          - name: shardingproxy-workspace
             mountPath: "/mnt/disk1/shardingproxy/data"
 
           livenessProbe:
@@ -98,20 +104,22 @@ spec:
             periodSeconds: 20
             tcpSocket:
               port: proxy
+          {{- if .Values.shardingproxy.resources.enabled }}
           resources:
-            {{- toYaml .Values.resources | nindent 12 }}
+            {{- toYaml .Values.shardingproxy.resources | nindent 12 }}
+          {{ end }}
 
-      {{- with .Values.nodeSelector }}
+      {{- with .Values.shardingproxy.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}
       {{- end }}
 
-      {{- with .Values.affinity }}
+      {{- with .Values.shardingproxy.affinity }}
       affinity:
         {{- toYaml . | nindent 8 }}
       {{- end }}
 
-      {{- with .Values.tolerations }}
+      {{- with .Values.shardingproxy.tolerations }}
       tolerations:
         {{- toYaml . | nindent 8 }}
       {{- end }}
