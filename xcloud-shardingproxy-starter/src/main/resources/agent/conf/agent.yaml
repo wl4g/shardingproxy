@@ -67,9 +67,9 @@ plugins:
     props:
       # Resource info of opentelemetry, multiple configurations can be separated by ','
       otel.resource.attributes: "service.name=cn-south1-a1-shardingproxy"
-      otel.traces.exporter: "zipkin" # zipkin|jaeger
+      otel.traces.exporter: "jaeger" # zipkin|jaeger
       # see:io.opentelemetry.sdk.autoconfigure.SpanExporterConfiguration
-      otel.exporter.jaeger.endpoint: "http://localhost:16685"
+      otel.exporter.jaeger.endpoint: "http://localhost:14250"
       otel.exporter.jaeger.timeout: "10000"
-      otel.exporter.zipkin.endpoint: "http://10.0.0.162:9411/api/v2/spans"
-      otel.exporter.zipkin.timeout: "10000"
+      #otel.exporter.zipkin.endpoint: "http://localhost:9411/api/v2/spans"
+      #otel.exporter.zipkin.timeout: "10000"
