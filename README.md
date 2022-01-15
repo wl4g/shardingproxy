@@ -96,7 +96,7 @@ docker run -d \
 wl4g/shardingproxy:5.1.0
 ```
 
-- Testing for valid
+- Testing access shardingproxy
 
 ```sql
 mysql -h127.0.0.1 -P3308 -uuserdb -p123456
@@ -107,6 +107,10 @@ INSERT INTO userdb.t_user (id, name) VALUES (10000000, 'user-insert-1111');
 UPDATE userdb.t_user SET name='user-update-2222' WHERE id=10000000;
 DELETE FROM userdb.t_user WHERE id=10000000;
 ```
+
+- Testing access dashboard
+
+> Jaeger UI: [http://localhost:16686/search](http://localhost:16686/search)
 
 ### 1.4 Deploy on Kubernetes(Production recommend)
 
