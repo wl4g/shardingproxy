@@ -30,7 +30,7 @@ ignoredPluginNames: #[] # Otherwise a null pointer is reported when instantiatin
   #- Logging
   #- Prometheus
   #- Jaeger
-  - Zipkin
+  #- Zipkin
   - Opentracing
   #- OpenTelemetry
 
