@@ -126,10 +126,14 @@ public final class ApmPluginLoader extends ClassLoader implements Closeable, Plu
         // TODO use environment configuration.
         // High priority loading custom agent extension module. (only then
         // the JVM will use it first)
-        // Collections.sort(files,(f1,f2)->(f1.getAbsolutePath().contains("agent-extension"))?-1:0);
-        File extension = files.stream().filter(f -> f.getAbsolutePath().contains("agent-extension")).findAny().get();
-        files.remove(extension);
-        files.offerFirst(extension);
+        for (int i = 0; i < files.size(); i++) {
+            if (files.get(i).getAbsolutePath().contains("agent-extension")) {
+                File tmp = files.get(0);
+                files.set(0, files.get(i));
+                files.set(i, tmp);
+                break;
+            }
+        }
 
         Map<String, PluginInterceptorPoint> pointMap = new HashMap<>();
         Set<String> ignoredPluginNames = AgentConfigurationRegistry.INSTANCE.get(AgentConfiguration.class)
