@@ -21,6 +21,7 @@ import static java.util.stream.Collectors.toList;
 import static org.apache.commons.lang3.StringUtils.equalsAnyIgnoreCase;
 import static org.apache.commons.lang3.StringUtils.join;
 
+import java.net.InetAddress;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -38,7 +39,12 @@ import org.apache.shardingsphere.infra.rule.event.impl.PrimaryDataSourceChangedE
  */
 public class ExtensionMetricsCollectorTests {
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws Exception {
+        // testPrimaryDataSourceChanged();
+        System.out.println(InetAddress.getLocalHost().getHostName());
+    }
+
+    public static void testPrimaryDataSourceChanged() {
         LinkedList<PrimaryDataSourceChangedEvent> queue = new LinkedList<>();
         queue.add(new PrimaryDataSourceChangedEvent("userdb", "ha_userdb_g0db0", "userdb_g0db0_0"));
         queue.add(new PrimaryDataSourceChangedEvent("userdb", "ha_userdb_g0db0", "userdb_g0db0_0"));

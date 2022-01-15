@@ -135,9 +135,9 @@ public class ExtensionMetricsCollector
         gauge.ifPresent(m -> {
             String hostname = "unknown";
             try {
-                hostname = InetAddress.getLocalHost().getCanonicalHostName();
+                hostname = InetAddress.getLocalHost().getHostName();
             } catch (UnknownHostException e) {
-                log.warn("Cannot get local hostname.", e);
+                log.warn("Cannot get local hostname, cause by {}", e.getMessage());
             }
             RuntimeMXBean bean = ManagementFactory.getRuntimeMXBean();
             m.addMetric(singletonList(hostname), (currentTimeMillis() - bean.getStartTime()) / 1000);

@@ -29,7 +29,7 @@ applicationName: cn_south1_a1_shardingproxy_0
 ignoredPluginNames: #[] # Otherwise a null pointer is reported when instantiating(5.1.0).
   #- Logging
   #- Prometheus
-  - Jaeger
+  #- Jaeger
   - Zipkin
   - Opentracing
   #- OpenTelemetry
@@ -67,9 +67,9 @@ plugins:
     props:
       # Resource info of opentelemetry, multiple configurations can be separated by ','
       otel.resource.attributes: "service.name=cn-south1-a1-shardingproxy"
-      otel.traces.exporter: "zipkin"
+      otel.traces.exporter: "zipkin" # zipkin|jaeger
       # see:io.opentelemetry.sdk.autoconfigure.SpanExporterConfiguration
-      #otel.exporter.jaeger.endpoint: "http://localhost:5775"
-      #otel.exporter.jaeger.timeout: "10000"
+      otel.exporter.jaeger.endpoint: "http://localhost:16685"
+      otel.exporter.jaeger.timeout: "10000"
       otel.exporter.zipkin.endpoint: "http://10.0.0.162:9411/api/v2/spans"
       otel.exporter.zipkin.timeout: "10000"

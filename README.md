@@ -4,7 +4,7 @@
 
 ## 1. Deployments
 
-## 1.1 Preparing db instances for testing
+### 1.1 Preparing MySQL MGR cluster for testing
 
 - You first need to prepare a multi-instance database cluster for testing, here is `MySQL Group Replication` as an example. Refer docs to: [Deploy MGR high-availability production cluster based on Docker](https://blogs.wl4g.com/archives/2477)
 
@@ -33,7 +33,7 @@ GROUP_NAME                            NODE_ID                               NODE
 5db40c3c-180c-11e9-afbf-005056ac6820  a88416b0-60db-11ec-939e-0242ac080871  rds-mgr-2     3306      ONLINE      0          0                STANDBY
 ```
 
-### 1.2 Initialization MySQL
+### 1.2 Initializing for testing
 
 Notice: The example of non average slicing is not recommended for production (scenario: slicing according to different machine performance weight), because shardingsphere:5.1.0, It is recommended to use average sharding.
 
@@ -46,9 +46,7 @@ echo "source exampledata/sharding/userdb-sharding.sql" | mysql -h172.8.8.111 -P3
 
 ### 1.3 Deploy on Docker(Testing recommend)
 
-- [https://hub.docker.com/_/zookeeper?tab=description](https://hub.docker.com/_/zookeeper?tab=description)
-
-- Run zookeeper simple container
+- Run [zookeeper](https://hub.docker.com/_/zookeeper) single container
 
 ```bash
 docker run -d \
@@ -60,7 +58,16 @@ docker run -d \
 zookeeper:3.6.0
 ```
 
-- Run shardingproxy simple container
+- Run [jaeger](https://hub.docker.com/r/jaegertracing/all-in-one) single container
+
+```bash
+docker run -d \
+--name jaeger1 \
+--net host \
+jaegertracing/all-in-one:1.30
+```
+
+- Run [shardingproxy](https://hub.docker.com/r/wl4g/shardingproxy) single container
 
 ```bash
 mkdir -p /mnt/disk1/shardingproxy/{ext-lib/agentlib/conf,conf,ext-lib}
@@ -132,7 +139,7 @@ java ${SP_JAVAAGENT} -jar shardingproxy-{version}-bin.jar 3308 ${SP_CONF_DIR}
 
 ## 3. Failover integration
 
-### 3.1 for MySQL [MGR](https://dev.mysql.com/doc/refman/5.7/en/group-replication.html) failover
+### 3.1 MySQL [Group Replication](https://dev.mysql.com/doc/refman/5.7/en/group-replication.html)
 
 - [https://dev.mysql.com/doc/refman/5.7/en/group-replication.html](https://dev.mysql.com/doc/refman/5.7/en/group-replication.html)
 
@@ -142,7 +149,7 @@ java ${SP_JAVAAGENT} -jar shardingproxy-{version}-bin.jar 3308 ${SP_CONF_DIR}
 
 - [Adjust discovery api feature. #13902](https://github.com/apache/shardingsphere/issues/13902)
 
-#### 3.1.1 Add MGR static DNS
+- 3.1.1 Add MGR static DNS
 
 ```bash
 sudo cp /etc/hosts /etc/hosts.bak
@@ -154,7 +161,7 @@ sudo cat <<EOF >/etc/hosts
 EOF
 ```
 
-#### 3.1.2 Then need to modify the test configuration follows
+- 3.1.2 Then need to modify the test configuration follows
 
 - Extension database discovery configuration refer to example: [config-sharding-readwrite-userdb.yaml](src/main/resources/example/sharding-readwrite/server.yaml), The prefix of the following key names is : `rules.discoveryTypes.<myDiscoveryName>.props.`
 
@@ -163,13 +170,13 @@ EOF
 | `extensionDiscoveryConfigJson.memberHostMappings.[0].<key>` | The access address of each dataSource correspond instance may be an external loadbalancing or proxy address (many-to-one) to internal address.(e.g: In the MGR cluster, the communication address of the member peer) |
 | `extensionDiscoveryConfigJson.memberHostMappings.[0].<key>.[0]` | The access address of each dataSource correspond instance may be an external loadbalancing or proxy address (one-to-many) to external addresses. |
 
-### 3.2 for PostgreSQL Cluster failover
+### 3.2 PostgreSQL Cluster
 
 ```bash
 #TODO
 ```
 
-### 3.3 for Oracle RAC failover
+### 3.3 Oracle RAC
 
 ```bash
 #TODO

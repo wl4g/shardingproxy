@@ -122,17 +122,20 @@ public final class ApmPluginLoader extends ClassLoader implements Closeable, Plu
         //
         // FEAT: ADD agent extension first priority order.
         //
-        List<File> files = asList(jarFiles);
+        LinkedList<File> files = new LinkedList<>(asList(jarFiles));
         // TODO use environment configuration.
         // High priority loading custom agent extension module. (only then
         // the JVM will use it first)
-        Collections.sort(files, (f1, f2) -> (f1.getAbsolutePath().contains("shardingproxy-agent-extension")) ? -1 : 0);
+        // Collections.sort(files,(f1,f2)->(f1.getAbsolutePath().contains("agent-extension"))?1:0);
+        File extension = files.stream().filter(f -> f.getAbsolutePath().contains("agent-extension")).findAny().get();
+        files.remove(extension);
+        files.offerFirst(extension);
 
         Map<String, PluginInterceptorPoint> pointMap = new HashMap<>();
         Set<String> ignoredPluginNames = AgentConfigurationRegistry.INSTANCE.get(AgentConfiguration.class)
                 .getIgnoredPluginNames();
         try (ByteArrayOutputStream outputStream = new ByteArrayOutputStream()) {
-            for (File each : jarFiles) {
+            for (File each : files) {
                 outputStream.reset();
                 JarFile jar = new JarFile(each, true);
                 jars.add(new PluginJar(jar, each));
