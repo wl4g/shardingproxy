@@ -44,7 +44,7 @@ cd $PROJECT_HOME/xcloud-shardingproxy-starter/
 echo "source exampledata/sharding/userdb-sharding.sql" | mysql -h172.8.8.111 -P3306 -uuserdb -p123456
 ```
 
-### 1.3 Deploy on Docker(Testing recommend)
+### 1.3 Deploy on Docker (Testing recommend)
 
 - Run [zookeeper](https://hub.docker.com/_/zookeeper) single container
 
@@ -74,7 +74,7 @@ mkdir -p /mnt/disk1/shardingproxy/{ext-lib/agentlib/conf,conf,ext-lib}
 mkdir -p /mnt/disk1/log/shardingproxy/
 
 # Prepare a example sharding configuration.
-cp xcloud-shardingproxy-starter/src/main/resources/agent/conf/*.yaml /mnt/disk1/shardingproxy/ext-lib/agentlib/conf/
+cp xcloud-shardingproxy-starter/src/main/resources/agent/conf/agent.yaml /mnt/disk1/shardingproxy/ext-lib/agentlib/conf/
 cp xcloud-shardingproxy-starter/src/main/resources/example/sharding-readwrite/*.yaml /mnt/disk1/shardingproxy/conf/
 
 # The MySQL group replication network for demonstration. see: https://blogs.wl4g.com/archives/2477
@@ -108,14 +108,18 @@ UPDATE userdb.t_user SET name='user-update-2222' WHERE id=10000000;
 DELETE FROM userdb.t_user WHERE id=10000000;
 ```
 
+- Testing access metrics
+
+  - Prometheus metrics: [http://localhost:10108/metrics](http://localhost:10108/metrics)
+
 - Testing access dashboard
 
-> Jaeger UI: [http://localhost:16686/search](http://localhost:16686/search)
+  - Jaeger UI: [http://localhost:16686/search](http://localhost:16686/search)
 
 - ![opentelemetry-jaeger1](shots/otel-jaeger1.png)
 - ![opentelemetry-jaeger1](shots/otel-jaeger2.png)
 
-### 1.4 Deploy on Kubernetes(Production recommend)
+### 1.4 Deploy on Kubernetes (Production recommend)
 
 - [Installation with helm](kubernetes/helm/README.md)
 
