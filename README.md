@@ -37,11 +37,10 @@ GROUP_NAME                            NODE_ID                               NODE
 
 Notice: The example of non average slicing is not recommended for production (scenario: slicing according to different machine performance weight), because shardingsphere:5.1.0, It is recommended to use average sharding.
 
-- Import exemple [userdb SQLs](xcloud-shardingproxy-starter/exampledata/sharding/userdb-sharding.sql)
+- Import exemple `userdb` [SQLs](xcloud-shardingproxy-starter/exampledata/sharding/userdb-sharding.sql)
 
 ```bash
-cd $PROJECT_HOME/xcloud-shardingproxy-starter/
-echo "source exampledata/sharding/userdb-sharding.sql" | mysql -h172.8.8.111 -P3306 -uuserdb -p123456
+echo "source $PROJECT_HOME/xcloud-shardingproxy-starter/exampledata/sharding/userdb-sharding.sql" | mysql -h172.8.8.111 -P3306 -uuserdb -p123456
 ```
 
 ### 1.3 Deploy on Docker (Testing recommend)
@@ -108,11 +107,11 @@ UPDATE userdb.t_user SET name='user-update-2222' WHERE id=10000000;
 DELETE FROM userdb.t_user WHERE id=10000000;
 ```
 
-- Testing access metrics
+- Testing scrape prometheus metrics
 
   - Prometheus metrics: [http://localhost:10108/metrics](http://localhost:10108/metrics)
 
-- Testing access dashboard
+- Testing access tracing dashboard
 
   - Jaeger UI: [http://localhost:16686/search](http://localhost:16686/search)
 
@@ -125,7 +124,7 @@ DELETE FROM userdb.t_user WHERE id=10000000;
 
 ## 2. Developer guide
 
-- 2.1 Compiling
+### 2.1 Compiling
 
 ```bash
 cd /opt/
@@ -135,7 +134,7 @@ cd xcloud-shardingproxy
 mvn clean install -DskipTests -Dmaven.test.skip=true -T 2C
 ```
 
-- 2.2 Example developer debugging
+### 2.2 Example developer debugging
 
 > The following is the schematic configuration of the example, please  correct configure it in eclipse and idea development tools.
 
@@ -158,9 +157,9 @@ java ${SP_JAVAAGENT} -jar shardingproxy-${SP_VERSION}-bin.jar 3308 ${SP_CONF_DIR
 #java ${SP_JAVAAGENT} -cp xxx com.wl4g.ShardingProxy 3308 ${SP_CONF_DIR}
 ```
 
-## 3. Failover integration
+## 3. Failover
 
-### 3.1 MySQL [Group Replication](https://dev.mysql.com/doc/refman/5.7/en/group-replication.html)
+### 3.1 [MySQL Group Replication](https://dev.mysql.com/doc/refman/5.7/en/group-replication.html)
 
 - [https://dev.mysql.com/doc/refman/5.7/en/group-replication.html](https://dev.mysql.com/doc/refman/5.7/en/group-replication.html)
 
@@ -184,7 +183,7 @@ EOF
 
 - 3.1.2 Then need to modify the test configuration follows
 
-- Extension database discovery configuration refer to example: [config-sharding-readwrite-userdb.yaml](src/main/resources/example/sharding-readwrite/server.yaml), The prefix of the following key names is : `rules.discoveryTypes.<myDiscoveryName>.props.`
+> Extension database discovery configuration refer to example: [config-sharding-readwrite-userdb.yaml](src/main/resources/example/sharding-readwrite/server.yaml), The prefix of the following key names is : `rules.discoveryTypes.<myDiscoveryName>.props.`
 
 | Attribute | Description |
 |-|-|
@@ -203,24 +202,38 @@ EOF
 #TODO
 ```
 
-## 4. Metircs integration
+## 4. Metircs
 
-- [https://shardingsphere.apache.org/document/5.1.0/cn/features/governance/observability/agent/](https://shardingsphere.apache.org/document/5.1.0/cn/features/governance/observability/agent/)
+- Docs:
+  - [https://shardingsphere.apache.org/document/5.1.0/cn/features/governance/observability/agent/](https://shardingsphere.apache.org/document/5.1.0/cn/features/governance/observability/agent/)
 
-- Source codes refer: [org.apache.shardingsphere.agent.metrics.prometheus.service.PrometheusPluginBootService.java](https://github.com/apache/shardingsphere/blob/5.1.0/shardingsphere-agent/shardingsphere-agent-plugins/shardingsphere-agent-plugin-metrics/shardingsphere-agent-metrics-prometheus/src/main/java/org/apache/shardingsphere/agent/metrics/prometheus/service/PrometheusPluginBootService.java)
+- Source codes:
+  - [org.apache.shardingsphere.agent.metrics.prometheus.service.PrometheusPluginBootService.java](https://github.com/apache/shardingsphere/blob/5.1.0/shardingsphere-agent/shardingsphere-agent-plugins/shardingsphere-agent-plugin-metrics/shardingsphere-agent-metrics-prometheus/src/main/java/org/apache/shardingsphere/agent/metrics/prometheus/service/PrometheusPluginBootService.java)
 
-- Source codes refer: [org.apache.shardingsphere.agent.core.config.loader.AgentConfigurationLoader.java](https://github1s.com/apache/shardingsphere/blob/5.1.0/shardingsphere-agent/shardingsphere-agent-core/src/main/java/org/apache/shardingsphere/agent/core/config/loader/AgentConfigurationLoader.java)
+  - [org.apache.shardingsphere.agent.core.config.loader.AgentConfigurationLoader.java](https://github1s.com/apache/shardingsphere/blob/5.1.0/shardingsphere-agent/shardingsphere-agent-core/src/main/java/org/apache/shardingsphere/agent/core/config/loader/AgentConfigurationLoader.java)
 
-- Example agent.yaml [xcloud-shardingproxy-starter/src/main/resources/conf/agent.yaml](https://github.com/wl4g/xcloud-shardingproxy/blob/master/xcloud-shardingproxy-starter/src/main/resources/conf/agent.yaml)
+- Example configuration:
+
+  - [xcloud-shardingproxy-starter/src/main/resources/agent/conf/agent.yaml](https://github.com/wl4g/xcloud-shardingproxy/blob/master/xcloud-shardingproxy-starter/src/main/resources/agent/conf/agent.yaml)
+
+- Gets prometheus metrics
 
 ```bash
-# Gets prometheus metrics
-curl http://localhost:10105/metrics
+curl http://localhost:10108/metrics
 ```
 
-## 5. Tracing integration
+## 5. Tracing
 
-TODO
+- Docs:
+  - [https://shardingsphere.apache.org/document/5.1.0/cn/features/governance/observability/agent/](https://shardingsphere.apache.org/document/5.1.0/cn/features/governance/observability/agent/)
+
+  - [https://github.com/open-telemetry/opentelemetry-java/tree/v1.3.0/sdk-extensions/autoconfigure#sampler](https://github.com/open-telemetry/opentelemetry-java/tree/v1.3.0/sdk-extensions/autoconfigure#sampler)
+
+- Example configuration:
+
+  - [xcloud-shardingproxy-starter/src/main/resources/agent/conf/agent.yaml](https://github.com/wl4g/xcloud-shardingproxy/blob/master/xcloud-shardingproxy-starter/src/main/resources/agent/conf/agent.yaml)
+
+- Jaeger UI: [http://localhost:16686/search](http://localhost:16686/search)
 
 ## 6. FAQ
 
@@ -230,130 +243,128 @@ Under the same schemaName, multiple sharding databases must be the same. See sou
 
 ### 6.2 What data is stored in zookeeper and where is the source code?
 
-- [org.apache.shardingsphere.mode.metadata.persist.node.SchemaMetaDataNode.java](https://github.com/apache/shardingsphere/blob/5.1.0/shardingsphere-mode/shardingsphere-mode-core/src/main/java/org/apache/shardingsphere/mode/metadata/persist/node/SchemaMetaDataNode.java)
+  - [org.apache.shardingsphere.mode.metadata.persist.node.SchemaMetaDataNode.java](https://github.com/apache/shardingsphere/blob/5.1.0/shardingsphere-mode/shardingsphere-mode-core/src/main/java/org/apache/shardingsphere/mode/metadata/persist/node/SchemaMetaDataNode.java)
 
-- [org.apache.shardingsphere.mode.metadata.persist.node.GlobalNode.java](https://github.com/apache/shardingsphere/blob/5.1.0/shardingsphere-mode/shardingsphere-mode-core/src/main/java/org/apache/shardingsphere/mode/metadata/persist/node/GlobalNode.java)
+  - [org.apache.shardingsphere.mode.metadata.persist.node.GlobalNode.java](https://github.com/apache/shardingsphere/blob/5.1.0/shardingsphere-mode/shardingsphere-mode-core/src/main/java/org/apache/shardingsphere/mode/metadata/persist/node/GlobalNode.java)
 
-- [org.apache.shardingsphere.mode.manager.cluster.coordinator.registry.process.node.ProcessNode.java](https://github.com/apache/shardingsphere/blob/5.1.0/shardingsphere-mode/shardingsphere-mode-type/shardingsphere-cluster-mode/shardingsphere-cluster-mode-core/src/main/java/org/apache/shardingsphere/mode/manager/cluster/coordinator/registry/process/node/ProcessNode.java)
+  - [org.apache.shardingsphere.mode.manager.cluster.coordinator.registry.process.node.ProcessNode.java](https://github.com/apache/shardingsphere/blob/5.1.0/shardingsphere-mode/shardingsphere-mode-type/shardingsphere-cluster-mode/shardingsphere-cluster-mode-core/src/main/java/org/apache/shardingsphere/mode/manager/cluster/coordinator/registry/process/node/ProcessNode.java)
 
-- [org.apache.shardingsphere.mode.manager.cluster.coordinator.registry.status.StatusNode.java](https://github1s.com/apache/shardingsphere/blob/5.1.0/shardingsphere-mode/shardingsphere-mode-type/shardingsphere-cluster-mode/shardingsphere-cluster-mode-core/src/main/java/org/apache/shardingsphere/mode/manager/cluster/coordinator/registry/status/StatusNode.java)
+  - [org.apache.shardingsphere.mode.manager.cluster.coordinator.registry.status.StatusNode.java](https://github1s.com/apache/shardingsphere/blob/5.1.0/shardingsphere-mode/shardingsphere-mode-type/shardingsphere-cluster-mode/shardingsphere-cluster-mode-core/src/main/java/org/apache/shardingsphere/mode/manager/cluster/coordinator/registry/status/StatusNode.java)
 
-- [org.apache.shardingsphere.mode.manager.cluster.coordinator.registry.status.storage.node.StorageStatusNode.java](https://github.com/apache/shardingsphere/blob/5.1.0/shardingsphere-mode/shardingsphere-mode-type/shardingsphere-cluster-mode/shardingsphere-cluster-mode-core/src/main/java/org/apache/shardingsphere/mode/manager/cluster/coordinator/registry/status/storage/node/StorageStatusNode.java)
+  - [org.apache.shardingsphere.mode.manager.cluster.coordinator.registry.status.storage.node.StorageStatusNode.java](https://github.com/apache/shardingsphere/blob/5.1.0/shardingsphere-mode/shardingsphere-mode-type/shardingsphere-cluster-mode/shardingsphere-cluster-mode-core/src/main/java/org/apache/shardingsphere/mode/manager/cluster/coordinator/registry/status/storage/node/StorageStatusNode.java)
 
-- for example zookeeper storage data directories.
+  - for example zookeeper storage data directories.
 
-```bash
-/cn_south1_a1_shardingproxy_0
-/cn_south1_a1_shardingproxy_0/MGR-ha_userdb_g0db0
-/cn_south1_a1_shardingproxy_0/MGR-ha_userdb_g0db1
-/cn_south1_a1_shardingproxy_0/MGR-ha_userdb_g0db2
-/cn_south1_a1_shardingproxy_0/lock
-/cn_south1_a1_shardingproxy_0/metadata
-/cn_south1_a1_shardingproxy_0/props
-/cn_south1_a1_shardingproxy_0/rules
-/cn_south1_a1_shardingproxy_0/scaling
-/cn_south1_a1_shardingproxy_0/status
-/cn_south1_a1_shardingproxy_0/MGR-ha_userdb_g0db0/config
-/cn_south1_a1_shardingproxy_0/MGR-ha_userdb_g0db0/instances
-/cn_south1_a1_shardingproxy_0/MGR-ha_userdb_g0db0/leader
-/cn_south1_a1_shardingproxy_0/MGR-ha_userdb_g0db0/servers
-/cn_south1_a1_shardingproxy_0/MGR-ha_userdb_g0db0/sharding
-/cn_south1_a1_shardingproxy_0/MGR-ha_userdb_g0db0/instances/10.0.0.114@-@137040
-/cn_south1_a1_shardingproxy_0/MGR-ha_userdb_g0db0/leader/election
-/cn_south1_a1_shardingproxy_0/MGR-ha_userdb_g0db0/leader/sharding
-/cn_south1_a1_shardingproxy_0/MGR-ha_userdb_g0db0/leader/election/instance
-/cn_south1_a1_shardingproxy_0/MGR-ha_userdb_g0db0/servers/10.0.0.114
-/cn_south1_a1_shardingproxy_0/MGR-ha_userdb_g0db0/sharding/0
-/cn_south1_a1_shardingproxy_0/MGR-ha_userdb_g0db0/sharding/0/instance
-/cn_south1_a1_shardingproxy_0/MGR-ha_userdb_g0db1/config
-/cn_south1_a1_shardingproxy_0/MGR-ha_userdb_g0db1/instances
-/cn_south1_a1_shardingproxy_0/MGR-ha_userdb_g0db1/leader
-/cn_south1_a1_shardingproxy_0/MGR-ha_userdb_g0db1/servers
-/cn_south1_a1_shardingproxy_0/MGR-ha_userdb_g0db1/sharding
-/cn_south1_a1_shardingproxy_0/MGR-ha_userdb_g0db1/instances/10.0.0.114@-@137040
-/cn_south1_a1_shardingproxy_0/MGR-ha_userdb_g0db1/leader/election
-/cn_south1_a1_shardingproxy_0/MGR-ha_userdb_g0db1/leader/sharding
-/cn_south1_a1_shardingproxy_0/MGR-ha_userdb_g0db1/leader/election/instance
-/cn_south1_a1_shardingproxy_0/MGR-ha_userdb_g0db1/servers/10.0.0.114
-/cn_south1_a1_shardingproxy_0/MGR-ha_userdb_g0db1/sharding/0
-/cn_south1_a1_shardingproxy_0/MGR-ha_userdb_g0db1/sharding/0/instance
-/cn_south1_a1_shardingproxy_0/MGR-ha_userdb_g0db2/config
-/cn_south1_a1_shardingproxy_0/MGR-ha_userdb_g0db2/instances
-/cn_south1_a1_shardingproxy_0/MGR-ha_userdb_g0db2/leader
-/cn_south1_a1_shardingproxy_0/MGR-ha_userdb_g0db2/servers
-/cn_south1_a1_shardingproxy_0/MGR-ha_userdb_g0db2/sharding
-/cn_south1_a1_shardingproxy_0/MGR-ha_userdb_g0db2/instances/10.0.0.114@-@137040
-/cn_south1_a1_shardingproxy_0/MGR-ha_userdb_g0db2/leader/election
-/cn_south1_a1_shardingproxy_0/MGR-ha_userdb_g0db2/leader/sharding
-/cn_south1_a1_shardingproxy_0/MGR-ha_userdb_g0db2/leader/election/instance
-/cn_south1_a1_shardingproxy_0/MGR-ha_userdb_g0db2/servers/10.0.0.114
-/cn_south1_a1_shardingproxy_0/MGR-ha_userdb_g0db2/sharding/0
-/cn_south1_a1_shardingproxy_0/MGR-ha_userdb_g0db2/sharding/0/instance
-/cn_south1_a1_shardingproxy_0/lock/ack
-/cn_south1_a1_shardingproxy_0/lock/locks
-/cn_south1_a1_shardingproxy_0/metadata/userdb_g0db0
-/cn_south1_a1_shardingproxy_0/metadata/userdb_g0db1
-/cn_south1_a1_shardingproxy_0/metadata/userdb_g0db2
-/cn_south1_a1_shardingproxy_0/metadata/userdb_g0db0/dataSources
-/cn_south1_a1_shardingproxy_0/metadata/userdb_g0db0/rules
-/cn_south1_a1_shardingproxy_0/metadata/userdb_g0db0/tables
-/cn_south1_a1_shardingproxy_0/metadata/userdb_g0db0/tables/t_user_0
-/cn_south1_a1_shardingproxy_0/metadata/userdb_g0db0/tables/t_user_1
-/cn_south1_a1_shardingproxy_0/metadata/userdb_g0db0/tables/t_user_2
-/cn_south1_a1_shardingproxy_0/metadata/userdb_g0db1/dataSources
-/cn_south1_a1_shardingproxy_0/metadata/userdb_g0db1/rules
-/cn_south1_a1_shardingproxy_0/metadata/userdb_g0db1/tables
-/cn_south1_a1_shardingproxy_0/metadata/userdb_g0db1/tables/t_user_0
-/cn_south1_a1_shardingproxy_0/metadata/userdb_g0db1/tables/t_user_1
-/cn_south1_a1_shardingproxy_0/metadata/userdb_g0db1/tables/t_user_2
-/cn_south1_a1_shardingproxy_0/metadata/userdb_g0db2/dataSources
-/cn_south1_a1_shardingproxy_0/metadata/userdb_g0db2/rules
-/cn_south1_a1_shardingproxy_0/metadata/userdb_g0db2/tables
-/cn_south1_a1_shardingproxy_0/metadata/userdb_g0db2/tables/t_user_0
-/cn_south1_a1_shardingproxy_0/metadata/userdb_g0db2/tables/t_user_1
-/cn_south1_a1_shardingproxy_0/metadata/userdb_g0db2/tables/t_user_2
-/cn_south1_a1_shardingproxy_0/scaling/_finished_check
-/cn_south1_a1_shardingproxy_0/scaling/_finished_check/config
-/cn_south1_a1_shardingproxy_0/scaling/_finished_check/instances
-/cn_south1_a1_shardingproxy_0/scaling/_finished_check/leader
-/cn_south1_a1_shardingproxy_0/scaling/_finished_check/servers
-/cn_south1_a1_shardingproxy_0/scaling/_finished_check/instances/10.0.0.114@-@137040
-/cn_south1_a1_shardingproxy_0/scaling/_finished_check/leader/election
-/cn_south1_a1_shardingproxy_0/scaling/_finished_check/leader/sharding
-/cn_south1_a1_shardingproxy_0/scaling/_finished_check/leader/election/instance
-/cn_south1_a1_shardingproxy_0/scaling/_finished_check/leader/sharding/necessary
-/cn_south1_a1_shardingproxy_0/scaling/_finished_check/servers/10.0.0.114
-/cn_south1_a1_shardingproxy_0/status/compute_nodes
-/cn_south1_a1_shardingproxy_0/status/storage_nodes
-/cn_south1_a1_shardingproxy_0/status/compute_nodes/online
-/cn_south1_a1_shardingproxy_0/status/compute_nodes/online/172.8.8.1@3308
-/cn_south1_a1_shardingproxy_0/status/storage_nodes/disable
-/cn_south1_a1_shardingproxy_0/status/storage_nodes/primary
-/cn_south1_a1_shardingproxy_0/status/storage_nodes/disable/userdb_g0db0.ds_userdb_g0db0_0
-/cn_south1_a1_shardingproxy_0/status/storage_nodes/disable/userdb_g0db1.ds_userdb_g0db1_0
-/cn_south1_a1_shardingproxy_0/status/storage_nodes/disable/userdb_g0db2.ds_userdb_g0db2_0
-/cn_south1_a1_shardingproxy_0/status/storage_nodes/primary/userdb_g0db0.ha_userdb_g0db0
-/cn_south1_a1_shardingproxy_0/status/storage_nodes/primary/userdb_g0db1.ha_userdb_g0db1
-/cn_south1_a1_shardingproxy_0/status/storage_nodes/primary/userdb_g0db2.ha_userdb_g0db2
-```
+  ```bash
+  /cn_south1_a1_shardingproxy_0
+  /cn_south1_a1_shardingproxy_0/MGR-ha_userdb_g0db0
+  /cn_south1_a1_shardingproxy_0/MGR-ha_userdb_g0db1
+  /cn_south1_a1_shardingproxy_0/MGR-ha_userdb_g0db2
+  /cn_south1_a1_shardingproxy_0/lock
+  /cn_south1_a1_shardingproxy_0/metadata
+  /cn_south1_a1_shardingproxy_0/props
+  /cn_south1_a1_shardingproxy_0/rules
+  /cn_south1_a1_shardingproxy_0/scaling
+  /cn_south1_a1_shardingproxy_0/status
+  /cn_south1_a1_shardingproxy_0/MGR-ha_userdb_g0db0/config
+  /cn_south1_a1_shardingproxy_0/MGR-ha_userdb_g0db0/instances
+  /cn_south1_a1_shardingproxy_0/MGR-ha_userdb_g0db0/leader
+  /cn_south1_a1_shardingproxy_0/MGR-ha_userdb_g0db0/servers
+  /cn_south1_a1_shardingproxy_0/MGR-ha_userdb_g0db0/sharding
+  /cn_south1_a1_shardingproxy_0/MGR-ha_userdb_g0db0/instances/10.0.0.114@-@137040
+  /cn_south1_a1_shardingproxy_0/MGR-ha_userdb_g0db0/leader/election
+  /cn_south1_a1_shardingproxy_0/MGR-ha_userdb_g0db0/leader/sharding
+  /cn_south1_a1_shardingproxy_0/MGR-ha_userdb_g0db0/leader/election/instance
+  /cn_south1_a1_shardingproxy_0/MGR-ha_userdb_g0db0/servers/10.0.0.114
+  /cn_south1_a1_shardingproxy_0/MGR-ha_userdb_g0db0/sharding/0
+  /cn_south1_a1_shardingproxy_0/MGR-ha_userdb_g0db0/sharding/0/instance
+  /cn_south1_a1_shardingproxy_0/MGR-ha_userdb_g0db1/config
+  /cn_south1_a1_shardingproxy_0/MGR-ha_userdb_g0db1/instances
+  /cn_south1_a1_shardingproxy_0/MGR-ha_userdb_g0db1/leader
+  /cn_south1_a1_shardingproxy_0/MGR-ha_userdb_g0db1/servers
+  /cn_south1_a1_shardingproxy_0/MGR-ha_userdb_g0db1/sharding
+  /cn_south1_a1_shardingproxy_0/MGR-ha_userdb_g0db1/instances/10.0.0.114@-@137040
+  /cn_south1_a1_shardingproxy_0/MGR-ha_userdb_g0db1/leader/election
+  /cn_south1_a1_shardingproxy_0/MGR-ha_userdb_g0db1/leader/sharding
+  /cn_south1_a1_shardingproxy_0/MGR-ha_userdb_g0db1/leader/election/instance
+  /cn_south1_a1_shardingproxy_0/MGR-ha_userdb_g0db1/servers/10.0.0.114
+  /cn_south1_a1_shardingproxy_0/MGR-ha_userdb_g0db1/sharding/0
+  /cn_south1_a1_shardingproxy_0/MGR-ha_userdb_g0db1/sharding/0/instance
+  /cn_south1_a1_shardingproxy_0/MGR-ha_userdb_g0db2/config
+  /cn_south1_a1_shardingproxy_0/MGR-ha_userdb_g0db2/instances
+  /cn_south1_a1_shardingproxy_0/MGR-ha_userdb_g0db2/leader
+  /cn_south1_a1_shardingproxy_0/MGR-ha_userdb_g0db2/servers
+  /cn_south1_a1_shardingproxy_0/MGR-ha_userdb_g0db2/sharding
+  /cn_south1_a1_shardingproxy_0/MGR-ha_userdb_g0db2/instances/10.0.0.114@-@137040
+  /cn_south1_a1_shardingproxy_0/MGR-ha_userdb_g0db2/leader/election
+  /cn_south1_a1_shardingproxy_0/MGR-ha_userdb_g0db2/leader/sharding
+  /cn_south1_a1_shardingproxy_0/MGR-ha_userdb_g0db2/leader/election/instance
+  /cn_south1_a1_shardingproxy_0/MGR-ha_userdb_g0db2/servers/10.0.0.114
+  /cn_south1_a1_shardingproxy_0/MGR-ha_userdb_g0db2/sharding/0
+  /cn_south1_a1_shardingproxy_0/MGR-ha_userdb_g0db2/sharding/0/instance
+  /cn_south1_a1_shardingproxy_0/lock/ack
+  /cn_south1_a1_shardingproxy_0/lock/locks
+  /cn_south1_a1_shardingproxy_0/metadata/userdb_g0db0
+  /cn_south1_a1_shardingproxy_0/metadata/userdb_g0db1
+  /cn_south1_a1_shardingproxy_0/metadata/userdb_g0db2
+  /cn_south1_a1_shardingproxy_0/metadata/userdb_g0db0/dataSources
+  /cn_south1_a1_shardingproxy_0/metadata/userdb_g0db0/rules
+  /cn_south1_a1_shardingproxy_0/metadata/userdb_g0db0/tables
+  /cn_south1_a1_shardingproxy_0/metadata/userdb_g0db0/tables/t_user_0
+  /cn_south1_a1_shardingproxy_0/metadata/userdb_g0db0/tables/t_user_1
+  /cn_south1_a1_shardingproxy_0/metadata/userdb_g0db0/tables/t_user_2
+  /cn_south1_a1_shardingproxy_0/metadata/userdb_g0db1/dataSources
+  /cn_south1_a1_shardingproxy_0/metadata/userdb_g0db1/rules
+  /cn_south1_a1_shardingproxy_0/metadata/userdb_g0db1/tables
+  /cn_south1_a1_shardingproxy_0/metadata/userdb_g0db1/tables/t_user_0
+  /cn_south1_a1_shardingproxy_0/metadata/userdb_g0db1/tables/t_user_1
+  /cn_south1_a1_shardingproxy_0/metadata/userdb_g0db1/tables/t_user_2
+  /cn_south1_a1_shardingproxy_0/metadata/userdb_g0db2/dataSources
+  /cn_south1_a1_shardingproxy_0/metadata/userdb_g0db2/rules
+  /cn_south1_a1_shardingproxy_0/metadata/userdb_g0db2/tables
+  /cn_south1_a1_shardingproxy_0/metadata/userdb_g0db2/tables/t_user_0
+  /cn_south1_a1_shardingproxy_0/metadata/userdb_g0db2/tables/t_user_1
+  /cn_south1_a1_shardingproxy_0/metadata/userdb_g0db2/tables/t_user_2
+  /cn_south1_a1_shardingproxy_0/scaling/_finished_check
+  /cn_south1_a1_shardingproxy_0/scaling/_finished_check/config
+  /cn_south1_a1_shardingproxy_0/scaling/_finished_check/instances
+  /cn_south1_a1_shardingproxy_0/scaling/_finished_check/leader
+  /cn_south1_a1_shardingproxy_0/scaling/_finished_check/servers
+  /cn_south1_a1_shardingproxy_0/scaling/_finished_check/instances/10.0.0.114@-@137040
+  /cn_south1_a1_shardingproxy_0/scaling/_finished_check/leader/election
+  /cn_south1_a1_shardingproxy_0/scaling/_finished_check/leader/sharding
+  /cn_south1_a1_shardingproxy_0/scaling/_finished_check/leader/election/instance
+  /cn_south1_a1_shardingproxy_0/scaling/_finished_check/leader/sharding/necessary
+  /cn_south1_a1_shardingproxy_0/scaling/_finished_check/servers/10.0.0.114
+  /cn_south1_a1_shardingproxy_0/status/compute_nodes
+  /cn_south1_a1_shardingproxy_0/status/storage_nodes
+  /cn_south1_a1_shardingproxy_0/status/compute_nodes/online
+  /cn_south1_a1_shardingproxy_0/status/compute_nodes/online/172.8.8.1@3308
+  /cn_south1_a1_shardingproxy_0/status/storage_nodes/disable
+  /cn_south1_a1_shardingproxy_0/status/storage_nodes/primary
+  /cn_south1_a1_shardingproxy_0/status/storage_nodes/disable/userdb_g0db0.ds_userdb_g0db0_0
+  /cn_south1_a1_shardingproxy_0/status/storage_nodes/disable/userdb_g0db1.ds_userdb_g0db1_0
+  /cn_south1_a1_shardingproxy_0/status/storage_nodes/disable/userdb_g0db2.ds_userdb_g0db2_0
+  /cn_south1_a1_shardingproxy_0/status/storage_nodes/primary/userdb_g0db0.ha_userdb_g0db0
+  /cn_south1_a1_shardingproxy_0/status/storage_nodes/primary/userdb_g0db1.ha_userdb_g0db1
+  /cn_south1_a1_shardingproxy_0/status/storage_nodes/primary/userdb_g0db2.ha_userdb_g0db2
+  ```
 
 ### 6.3 If you want to test native [apache/shardingsphere/shardingsphere-proxy](https://github.com/apache/shardingsphere/tree/master/shardingsphere-proxy)
 
-```bash
-sudo mkdir -p /mnt/disk1/shardingsphere-proxy/{conf,ext-lib}
-sudo mkdir -p /mnt/disk1/log/shardingsphere-proxy/
-
-docker network create --subnet=172.8.8.0/24 mysqlnet
-
-docker run -d \
---name ssp1 \
---net mysqlnet \
---restart no \
--p 3308:3308 \
--v /mnt/disk1/shardingsphere-proxy/conf:/opt/shardingsphere-proxy/conf/ \
--v /mnt/disk1/shardingsphere-proxy/ext-lib/:/opt/shardingsphere-proxy/ext-lib/ \
--v /mnt/disk1/log/shardingsphere-proxy/:/opt/shardingsphere-proxy/logs/ \
--e JVM_OPTS='-Djava.awt.headless=true' \
--e PORT=3308 \
-apache/shardingsphere-proxy:5.1.0
-```
+  ```bash
+  sudo mkdir -p /mnt/disk1/shardingsphere-proxy/{conf,ext-lib}
+  sudo mkdir -p /mnt/disk1/log/shardingsphere-proxy/
+  docker network create --subnet=172.8.8.0/24 mysqlnet
+  docker run -d \
+  --name ssp1 \
+  --net mysqlnet \
+  --restart no \
+  -p 3308:3308 \
+  -v /mnt/disk1/shardingsphere-proxy/conf:/opt/shardingsphere-proxy/conf/ \
+  -v /mnt/disk1/shardingsphere-proxy/ext-lib/:/opt/shardingsphere-proxy/ext-lib/ \
+  -v /mnt/disk1/log/shardingsphere-proxy/:/opt/shardingsphere-proxy/logs/ \
+  -e JVM_OPTS='-Djava.awt.headless=true' \
+  -e PORT=3308 \
+  apache/shardingsphere-proxy:5.1.0
+  ```
