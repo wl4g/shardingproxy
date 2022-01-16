@@ -216,13 +216,11 @@ EOF
 
 - Example configuration:
 
-  - [xcloud-shardingproxy-starter/src/main/resources/agent/conf/agent.yaml](https://github.com/wl4g/xcloud-shardingproxy/blob/master/xcloud-shardingproxy-starter/src/main/resources/agent/conf/agent.yaml)
+  - [example metrics plugin agent.yaml](https://github.com/wl4g/xcloud-shardingproxy/blob/master/xcloud-shardingproxy-starter/src/main/resources/agent/conf/agent.yaml)
 
-- Gets prometheus metrics
+  - [example prometheus alerting shardingproxy-alert-rules.yml](prometheus/shardingproxy-alert-rules.yml)
 
-```bash
-curl http://localhost:10108/metrics
-```
+- Gets prometheus metrics: [http://localhost:10108/metrics](http://localhost:10108/metrics)
 
 ## 5. Tracing
 
@@ -233,17 +231,21 @@ curl http://localhost:10108/metrics
 
 - Example configuration:
 
-  - [xcloud-shardingproxy-starter/src/main/resources/agent/conf/agent.yaml](https://github.com/wl4g/xcloud-shardingproxy/blob/master/xcloud-shardingproxy-starter/src/main/resources/agent/conf/agent.yaml)
+  - [example tracing plugin agent.yaml](https://github.com/wl4g/xcloud-shardingproxy/blob/master/xcloud-shardingproxy-starter/src/main/resources/agent/conf/agent.yaml)
 
 - Jaeger UI: [http://localhost:16686/search](http://localhost:16686/search)
 
-## 6. FAQ
+## 6. Logging
 
-### 6.1 Can the same schema support different types of databases at the same time under read-write splitting and fragment splitting modes ?
+> Like regular springboot applications, for example, use [EFK](https://github.com/elastic/beats) to collect, or use [loki](https://github.com/grafana/loki), [fluentbit](https://github.com/fluent/fluent-bit) and other components to collect application logs uniformly in the [kubernetes](https://kubernetes.io) environment.
+
+## 7. FAQ
+
+### 7.1 Can the same schema support different types of databases at the same time under read-write splitting and fragment splitting modes ?
 
 Under the same schemaName, multiple sharding databases must be the same. See source code: [org.apache.shardingsphere.infra.metadata.ShardingSphereMetaData](https://github.com/apache/shardingsphere/blob/5.1.0/shardingsphere-infra/shardingsphere-infra-common/src/main/java/org/apache/shardingsphere/infra/metadata/ShardingSphereMetaData.java#L35) and [org.apache.shardingsphere.infra.metadata.resource.ShardingSphereResource](https://github.com/apache/shardingsphere/blob/5.1.0/shardingsphere-infra/shardingsphere-infra-common/src/main/java/org/apache/shardingsphere/infra/metadata/resource/ShardingSphereResource.java#L48)
 
-### 6.2 What data is stored in zookeeper and where is the source code?
+### 7.2 What data is stored in zookeeper and where is the source code?
 
   - [org.apache.shardingsphere.mode.metadata.persist.node.SchemaMetaDataNode.java](https://github.com/apache/shardingsphere/blob/5.1.0/shardingsphere-mode/shardingsphere-mode-core/src/main/java/org/apache/shardingsphere/mode/metadata/persist/node/SchemaMetaDataNode.java)
 
@@ -352,7 +354,7 @@ Under the same schemaName, multiple sharding databases must be the same. See sou
   /cn_south1_a1_shardingproxy_0/status/storage_nodes/primary/userdb_g0db2.ha_userdb_g0db2
   ```
 
-### 6.3 If you want to test native [apache/shardingsphere/shardingsphere-proxy](https://github.com/apache/shardingsphere/tree/master/shardingsphere-proxy)
+### 7.3 If you want to test native [apache/shardingsphere/shardingsphere-proxy](https://github.com/apache/shardingsphere/tree/master/shardingsphere-proxy)
 
   ```bash
   sudo mkdir -p /mnt/disk1/shardingsphere-proxy/{conf,ext-lib}
