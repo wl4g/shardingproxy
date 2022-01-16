@@ -112,6 +112,9 @@ DELETE FROM userdb.t_user WHERE id=10000000;
 
 > Jaeger UI: [http://localhost:16686/search](http://localhost:16686/search)
 
+- ![opentelemetry-jaeger1](shots/otel-jaeger1.png)
+- ![opentelemetry-jaeger1](shots/otel-jaeger2.png)
+
 ### 1.4 Deploy on Kubernetes(Production recommend)
 
 - [Installation with helm](kubernetes/helm/README.md)
