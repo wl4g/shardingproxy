@@ -29,11 +29,12 @@ applicationName: cn_south1_a1_shardingproxy_0
 ignoredPluginNames: #[] # Otherwise a null pointer is reported when instantiating(5.1.0).
   #- Logging
   #- Prometheus
-  #- Jaeger
-  #- Zipkin
+  - Jaeger
+  - Zipkin
   - Opentracing
   #- OpenTelemetry
 
+# see:https://shardingsphere.apache.org/document/5.0.0/cn/features/governance/observability/agent/
 plugins:
   Logging:
     props:
@@ -44,6 +45,7 @@ plugins:
     props:
       JVM_INFORMATION_COLLECTOR_ENABLED : "true"
   #Jaeger:
+  #  # see:https://www.jaegertracing.io/docs/1.21/client-libraries/#propagation-format
   #  host: "localhost"
   #  port: 5775
   #  props:
@@ -64,11 +66,23 @@ plugins:
   #    OPENTRACING_TRACER_CLASS_NAME: "org.apache.skywalking.apm.toolkit.opentracing.SkywalkingTracer"
   OpenTelemetry:
     # see:org.apache.shardingsphere.agent.plugin.tracing.opentelemetry.service.OpenTelemetryTracingPluginBootService
+    # see:io.opentelemetry.sdk.autoconfigure.SpanExporterConfiguration
     props:
-      # Resource info of opentelemetry, multiple configurations can be separated by ','
-      otel.resource.attributes: "service.name=cn-south1-a1-shardingproxy"
+      # see:https://github.com/open-telemetry/opentelemetry-java/tree/v1.3.0/sdk-extensions/autoconfigure#opentelemetry-resource
+      otel.resource.attributes: "service.name=cn-south1-a1-shardingproxy,service.namespace=shardingproxy"
       otel.traces.exporter: "jaeger" # zipkin|jaeger
-      # see:io.opentelemetry.sdk.autoconfigure.SpanExporterConfiguration
+      # see:https://github.com/open-telemetry/opentelemetry-java/tree/v1.3.0/sdk-extensions/autoconfigure#sampler
+      otel.traces.sampler: "parentbased_always_on" # always_on|always_off|traceidratio|parentbased_always_on|...
+      otel.traces.sampler.arg: "0.99"
+      # see:https://github.com/open-telemetry/opentelemetry-java/tree/v1.3.0/sdk-extensions/autoconfigure#span-limits
+      otel.span.attribute.count.limit: "128"
+      otel.span.event.count.limit: "128"
+      otel.span.link.count.limit: "128"
+      # see:https://github.com/open-telemetry/opentelemetry-java/tree/v1.3.0/sdk-extensions/autoconfigure#batch-span-processor
+      otel.bsp.schedule.delay: "5000"
+      otel.bsp.max.queue.size: "2048"
+      otel.bsp.max.export.batch.size: "512"
+      otel.bsp.export.timeout: "30000"
       otel.exporter.jaeger.endpoint: "http://localhost:14250"
       otel.exporter.jaeger.timeout: "10000"
       #otel.exporter.zipkin.endpoint: "http://localhost:9411/api/v2/spans"
