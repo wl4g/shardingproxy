@@ -93,7 +93,7 @@ docker run -d \
 -v /mnt/disk1/shardingproxy/conf/:/opt/shardingproxy/conf/ \
 -v /mnt/disk1/log/shardingproxy/:/var/log/shardingproxy/ \
 -p 3308:3308 \
-wl4g/shardingproxy:5.1.0
+wl4g/shardingproxy:2.0.0_5.1.0
 ```
 
 - Testing access shardingproxy
@@ -139,12 +139,12 @@ mvn clean install -DskipTests -Dmaven.test.skip=true -T 2C
 ```bash
 export SP_PROJECT_DIR=/opt/java-workspace/xcloud-shardingproxy
 export SP_CONF_DIR=${SP_PROJECT_DIR}/xcloud-shardingproxy-starter/src/main/resources/example/sharding-readwrite/
-export SP_JAVAAGENT=${SP_PROJECT_DIR}/xcloud-shardingproxy-agent-bootstrap/target/xcloud-shardingproxy-agent-bootstrap-5.1.0.jar
+export SP_JAVAAGENT=${SP_PROJECT_DIR}/xcloud-shardingproxy-agent-bootstrap/target/xcloud-shardingproxy-agent-bootstrap-2.0.0_5.1.0.jar
 # Extension environment configuration.
 export AGENT_PATH=${SP_PROJECT_DIR}/xcloud-shardingproxy-starter/src/main/resources/
 export PLUGINS_PATH=${SP_PROJECT_DIR}/xcloud-shardingproxy-agent-extension/target/
 
-java ${SP_JAVAAGENT} -jar shardingproxy-{version}-bin.jar 3308 ${SP_CONF_DIR}
+java ${SP_JAVAAGENT} -jar shardingproxy-2.0.0_5.1.0-bin.jar 3308 ${SP_CONF_DIR}
 # java ${SP_JAVAAGENT} -cp xxx com.wl4g.ShardingProxy 3308 ${SP_CONF_DIR}
 ```
 
