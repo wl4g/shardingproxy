@@ -9,31 +9,33 @@ This chart bootstraps an shardingproxy deployment on a Kubernetes cluster using 
 
 ## Installing the Chart
 
-To install the chart with the release name `cn-south1-a1-shardingproxy`:
+- [helm charts values.yaml](shardingproxy/values.yaml)
+
+To install the chart with the release name `shardingproxy`:
 
 + From github
 
 ```bash
 git clone https://github.com/wl4g/xcloud-shardingproxy.git
 cd xcloud-shardingproxy/kubernetes/helm/
-helm install cn-south1-a1-shardingproxy .
+helm install shardingproxy .
 ```
 
 + From chart repos
 
 ```bash
 helm repo add shardingproxy https://helm-repo.wl4g.io/charts
-helm install cn-south1-a1-shardingproxy wl4g/shardingproxy
+helm install shardingproxy wl4g/shardingproxy
 ```
 
 > If you want to install an unstable version, you need to add `--devel` when you execute the `helm install` command.
 
 ## Uninstalling the Chart
 
-To uninstall/delete the `cn-south1-a1-shardingproxy` deployment:
+To uninstall/delete the `shardingproxy` deployment:
 
 ```bash
-helm del cn-south1-a1-shardingproxy
+helm del shardingproxy
 ```
 
 ## Configuration
