@@ -128,24 +128,34 @@ DELETE FROM userdb.t_user WHERE id=10000000;
 - 2.1 Compiling
 
 ```bash
+cd /opt/
 # git clone https://github.com/wl4g/xcloud-shardingproxy.git # (Upstream is newer)
 git clone https://gitee.com/wl4g/xcloud-shardingproxy.git # (Domestic faster)
 cd xcloud-shardingproxy
 mvn clean install -DskipTests -Dmaven.test.skip=true -T 2C
 ```
 
-- 2.2 Example startup
+- 2.2 Example developer debugging
+
+> The following is the schematic configuration of the example, please  correct configure it in eclipse and idea development tools.
 
 ```bash
-export SP_PROJECT_DIR=/opt/java-workspace/xcloud-shardingproxy
-export SP_CONF_DIR=${SP_PROJECT_DIR}/xcloud-shardingproxy-starter/src/main/resources/example/sharding-readwrite/
-export SP_JAVAAGENT=${SP_PROJECT_DIR}/xcloud-shardingproxy-agent-bootstrap/target/xcloud-shardingproxy-agent-bootstrap-2.0.0_5.1.0.jar
-# Extension environment configuration.
-export AGENT_PATH=${SP_PROJECT_DIR}/xcloud-shardingproxy-starter/src/main/resources/
-export PLUGINS_PATH=${SP_PROJECT_DIR}/xcloud-shardingproxy-agent-extension/target/
+export SP_BASE_DIR=/opt/xcloud-shardingproxy
+export SP_VERSION='2.0.0_5.1.0'
+export SP_CONF_DIR=${SP_BASE_DIR}/xcloud-shardingproxy-starter/src/main/resources/example/sharding-readwrite/
+export SP_JAVAAGENT=${SP_BASE_DIR}/xcloud-shardingproxy-agent-bootstrap/target/xcloud-shardingproxy-agent-bootstrap-${SP_VERSION}.jar
 
-java ${SP_JAVAAGENT} -jar shardingproxy-2.0.0_5.1.0-bin.jar 3308 ${SP_CONF_DIR}
-# java ${SP_JAVAAGENT} -cp xxx com.wl4g.ShardingProxy 3308 ${SP_CONF_DIR}
+## Sets agent jar path.
+export AGENT_PATH=${SP_BASE_DIR}/xcloud-shardingproxy-starter/src/main/resources/agent
+
+## Sets the dir for more plugins.
+export PLUGINS_PATH=${SP_BASE_DIR}/xcloud-shardingproxy-startertension/target/shardingproxy-2.0.0_5.1.0-bin/ext-lib/agentlib/plugins
+
+## Or, only set the target dir of the extension plugin jar.
+#export PLUGINS_PATH=${SP_BASE_DIR}/xcloud-shardingproxy-agent-extension/target/
+
+java ${SP_JAVAAGENT} -jar shardingproxy-${SP_VERSION}-bin.jar 3308 ${SP_CONF_DIR}
+#java ${SP_JAVAAGENT} -cp xxx com.wl4g.ShardingProxy 3308 ${SP_CONF_DIR}
 ```
 
 ## 3. Failover integration
