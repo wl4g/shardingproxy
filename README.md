@@ -6,7 +6,7 @@
 
 ### 1.1 Preparing MySQL MGR cluster for testing
 
-- You first need to prepare a multi-instance database cluster for testing, here is `MySQL Group Replication` as an example. Refer docs to: [Deploy MGR high-availability production cluster based on Docker](https://blogs.wl4g.com/archives/2477)
+- You first need to prepare a multi-instance DB cluster for testing, here is `MySQL Group Replication` as an example. Refer docs to: [Deploy MGR high-availability production cluster based on Docker](https://blogs.wl4g.com/archives/2477)
 
 - Assuming that the MGR cluster is now ready as follows:
 
@@ -97,15 +97,23 @@ wl4g/shardingproxy:2.0.0_5.1.0
 
 - Testing access shardingproxy
 
-```sql
-mysql -h127.0.0.1 -P3308 -uuserdb -p123456
+  - Select operation. (Simulate 100 this query operation and observe the Tracing UI)
 
-use userdb;
-SELECT * FROM userdb.t_user;
-INSERT INTO userdb.t_user (id, name) VALUES (10000000, 'user-insert-1111');
-UPDATE userdb.t_user SET name='user-update-2222' WHERE id=10000000;
-DELETE FROM userdb.t_user WHERE id=10000000;
-```
+  ```bash
+  for i in `seq 1 100`; do echo 'use userdb; select * from t_user' | mysql -h127.0.0.1 -P3308 -uuserdb -p123456; done
+  ```
+
+  - Update operation
+
+  ```sql
+  mysql -h127.0.0.1 -P3308 -uuserdb -p123456
+  
+  use userdb;
+  SELECT * FROM userdb.t_user;
+  INSERT INTO userdb.t_user (id, name) VALUES (10000000, 'user-insert-1111');
+  UPDATE userdb.t_user SET name='user-update-2222' WHERE id=10000000;
+  DELETE FROM userdb.t_user WHERE id=10000000;
+  ```
 
 - Testing scrape prometheus metrics
 
@@ -161,20 +169,26 @@ java ${SP_JAVAAGENT} -jar shardingproxy-${SP_VERSION}-bin.jar 3308 ${SP_CONF_DIR
 
 ### 3.1 [MySQL Group Replication](https://dev.mysql.com/doc/refman/5.7/en/group-replication.html)
 
-- [https://dev.mysql.com/doc/refman/5.7/en/group-replication.html](https://dev.mysql.com/doc/refman/5.7/en/group-replication.html)
+- Docs:
 
-- [org.apache.shardingsphere.dbdiscovery.mgr.MGRDatabaseDiscoveryType.java](https://github.com/apache/shardingsphere/blob/5.1.0/shardingsphere-features/shardingsphere-db-discovery/shardingsphere-db-discovery-provider/shardingsphere-db-discovery-mgr/src/main/java/org/apache/shardingsphere/dbdiscovery/mgr/MGRDatabaseDiscoveryType.java)
+  - [https://dev.mysql.com/doc/refman/5.7/en/group-replication.html](https://dev.mysql.com/doc/refman/5.7/en/group-replication.html)
 
-- [https://github.com/apache/shardingsphere/blob/5.1.0/shardingsphere-proxy/shardingsphere-proxy-bootstrap/src/main/resources/conf/config-database-discovery.yaml](https://github.com/apache/shardingsphere/blob/5.1.0/shardingsphere-proxy/shardingsphere-proxy-bootstrap/src/main/resources/conf/config-database-discovery.yaml)
+  - [Deploy MGR high-availability production cluster based on Docker](https://blogs.wl4g.com/archives/2477)
 
-- [Adjust discovery api feature. #13902](https://github.com/apache/shardingsphere/issues/13902)
+  - [Adjust discovery api feature. #13902](https://github.com/apache/shardingsphere/issues/13902)
 
-- 3.1.1 Add MGR static DNS
+- Source codes:
+
+  - [org.apache.shardingsphere.dbdiscovery.mgr.MGRDatabaseDiscoveryType.java](https://github.com/apache/shardingsphere/blob/5.1.0/shardingsphere-features/shardingsphere-db-discovery/shardingsphere-db-discovery-provider/shardingsphere-db-discovery-mgr/src/main/java/org/apache/shardingsphere/dbdiscovery/mgr/MGRDatabaseDiscoveryType.java)
+
+  - [https://github.com/apache/shardingsphere/blob/5.1.0/shardingsphere-proxy/shardingsphere-proxy-bootstrap/src/main/resources/conf/config-database-discovery.yaml](https://github.com/apache/shardingsphere/blob/5.1.0/shardingsphere-proxy/shardingsphere-proxy-bootstrap/src/main/resources/conf/config-database-discovery.yaml)
+
+- 3.1.1 Add static DNS
 
 ```bash
 sudo cp /etc/hosts /etc/hosts.bak
-sudo cat <<EOF >/etc/hosts
-# for MGR testing
+sudo cat <<EOF >>/etc/hosts
+# Testing for shardingproxy dbdiscovery MGR.
 172.8.8.111 n0.rds.local
 172.8.8.112 n1.rds.local
 172.8.8.113 n2.rds.local
@@ -189,18 +203,6 @@ EOF
 |-|-|
 | `extensionDiscoveryConfigJson.memberHostMappings.[0].<key>` | The access address of each dataSource correspond instance may be an external loadbalancing or proxy address (many-to-one) to internal address.(e.g: In the MGR cluster, the communication address of the member peer) |
 | `extensionDiscoveryConfigJson.memberHostMappings.[0].<key>.[0]` | The access address of each dataSource correspond instance may be an external loadbalancing or proxy address (one-to-many) to external addresses. |
-
-### 3.2 PostgreSQL Cluster
-
-```bash
-#TODO
-```
-
-### 3.3 Oracle RAC
-
-```bash
-#TODO
-```
 
 ## 4. Metircs
 
