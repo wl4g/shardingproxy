@@ -40,6 +40,11 @@ spec:
         app.kubernetes.io/instance: {{ .Release.Name }}
 
     spec:
+      {{- if .Values.initContainers }}
+      initContainers:
+{{ toYaml .Values.initContainers | indent 8 }}
+      {{- end }}
+
       {{- if .Values.shardingproxy.image.pullSecrets }}
       imagePullSecrets:
         {{- range .Values.shardingproxy.image.pullSecrets }}
@@ -53,11 +58,19 @@ spec:
       {{- end }}
 
       volumes:
+      - name: agentConfig
+        configMap:
+          name: {{ include "shardingproxy.fullname" . }}-agentConfig
+      {{- range $index, $value := .Values.shardingConfigs}}
+      - name: {{$index}}
+        configMap:
+          name: {{ include "shardingproxy.fullname" . }}-{{$index}}
+      {{- end}}
       {{- if not .Values.shardingproxy.persistence.enabled }}
-      - name: shardingproxy-workspace
+      - name: shardingLog
         emptyDir: {}
       {{- else if .Values.shardingproxy.persistence.existingClaim }}
-      - name: shardingproxy-workspace
+      - name: shardingLog
         persistentVolumeClaim:
         {{- with .Values.shardingproxy.persistence.existingClaim }}
           claimName: {{ tpl . $ }}
@@ -79,16 +92,27 @@ spec:
               containerPort: 10108
               protocol: TCP
 
-          envFrom:
-          - configMapRef:
-            name: {{ include "shardingproxy.fullname" . }}-env
-
           env:
           - name: SHARDINGPROXY_NAME
             value: {{ .Release.Name }}
+          - name: JAVA_OPTS
+            value: '-Djava.awt.headless=true'
+          - name: SHARDING_PORT
+            value: 3308
+
+          #envFrom:
+          #- configMapRef:
+          #  name: {{ include "shardingproxy.fullname" . }}-env
+
           volumeMounts:
-          - name: shardingproxy-workspace
-            mountPath: "/mnt/disk1/shardingproxy/data"
+          - name: agentConfig
+            mountPath: "/opt/shardingproxy/ext-lib/agentlib/conf/agent.yaml"
+          - name: shardingLog
+            mountPath: "/var/log/shardingproxy/"
+          {{- range $index, $value := .Values.shardingConfigs}}
+          - name: {{$index}}
+            mountPath: "/opt/shardingproxy/conf/config-{{$index}}.yaml"
+          {{- end}}
 
           livenessProbe:
             initialDelaySeconds: 10
@@ -104,6 +128,7 @@ spec:
             periodSeconds: 20
             tcpSocket:
               port: proxy
+
           {{- if .Values.shardingproxy.resources.enabled }}
           resources:
             {{- toYaml .Values.shardingproxy.resources | nindent 12 }}

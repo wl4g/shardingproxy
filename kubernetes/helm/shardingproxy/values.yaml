@@ -1,5 +1,17 @@
 ## This is the spec definition of ShardingProxy instance deployed in Kubernetes.
 shardingproxy:
+  # ========================================== Begin ShardingProxy Deployment ================================================
+  image:
+    repository: wl4g/shardingproxy
+    pullPolicy: IfNotPresent
+    # tag: 2.0.0_5.1.0
+    ## Optionally specify an array of imagePullSecrets.
+    ## Secrets must be manually created in the namespace.
+    ## ref: https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/
+    ##
+    # pullSecrets:
+    # - myRegistryKeySecretName
+
   ## It is recommended to have odd number of nodes in a cluster, otherwise the shardingproxy cluster cannot be automatically healed in case of net-split.
   autoscaling:
     enabled: true
@@ -10,16 +22,6 @@ shardingproxy:
   # Set it as "Recreate" when "RWM" for volumes isn't supported
   updateStrategy:
     type: RollingUpdate
-
-  image:
-    repository: wl4g/shardingproxy:5.1.0
-    pullPolicy: IfNotPresent
-    ## Optionally specify an array of imagePullSecrets.
-    ## Secrets must be manually created in the namespace.
-    ## ref: https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/
-    ##
-    # pullSecrets:
-    # - myRegistryKeySecretName
 
   # The name of a secret in the same kubernetes namespace which contains values to
   # be added to the environment (must be manually created)
@@ -64,17 +66,6 @@ shardingproxy:
     #   image: alpine
     #   command: ["sh", "-c", "for i in $(seq 1 300); do nc -zvw1 mysql 3306 && exit 0 || sleep 3; done; exit 1"]
 
-  ## ShardingProxy configuration item, see the documentation (https://hub.docker.com/r/wl4g/shardingproxy)
-  shardingproxyConfig:
-    SHARDINGPROXY_CLUSTER__K8S__APISERVER: "https://kubernetes.default.svc:443"
-    ## The address type is used to extract host from k8s service.
-    ## Value: ip | dns | hostname
-    ## Note：Hostname is only supported after v4.0-rc.2
-    SHARDINGPROXY_CLUSTER__K8S__ADDRESS_TYPE: "hostname"
-    SHARDINGPROXY_CLUSTER__K8S__SUFFIX: "svc.cluster.local"
-    ## if SHARDINGPROXY_CLUSTER__K8S__ADDRESS_TYPE eq dns
-    # SHARDINGPROXY_CLUSSHARDINGPROXY_K8S__SUFFIX: "pod.cluster.local"
-
   podSecurityContext:
     enabled: true
     fsGroup: 1000
@@ -94,6 +85,181 @@ shardingproxy:
 
   affinity: {}
 
+  # ========================================== End ShardingProxy Deployment ================================================
+
+  # ========================================== Begin ShardingProxy ConfigMap ===============================================
+  ## ShardingProxy agent configuration, see: https://github.com/wl4g/xcloud-shardingproxy/blob/master/xcloud-shardingproxy-starter/src/main/resources/agent/conf/agent.yaml
+  agentConfig: |-
+    applicationName: cn_south1_a1_shardingproxy_0
+    ignoredPluginNames:
+      - Jaeger
+      - Zipkin
+      - Opentracing
+    plugins:
+      Logging:
+        props:
+          LEVEL: "DEBUG"
+      Prometheus:
+        host:  "0.0.0.0"
+        port: 10108
+        props:
+          JVM_INFORMATION_COLLECTOR_ENABLED : "true"
+      OpenTelemetry:
+        props:
+          otel.resource.attributes: "service.name=cn-south1-a1-shardingproxy,service.namespace=shardingproxy"
+          otel.traces.exporter: "jaeger"
+          otel.traces.sampler: "parentbased_always_on"
+          otel.traces.sampler.arg: "0.99"
+          otel.span.attribute.count.limit: "128"
+          otel.span.event.count.limit: "128"
+          otel.span.link.count.limit: "128"
+          otel.bsp.schedule.delay: "5000"
+          otel.bsp.max.queue.size: "2048"
+          otel.bsp.max.export.batch.size: "512"
+          otel.bsp.export.timeout: "30000"
+          otel.exporter.jaeger.endpoint: "http://jaeger.svc.cluster.local:14250"
+          otel.exporter.jaeger.timeout: "10000"
+
+  ## ShardingProxy sharding configuration, example see: https://github.com/wl4g/xcloud-shardingproxy/blob/master/xcloud-shardingproxy-starter/src/main/resources/example/
+  shardingConfigs:
+    - sharding_rw_userdb: |-
+      schemaName: userdb
+      extensionDefaultDataSource:
+        username: root
+        password: 123456
+        connectionTimeoutMilliseconds: 30000
+        idleTimeoutMilliseconds: 60000
+        maxLifetimeMilliseconds: 1800000
+        maxPoolSize: 50
+        minPoolSize: 1
+      dataSources:
+        ds_userdb_g0db0_0:
+          url: 'jdbc:mysql://n0.rds.local:3306/userdb_g0db0?serverTimezone=UTC&useSSL=false&allowMultiQueries=true&characterEncoding=utf-8'
+        ds_userdb_g0db0_1:
+          url: 'jdbc:mysql://n1.rds.local:3306/userdb_g0db0?serverTimezone=UTC&useSSL=false&allowMultiQueries=true&characterEncoding=utf-8'
+        ds_userdb_g0db0_2:
+          url: 'jdbc:mysql://n2.rds.local:3306/userdb_g0db0?serverTimezone=UTC&useSSL=false&allowMultiQueries=true&characterEncoding=utf-8'
+        ds_userdb_g0db1_0:
+          url: 'jdbc:mysql://n0.rds.local:3306/userdb_g0db1?serverTimezone=UTC&useSSL=false&allowMultiQueries=true&characterEncoding=utf-8'
+        ds_userdb_g0db1_1:
+          url: 'jdbc:mysql://n1.rds.local:3306/userdb_g0db1?serverTimezone=UTC&useSSL=false&allowMultiQueries=true&characterEncoding=utf-8'
+        ds_userdb_g0db1_2:
+          url: 'jdbc:mysql://n2.rds.local:3306/userdb_g0db1?serverTimezone=UTC&useSSL=false&allowMultiQueries=true&characterEncoding=utf-8'
+        ds_userdb_g0db2_0:
+          url: 'jdbc:mysql://n0.rds.local:3306/userdb_g0db2?serverTimezone=UTC&useSSL=false&allowMultiQueries=true&characterEncoding=utf-8'
+        ds_userdb_g0db2_1:
+          url: 'jdbc:mysql://n1.rds.local:3306/userdb_g0db2?serverTimezone=UTC&useSSL=false&allowMultiQueries=true&characterEncoding=utf-8'
+        ds_userdb_g0db2_2:
+          url: 'jdbc:mysql://n2.rds.local:3306/userdb_g0db2?serverTimezone=UTC&useSSL=false&allowMultiQueries=true&characterEncoding=utf-8'
+      rules:
+       - !SHARDING
+        tables:
+          t_user:
+            actualDataNodes: rw_userdb_g0db${0..2}.t_user_${0..2}
+            tableStrategy:
+              standard:
+                shardingColumn: id
+                shardingAlgorithmName: alg_table_volume_range_g0_0
+            keyGenerateStrategy:
+              column: id
+              keyGeneratorName: gen_snowflake0
+        bindingTables:
+          - t_user
+        defaultDatabaseStrategy:
+          standard:
+            shardingColumn: id
+            shardingAlgorithmName: alg_database_inline_g0_0
+        defaultTableStrategy:
+        shardingAlgorithms:
+          alg_database_inline_g0_0:
+            type: INLINE
+            props:
+              algorithm-expression: rw_userdb_g0db${(id % 9) as int}
+          alg_table_volume_range_g0_0:
+            type: VOLUME_RANGE2
+            props:
+              range-lower: '0'
+              range-upper: '40000000'
+              sharding-volume: '10000000'
+        keyGenerators:
+          gen_snowflake0:
+            type: SNOWFLAKE
+            props:
+              worker-id: '1'
+       - !READWRITE_SPLITTING
+        dataSources:
+          rw_userdb_g0db0:
+            writeDataSourceName: ds_userdb_g0db0_1
+            readDataSourceNames:
+              - ds_userdb_g0db0_1
+              - ds_userdb_g0db0_2
+            loadBalancerName: r_lb_0
+          rw_userdb_g0db1:
+            writeDataSourceName: ds_userdb_g0db1_1
+            readDataSourceNames:
+              - ds_userdb_g0db1_1
+              - ds_userdb_g0db1_2
+            loadBalancerName: r_lb_0
+          rw_userdb_g0db2:
+            writeDataSourceName: ds_userdb_g0db2_1
+            readDataSourceNames:
+              - ds_userdb_g0db2_1
+              - ds_userdb_g0db2_2
+            loadBalancerName: r_lb_0
+        loadBalancers:
+          r_lb_0:
+            type: RANDOM
+       - !DB_DISCOVERY
+         dataSources:
+           ha_userdb_g0db0:
+             discoveryTypeName: cn_south1_a1_mgr_g0_0
+             discoveryHeartbeatName: mgr_heartbeat_0
+             dataSourceNames:
+               - ds_userdb_g0db0_0
+               - ds_userdb_g0db0_1
+               - ds_userdb_g0db0_2
+           ha_userdb_g0db1:
+             discoveryTypeName: cn_south1_a1_mgr_g0_0
+             discoveryHeartbeatName: mgr_heartbeat_0
+             dataSourceNames:
+               - ds_userdb_g0db1_0
+               - ds_userdb_g0db1_1
+               - ds_userdb_g0db1_2
+           ha_userdb_g0db2:
+             discoveryTypeName: cn_south1_a1_mgr_g0_0
+             discoveryHeartbeatName: mgr_heartbeat_0
+             dataSourceNames:
+               - ds_userdb_g0db2_0
+               - ds_userdb_g0db2_1
+               - ds_userdb_g0db2_2
+         discoveryHeartbeats:
+           mgr_heartbeat_0:
+             props:
+               keep-alive-cron: '0/5 * * * * ?'
+         discoveryTypes:
+           cn_south1_a1_mgr_g0_0:
+             type: MGR
+             props:
+               group-name: 5db40c3c-180c-11e9-afbf-005056ac6820
+               extensionDiscoveryConfigJson: |-
+                 {
+                   "memberHostMappings": [{
+                       "rds-mgr-0:3306": [
+                           "n0.rds.local:3306"
+                       ]
+                   }, {
+                       "rds-mgr-1:3306": [
+                           "n1.rds.local:3306"
+                       ]
+                   }, {
+                       "rds-mgr-2:3306": [
+                           "n2.rds.local:3306"
+                       ]
+                   }]
+                 }
+  # ========================================== End ShardingProxy ConfigMap ===============================================
+
+  # ========================================== Begin ShardingProxy Service ===============================================
   service:
     ## Service type
     ##
@@ -156,3 +322,5 @@ shardingproxy:
       hosts:
       - prometheus.shardingproxy.local
       tls: []
+
+  # ========================================== End ShardingProxy Service ===============================================

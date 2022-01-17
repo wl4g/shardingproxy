@@ -1,14 +1,29 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: {{ include "shardingproxy.fullname" . }}-env
+  name: {{ include "shardingproxy.fullname" . }}-agentConfig
   namespace: {{ .Release.Namespace }}
   labels:
     app.kubernetes.io/name: {{ include "shardingproxy.name" . }}
-    helm.sh/chart: {{ include "shardingproxy.chart" . }}
     app.kubernetes.io/instance: {{ .Release.Name }}
     app.kubernetes.io/managed-by: {{ .Release.Service }}
+    helm.sh/chart: {{ include "shardingproxy.chart" . }}
 data:
-  {{- range $index, $value := .Values.shardingproxy.shardingproxyConfig}}
-    {{$index}}: "{{ $value }}" 
-  {{- end}}
+{{ toYaml .Values.shardingproxy.agentConfig | indent 2 }}
+
+---
+
+{{- range $index, $value := .Values.shardingConfigs}}
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "shardingproxy.fullname" . }}-{{$index}}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app.kubernetes.io/name: {{ include "shardingproxy.name" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+    helm.sh/chart: {{ include "shardingproxy.chart" . }}
+data: "{{ $value }}"
+{{- end}}
