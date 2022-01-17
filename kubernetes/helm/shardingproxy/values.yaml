@@ -117,7 +117,7 @@ shardingproxy:
           otel.bsp.max.queue.size: "2048"
           otel.bsp.max.export.batch.size: "512"
           otel.bsp.export.timeout: "30000"
-          otel.exporter.jaeger.endpoint: "http://jaeger.svc.cluster.local:14250"
+          otel.exporter.jaeger.endpoint: "http://jaeger.shardingproxy.svc.cluster.local:14250"
           otel.exporter.jaeger.timeout: "10000"
 
   ## ShardingProxy sharding configuration, example see: https://github.com/wl4g/xcloud-shardingproxy/blob/master/xcloud-shardingproxy-starter/src/main/resources/example/
@@ -134,23 +134,23 @@ shardingproxy:
         minPoolSize: 1
       dataSources:
         ds_userdb_g0db0_0:
-          url: 'jdbc:mysql://n0.rds.local:3306/userdb_g0db0?serverTimezone=UTC&useSSL=false&allowMultiQueries=true&characterEncoding=utf-8'
+          url: 'jdbc:mysql://mysql0.shardingproxy.svc.cluster.local:3306/userdb_g0db0?serverTimezone=UTC&useSSL=false&allowMultiQueries=true&characterEncoding=utf-8'
         ds_userdb_g0db0_1:
-          url: 'jdbc:mysql://n1.rds.local:3306/userdb_g0db0?serverTimezone=UTC&useSSL=false&allowMultiQueries=true&characterEncoding=utf-8'
+          url: 'jdbc:mysql://mysql1.shardingproxy.svc.cluster.local:3306/userdb_g0db0?serverTimezone=UTC&useSSL=false&allowMultiQueries=true&characterEncoding=utf-8'
         ds_userdb_g0db0_2:
-          url: 'jdbc:mysql://n2.rds.local:3306/userdb_g0db0?serverTimezone=UTC&useSSL=false&allowMultiQueries=true&characterEncoding=utf-8'
+          url: 'jdbc:mysql://mysql2.shardingproxy.svc.cluster.local:3306/userdb_g0db0?serverTimezone=UTC&useSSL=false&allowMultiQueries=true&characterEncoding=utf-8'
         ds_userdb_g0db1_0:
-          url: 'jdbc:mysql://n0.rds.local:3306/userdb_g0db1?serverTimezone=UTC&useSSL=false&allowMultiQueries=true&characterEncoding=utf-8'
+          url: 'jdbc:mysql://mysql0.shardingproxy.svc.cluster.local:3306/userdb_g0db1?serverTimezone=UTC&useSSL=false&allowMultiQueries=true&characterEncoding=utf-8'
         ds_userdb_g0db1_1:
-          url: 'jdbc:mysql://n1.rds.local:3306/userdb_g0db1?serverTimezone=UTC&useSSL=false&allowMultiQueries=true&characterEncoding=utf-8'
+          url: 'jdbc:mysql://mysql1.shardingproxy.svc.cluster.local:3306/userdb_g0db1?serverTimezone=UTC&useSSL=false&allowMultiQueries=true&characterEncoding=utf-8'
         ds_userdb_g0db1_2:
-          url: 'jdbc:mysql://n2.rds.local:3306/userdb_g0db1?serverTimezone=UTC&useSSL=false&allowMultiQueries=true&characterEncoding=utf-8'
+          url: 'jdbc:mysql://mysql2.shardingproxy.svc.cluster.local:3306/userdb_g0db1?serverTimezone=UTC&useSSL=false&allowMultiQueries=true&characterEncoding=utf-8'
         ds_userdb_g0db2_0:
-          url: 'jdbc:mysql://n0.rds.local:3306/userdb_g0db2?serverTimezone=UTC&useSSL=false&allowMultiQueries=true&characterEncoding=utf-8'
+          url: 'jdbc:mysql://mysql0.shardingproxy.svc.cluster.local:3306/userdb_g0db2?serverTimezone=UTC&useSSL=false&allowMultiQueries=true&characterEncoding=utf-8'
         ds_userdb_g0db2_1:
-          url: 'jdbc:mysql://n1.rds.local:3306/userdb_g0db2?serverTimezone=UTC&useSSL=false&allowMultiQueries=true&characterEncoding=utf-8'
+          url: 'jdbc:mysql://mysql1.shardingproxy.svc.cluster.local:3306/userdb_g0db2?serverTimezone=UTC&useSSL=false&allowMultiQueries=true&characterEncoding=utf-8'
         ds_userdb_g0db2_2:
-          url: 'jdbc:mysql://n2.rds.local:3306/userdb_g0db2?serverTimezone=UTC&useSSL=false&allowMultiQueries=true&characterEncoding=utf-8'
+          url: 'jdbc:mysql://mysql2.shardingproxy.svc.cluster.local:3306/userdb_g0db2?serverTimezone=UTC&useSSL=false&allowMultiQueries=true&characterEncoding=utf-8'
       rules:
        - !SHARDING
         tables:
@@ -244,16 +244,16 @@ shardingproxy:
                extensionDiscoveryConfigJson: |-
                  {
                    "memberHostMappings": [{
-                       "rds-mgr-0:3306": [
-                           "n0.rds.local:3306"
+                       "mysql0:3306": [
+                           "mysql0.shardingproxy.svc.cluster.local:3306"
                        ]
                    }, {
-                       "rds-mgr-1:3306": [
-                           "n1.rds.local:3306"
+                       "mysql1:3306": [
+                           "mysql1.shardingproxy.svc.cluster.local:3306"
                        ]
                    }, {
-                       "rds-mgr-2:3306": [
-                           "n2.rds.local:3306"
+                       "mysql2:3306": [
+                           "mysql2.shardingproxy.svc.cluster.local:3306"
                        ]
                    }]
                  }
@@ -308,7 +308,7 @@ shardingproxy:
         # kubernetes.io/tls-acme: "true"
       path: /
       hosts:
-      - dashboard.shardingproxy.local
+      - dashboard.shardingproxy.svc.cluster.local
       tls: []
 
     ## ingress for ShardingProxy prometheus API
@@ -320,7 +320,7 @@ shardingproxy:
         # kubernetes.io/tls-acme: "true"
       path: /
       hosts:
-      - prometheus.shardingproxy.local
+      - prometheus.shardingproxy.svc.cluster.local
       tls: []
 
   # ========================================== End ShardingProxy Service ===============================================

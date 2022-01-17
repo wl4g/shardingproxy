@@ -12,9 +12,9 @@ metadata:
   name: {{ printf "%s-%s" (include "shardingproxy.fullname" .) "dashboard" }}
   labels:
     app.kubernetes.io/name: {{ include "shardingproxy.name" . }}
-    helm.sh/chart: {{ include "shardingproxy.chart" . }}
     app.kubernetes.io/instance: {{ .Release.Name }}
     app.kubernetes.io/managed-by: {{ .Release.Service }}
+    helm.sh/chart: {{ include "shardingproxy.chart" . }}
   {{- if .Values.shardingproxy.ingress.dashboard.annotations }}
   annotations:
     {{- toYaml .Values.shardingproxy.ingress.dashboard.annotations | nindent 4 }}
@@ -66,9 +66,9 @@ metadata:
   name: {{ printf "%s-%s" (include "shardingproxy.fullname" .) "prometheus" }}
   labels:
     app.kubernetes.io/name: {{ include "shardingproxy.name" . }}
-    helm.sh/chart: {{ include "shardingproxy.chart" . }}
     app.kubernetes.io/instance: {{ .Release.Name }}
     app.kubernetes.io/managed-by: {{ .Release.Service }}
+    helm.sh/chart: {{ include "shardingproxy.chart" . }}
   {{- if .Values.shardingproxy.ingress.prometheus.annotations }}
   annotations:
     {{- toYaml .Values.shardingproxy.ingress.prometheus.annotations | nindent 4 }}
