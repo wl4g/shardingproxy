@@ -40,7 +40,7 @@ public final class YamlProxyRuleConfiguration implements YamlConfiguration {
     //
     // ADD custom properties.
     //
-    private YamlDataSourceParameter defaultDataSource = new YamlDataSourceParameter();
+    private YamlDataSourceParameter extensionDefaultDataSource = new YamlDataSourceParameter();
 
     private Map<String, YamlDataSourceParameter> dataSources = new HashMap<>();
 

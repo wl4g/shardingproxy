@@ -111,11 +111,11 @@ public final class ProxyConfigurationLoader2 {
         //
         // ADD for merge from default dataSource configuration.
         //
-        YamlDataSourceParameter defaultDS = result.getDefaultDataSource();
-        if (nonNull(defaultDS)) {
+        YamlDataSourceParameter extensionDefaultDS = result.getExtensionDefaultDataSource();
+        if (nonNull(extensionDefaultDS)) {
             result.getDataSources().forEach((name, ds) -> {
                 try {
-                    BeanUtils2.deepCopyFieldState(ds, defaultDS, BeanUtils2.SIMPLE_MERGE_FIELD_COPYER);
+                    BeanUtils2.deepCopyFieldState(ds, extensionDefaultDS, BeanUtils2.SIMPLE_MERGE_FIELD_COPYER);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }

@@ -20,9 +20,9 @@
 # External logical database schema.
 schemaName: userdb_g0db1
 
-# Default datasource configuration.
-# @see:com.wl4g.component.integration.sharding.config.ProxyConfigurationLoader2#loadRuleConfiguration
-defaultDataSource:
+# Extension default datasource configuration.
+# @see:com.wl4g.shardingproxy.config.ProxyConfigurationLoader2.loadRuleConfiguration
+extensionDefaultDataSource:
   username: root
   password: 123456
   connectionTimeoutMilliseconds: 30000
