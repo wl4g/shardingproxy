@@ -28,7 +28,9 @@ shardingproxy:
   # envFromSecret: "shardingproxy-secrets"
 
   ## Additional deployment annotations
-  podAnnotations: {}
+  podAnnotations: 
+    prometheus.io/scrape: "true"
+    prometheus.io/port: "10108"
 
   # Pod deployment policy
   # value: OrderedReady | Parallel

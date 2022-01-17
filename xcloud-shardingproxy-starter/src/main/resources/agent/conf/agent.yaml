@@ -40,7 +40,7 @@ plugins:
     props:
       LEVEL: "DEBUG"
   Prometheus:
-    host:  "localhost"
+    host:  "0.0.0.0"
     port: 10108
     props:
       JVM_INFORMATION_COLLECTOR_ENABLED : "true"
