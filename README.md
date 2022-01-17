@@ -2,7 +2,7 @@
 
 > It's an enhanced package that integrates shardingsphere-proxy and shardingsphere-scaling
 
-## 1. Deployments
+## 1. Deployment guide
 
 ### 1.1 Preparing MySQL MGR cluster for testing
 
@@ -130,9 +130,85 @@ wl4g/shardingproxy:2.0.0_5.1.0
 
 - [Installation with helm](kubernetes/helm/README.md)
 
-## 2. Developer guide
+## 2. Operation guide
 
-### 2.1 Compiling
+### 2.1 Configuring failover
+
+#### 2.1.1 [MySQL Group Replication](https://dev.mysql.com/doc/refman/5.7/en/group-replication.html)
+
+- Docs:
+
+  - [https://dev.mysql.com/doc/refman/5.7/en/group-replication.html](https://dev.mysql.com/doc/refman/5.7/en/group-replication.html)
+
+  - [Deploy MGR high-availability production cluster based on Docker](https://blogs.wl4g.com/archives/2477)
+
+  - [Adjust discovery api feature. #13902](https://github.com/apache/shardingsphere/issues/13902)
+
+- Source codes:
+
+  - [org.apache.shardingsphere.dbdiscovery.mgr.MGRDatabaseDiscoveryType.java](https://github.com/apache/shardingsphere/blob/5.1.0/shardingsphere-features/shardingsphere-db-discovery/shardingsphere-db-discovery-provider/shardingsphere-db-discovery-mgr/src/main/java/org/apache/shardingsphere/dbdiscovery/mgr/MGRDatabaseDiscoveryType.java)
+
+  - [https://github.com/apache/shardingsphere/blob/5.1.0/shardingsphere-proxy/shardingsphere-proxy-bootstrap/src/main/resources/conf/config-database-discovery.yaml](https://github.com/apache/shardingsphere/blob/5.1.0/shardingsphere-proxy/shardingsphere-proxy-bootstrap/src/main/resources/conf/config-database-discovery.yaml)
+
+- Add static DNS
+
+```bash
+sudo cp /etc/hosts /etc/hosts.bak
+sudo cat <<EOF >>/etc/hosts
+# Testing for shardingproxy dbdiscovery MGR.
+172.8.8.111 n0.rds.local
+172.8.8.112 n1.rds.local
+172.8.8.113 n2.rds.local
+EOF
+```
+
+- Then need to modify the test configuration follows
+
+> Extension database discovery configuration refer to example: [config-sharding-readwrite-userdb.yaml](src/main/resources/example/sharding-readwrite/server.yaml), The prefix of the following key names is : `rules.discoveryTypes.<myDiscoveryName>.props.`
+
+| Attribute | Description |
+|-|-|
+| `extensionDiscoveryConfigJson.memberHostMappings.[0].<key>` | The access address of each dataSource correspond instance may be an external loadbalancing or proxy address (many-to-one) to internal address.(e.g: In the MGR cluster, the communication address of the member peer) |
+| `extensionDiscoveryConfigJson.memberHostMappings.[0].<key>.[0]` | The access address of each dataSource correspond instance may be an external loadbalancing or proxy address (one-to-many) to external addresses. |
+
+### 2.2 Configuring metircs
+
+- Docs:
+  - [https://shardingsphere.apache.org/document/5.1.0/cn/features/governance/observability/agent/](https://shardingsphere.apache.org/document/5.1.0/cn/features/governance/observability/agent/)
+
+- Source codes:
+  - [org.apache.shardingsphere.agent.metrics.prometheus.service.PrometheusPluginBootService.java](https://github.com/apache/shardingsphere/blob/5.1.0/shardingsphere-agent/shardingsphere-agent-plugins/shardingsphere-agent-plugin-metrics/shardingsphere-agent-metrics-prometheus/src/main/java/org/apache/shardingsphere/agent/metrics/prometheus/service/PrometheusPluginBootService.java)
+
+  - [org.apache.shardingsphere.agent.core.config.loader.AgentConfigurationLoader.java](https://github1s.com/apache/shardingsphere/blob/5.1.0/shardingsphere-agent/shardingsphere-agent-core/src/main/java/org/apache/shardingsphere/agent/core/config/loader/AgentConfigurationLoader.java)
+
+- Example configuration:
+
+  - [example metrics plugin agent.yaml](https://github.com/wl4g/xcloud-shardingproxy/blob/master/xcloud-shardingproxy-starter/src/main/resources/agent/conf/agent.yaml)
+
+  - [example prometheus alerting shardingproxy-alert-rules.yml](prometheus/shardingproxy-alert-rules.yml)
+
+- Gets prometheus metrics: [http://localhost:10108/metrics](http://localhost:10108/metrics)
+
+### 2.3 Configuring tracing
+
+- Docs:
+  - [https://shardingsphere.apache.org/document/5.1.0/cn/features/governance/observability/agent/](https://shardingsphere.apache.org/document/5.1.0/cn/features/governance/observability/agent/)
+
+  - [https://github.com/open-telemetry/opentelemetry-java/tree/v1.3.0/sdk-extensions/autoconfigure#sampler](https://github.com/open-telemetry/opentelemetry-java/tree/v1.3.0/sdk-extensions/autoconfigure#sampler)
+
+- Example configuration:
+
+  - [example tracing plugin agent.yaml](https://github.com/wl4g/xcloud-shardingproxy/blob/master/xcloud-shardingproxy-starter/src/main/resources/agent/conf/agent.yaml)
+
+- Jaeger UI: [http://localhost:16686/search](http://localhost:16686/search)
+
+### 2.4 Configuring logging
+
+> Like regular springboot applications, for example, use [EFK](https://github.com/elastic/beats) to collect, or use [loki](https://github.com/grafana/loki), [fluentbit](https://github.com/fluent/fluent-bit) and other components to collect application logs uniformly in the [kubernetes](https://kubernetes.io) environment.
+
+## 3. Developer guide
+
+### 3.1 Compiling
 
 ```bash
 cd /opt/
@@ -142,7 +218,7 @@ cd xcloud-shardingproxy
 mvn clean install -DskipTests -Dmaven.test.skip=true -T 2C
 ```
 
-### 2.2 Example developer debugging
+### 3.2 Example developer debugging
 
 > The following is the schematic configuration of the example, please  correct configure it in eclipse and idea development tools.
 
@@ -165,87 +241,13 @@ java ${SP_JAVAAGENT} -jar shardingproxy-${SP_VERSION}-bin.jar 3308 ${SP_CONF_DIR
 #java ${SP_JAVAAGENT} -cp xxx com.wl4g.ShardingProxy 3308 ${SP_CONF_DIR}
 ```
 
-## 3. Failover
+## 4. FAQ
 
-### 3.1 [MySQL Group Replication](https://dev.mysql.com/doc/refman/5.7/en/group-replication.html)
-
-- Docs:
-
-  - [https://dev.mysql.com/doc/refman/5.7/en/group-replication.html](https://dev.mysql.com/doc/refman/5.7/en/group-replication.html)
-
-  - [Deploy MGR high-availability production cluster based on Docker](https://blogs.wl4g.com/archives/2477)
-
-  - [Adjust discovery api feature. #13902](https://github.com/apache/shardingsphere/issues/13902)
-
-- Source codes:
-
-  - [org.apache.shardingsphere.dbdiscovery.mgr.MGRDatabaseDiscoveryType.java](https://github.com/apache/shardingsphere/blob/5.1.0/shardingsphere-features/shardingsphere-db-discovery/shardingsphere-db-discovery-provider/shardingsphere-db-discovery-mgr/src/main/java/org/apache/shardingsphere/dbdiscovery/mgr/MGRDatabaseDiscoveryType.java)
-
-  - [https://github.com/apache/shardingsphere/blob/5.1.0/shardingsphere-proxy/shardingsphere-proxy-bootstrap/src/main/resources/conf/config-database-discovery.yaml](https://github.com/apache/shardingsphere/blob/5.1.0/shardingsphere-proxy/shardingsphere-proxy-bootstrap/src/main/resources/conf/config-database-discovery.yaml)
-
-- 3.1.1 Add static DNS
-
-```bash
-sudo cp /etc/hosts /etc/hosts.bak
-sudo cat <<EOF >>/etc/hosts
-# Testing for shardingproxy dbdiscovery MGR.
-172.8.8.111 n0.rds.local
-172.8.8.112 n1.rds.local
-172.8.8.113 n2.rds.local
-EOF
-```
-
-- 3.1.2 Then need to modify the test configuration follows
-
-> Extension database discovery configuration refer to example: [config-sharding-readwrite-userdb.yaml](src/main/resources/example/sharding-readwrite/server.yaml), The prefix of the following key names is : `rules.discoveryTypes.<myDiscoveryName>.props.`
-
-| Attribute | Description |
-|-|-|
-| `extensionDiscoveryConfigJson.memberHostMappings.[0].<key>` | The access address of each dataSource correspond instance may be an external loadbalancing or proxy address (many-to-one) to internal address.(e.g: In the MGR cluster, the communication address of the member peer) |
-| `extensionDiscoveryConfigJson.memberHostMappings.[0].<key>.[0]` | The access address of each dataSource correspond instance may be an external loadbalancing or proxy address (one-to-many) to external addresses. |
-
-## 4. Metircs
-
-- Docs:
-  - [https://shardingsphere.apache.org/document/5.1.0/cn/features/governance/observability/agent/](https://shardingsphere.apache.org/document/5.1.0/cn/features/governance/observability/agent/)
-
-- Source codes:
-  - [org.apache.shardingsphere.agent.metrics.prometheus.service.PrometheusPluginBootService.java](https://github.com/apache/shardingsphere/blob/5.1.0/shardingsphere-agent/shardingsphere-agent-plugins/shardingsphere-agent-plugin-metrics/shardingsphere-agent-metrics-prometheus/src/main/java/org/apache/shardingsphere/agent/metrics/prometheus/service/PrometheusPluginBootService.java)
-
-  - [org.apache.shardingsphere.agent.core.config.loader.AgentConfigurationLoader.java](https://github1s.com/apache/shardingsphere/blob/5.1.0/shardingsphere-agent/shardingsphere-agent-core/src/main/java/org/apache/shardingsphere/agent/core/config/loader/AgentConfigurationLoader.java)
-
-- Example configuration:
-
-  - [example metrics plugin agent.yaml](https://github.com/wl4g/xcloud-shardingproxy/blob/master/xcloud-shardingproxy-starter/src/main/resources/agent/conf/agent.yaml)
-
-  - [example prometheus alerting shardingproxy-alert-rules.yml](prometheus/shardingproxy-alert-rules.yml)
-
-- Gets prometheus metrics: [http://localhost:10108/metrics](http://localhost:10108/metrics)
-
-## 5. Tracing
-
-- Docs:
-  - [https://shardingsphere.apache.org/document/5.1.0/cn/features/governance/observability/agent/](https://shardingsphere.apache.org/document/5.1.0/cn/features/governance/observability/agent/)
-
-  - [https://github.com/open-telemetry/opentelemetry-java/tree/v1.3.0/sdk-extensions/autoconfigure#sampler](https://github.com/open-telemetry/opentelemetry-java/tree/v1.3.0/sdk-extensions/autoconfigure#sampler)
-
-- Example configuration:
-
-  - [example tracing plugin agent.yaml](https://github.com/wl4g/xcloud-shardingproxy/blob/master/xcloud-shardingproxy-starter/src/main/resources/agent/conf/agent.yaml)
-
-- Jaeger UI: [http://localhost:16686/search](http://localhost:16686/search)
-
-## 6. Logging
-
-> Like regular springboot applications, for example, use [EFK](https://github.com/elastic/beats) to collect, or use [loki](https://github.com/grafana/loki), [fluentbit](https://github.com/fluent/fluent-bit) and other components to collect application logs uniformly in the [kubernetes](https://kubernetes.io) environment.
-
-## 7. FAQ
-
-### 7.1 Can the same schema support different types of databases at the same time under read-write splitting and fragment splitting modes ?
+### 4.1 Can the same schema support different types of databases at the same time under read-write splitting and fragment splitting modes ?
 
 Under the same schemaName, multiple sharding databases must be the same. See source code: [org.apache.shardingsphere.infra.metadata.ShardingSphereMetaData](https://github.com/apache/shardingsphere/blob/5.1.0/shardingsphere-infra/shardingsphere-infra-common/src/main/java/org/apache/shardingsphere/infra/metadata/ShardingSphereMetaData.java#L35) and [org.apache.shardingsphere.infra.metadata.resource.ShardingSphereResource](https://github.com/apache/shardingsphere/blob/5.1.0/shardingsphere-infra/shardingsphere-infra-common/src/main/java/org/apache/shardingsphere/infra/metadata/resource/ShardingSphereResource.java#L48)
 
-### 7.2 What data is stored in zookeeper and where is the source code?
+### 4.2 What data is stored in zookeeper and where is the source code?
 
   - [org.apache.shardingsphere.mode.metadata.persist.node.SchemaMetaDataNode.java](https://github.com/apache/shardingsphere/blob/5.1.0/shardingsphere-mode/shardingsphere-mode-core/src/main/java/org/apache/shardingsphere/mode/metadata/persist/node/SchemaMetaDataNode.java)
 
@@ -354,7 +356,7 @@ Under the same schemaName, multiple sharding databases must be the same. See sou
   /cn_south1_a1_shardingproxy_0/status/storage_nodes/primary/userdb_g0db2.ha_userdb_g0db2
   ```
 
-### 7.3 If you want to test native [apache/shardingsphere/shardingsphere-proxy](https://github.com/apache/shardingsphere/tree/master/shardingsphere-proxy)
+### 4.3 If you want to test native [apache/shardingsphere/shardingsphere-proxy](https://github.com/apache/shardingsphere/tree/master/shardingsphere-proxy)
 
   ```bash
   sudo mkdir -p /mnt/disk1/shardingsphere-proxy/{conf,ext-lib}
