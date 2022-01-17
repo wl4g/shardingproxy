@@ -16,7 +16,7 @@
 	</appender>
 	<appender name="rollingFile" class="ch.qos.logback.core.rolling.RollingFileAppender">
 		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-			<fileNamePattern>${SHARDING_LOG:-/var/log/shardingproxy}/shardingproxy-%d{yyyy-MM-dd-HH}.log</fileNamePattern>
+			<fileNamePattern>${SHARDING_LOG:-/opt/shardingproxy/log}/shardingproxy-%d{yyyy-MM-dd-HH}.%i.log</fileNamePattern>
 			<maxHistory>10</maxHistory>
 		</rollingPolicy>
 		<encoder>

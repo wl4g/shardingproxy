@@ -90,7 +90,7 @@ docker run -d \
 -e SHARDING_PORT=3308 \
 -v /mnt/disk1/shardingproxy/ext-lib/agentlib/conf/:/opt/shardingproxy/ext-lib/agentlib/conf/ \
 -v /mnt/disk1/shardingproxy/conf/:/opt/shardingproxy/conf/ \
--v /mnt/disk1/log/shardingproxy/:/var/log/shardingproxy/ \
+-v /mnt/disk1/log/shardingproxy/:/opt/shardingproxy/log/ \
 -p 3308:3308 \
 wl4g/shardingproxy:2.0.0_5.1.0
 ```

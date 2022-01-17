@@ -49,8 +49,8 @@ ARG SHARDING_MAINCLASS
 ARG SHARDING_EXT_CLASSPATH # Optional
 ENV SHARDING_BIN_NAME "${SHARDING_NAME}-${SHARDING_VERSION}-bin"
 #ENV SHARDING_HOME_PARENT "/opt/apps/ecm/${SHARDING_NAME}-package/"
-ENV SHARDING_HOME_PARENT "/opt"
 #ENV SHARDING_HOME "${SHARDING_HOME_PARENT}/${SHARDING_BIN_NAME}"
+ENV SHARDING_HOME_PARENT "/opt"
 ENV SHARDING_HOME "${SHARDING_HOME_PARENT}/${SHARDING_NAME}"
 
 # Installcation app files.
@@ -60,8 +60,8 @@ RUN mkdir -p ${SHARDING_HOME} \
 && tar -xf /tmp/${SHARDING_BIN_NAME}.tar --strip-components=1 -C ${SHARDING_HOME} \
 && rm -rf /tmp/${SHARDING_BIN_NAME}.tar \
 # Make control script.
-&& touch /startup.sh && chmod +x /startup.sh \
-&& echo -e "#!/bin/bash" >>/startup.sh \
+&& touch /docker-entrypoint.sh && chmod +x /docker-entrypoint.sh \
+&& echo -e "#!/bin/bash" >>/docker-entrypoint.sh \
 && echo -e "\
 # Define app basic the immutable properties.\n\
 export SHARDING_NAME=${SHARDING_NAME:-}\n\
@@ -74,7 +74,7 @@ export SHARDING_DEBUG=\$(echo \$SHARDING_DEBUG|tr '[a-z]' '[A-Z]')\n\
 export SHARDING_PORT=\${SHARDING_PORT:-'3308'}\n\
 export SHARDING_CONF=\${SHARDING_CONF:-${SHARDING_HOME}/conf/}\n\
 export SHARDING_DATA=\${SHARDING_DATA:-/mnt/disk1/\$SHARDING_NAME}\n\
-export SHARDING_LOG=\${SHARDING_LOG:-/var/log/\$SHARDING_NAME}\n\
+export SHARDING_LOG=\${SHARDING_LOG:-${SHARDING_HOME}/log/}\n\
 # Define JVM options.\n\
 export JAVA_OPTS=\${JAVA_OPTS:-'-Xms256M -Xmx1G'}\n\
 [[ \$SHARDING_NOHUP == 'TRUE' || \$SHARDING_NOHUP == 'YES' || \$SHARDING_NOHUP == 'Y' || \$SHARDING_NOHUP == 'ON' ]] && export CMD_NOHUP='nohup'\n\
@@ -99,10 +99,18 @@ export CMD_EXEC=\"\${CMD_NOHUP} java -server \
 # Execution.\n\
 echo \"Starting \${SHARDING_NAME}:\${SHARDING_VERSION} on \${SHARDING_PORT} ...\"\n\
 exec \${CMD_EXEC}\n\
-echo \"Started \${SHARDING_NAME}:\${SHARDING_VERSION} on \${SHARDING_PORT}\"\n" >>/startup.sh
+echo \"Started \${SHARDING_NAME}:\${SHARDING_VERSION} on \${SHARDING_PORT}\"\n" >>/docker-entrypoint.sh
+
+# Using root-less run container. see:https://docs.docker.com/engine/security/rootless/
+# see:https://stackoverflow.com/questions/49955097/how-do-i-add-a-user-when-im-using-alpine-as-a-base-image
+RUN adduser ${SHARDING_NAME} --disabled-password \
+&& mkdir -p ${SHARDING_HOME} \
+&& chown -R ${SHARDING_NAME}:${SHARDING_NAME} ${SHARDING_HOME} /docker-entrypoint.sh \
+&& chmod -R 755 ${SHARDING_HOME} /docker-entrypoint.sh
+USER ${SHARDING_NAME}
 
 #EXPOSE ${SHARDING_PORT} # Mapping ports when delegating to a start container.
 
 # [FIX]: Notice that if you use bash or sh to start the program, graceful termination cannot be achieved under kubernetes.
-#CMD ["/bin/bash", "-c", "/startup.sh"]
-CMD ["/startup.sh"]
+#CMD ["/bin/bash", "-c", "/docker-entrypoint.sh"]
+CMD ["/docker-entrypoint.sh"]
