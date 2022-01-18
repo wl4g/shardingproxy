@@ -34,11 +34,11 @@ extensionDefaultDataSource:
 # Datasource configuration.
 dataSources:
   ds_userdb_r0z0mgr1i0:
-    url: 'jdbc:mysql://n0.rds.local:3306/userdb_r0z0mgr1i0?serverTimezone=UTC&useSSL=false&allowMultiQueries=true&characterEncoding=utf-8'
+    url: 'jdbc:mysql://n0.rds.local:3306/userdb_r0z0mgr1db1?serverTimezone=UTC&useSSL=false&allowMultiQueries=true&characterEncoding=utf-8'
   ds_userdb_r0z0mgr1i1:
-    url: 'jdbc:mysql://n1.rds.local:3306/userdb_r0z0mgr1i1?serverTimezone=UTC&useSSL=false&allowMultiQueries=true&characterEncoding=utf-8'
+    url: 'jdbc:mysql://n1.rds.local:3306/userdb_r0z0mgr1db1?serverTimezone=UTC&useSSL=false&allowMultiQueries=true&characterEncoding=utf-8'
   ds_userdb_r0z0mgr1i2:
-    url: 'jdbc:mysql://n2.rds.local:3306/userdb_r0z0mgr1i2?serverTimezone=UTC&useSSL=false&allowMultiQueries=true&characterEncoding=utf-8'
+    url: 'jdbc:mysql://n2.rds.local:3306/userdb_r0z0mgr1db1?serverTimezone=UTC&useSSL=false&allowMultiQueries=true&characterEncoding=utf-8'
 
 # Schema rules configuration.
 rules:
