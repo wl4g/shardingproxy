@@ -72,6 +72,9 @@ jaegertracing/all-in-one:1.30
 mkdir -p /mnt/disk1/shardingproxy/{ext-lib/agentlib/conf,conf,ext-lib}
 mkdir -p /mnt/disk1/log/shardingproxy/
 
+# Need to grant ownership because wl4g/shardingproxy is a rootless container
+sudo chmod -R 777 /mnt/disk1/shardingproxy
+
 # Prepare a example sharding configuration.
 cp xcloud-shardingproxy-starter/src/main/resources/agent/conf/agent.yaml /mnt/disk1/shardingproxy/ext-lib/agentlib/conf/
 cp xcloud-shardingproxy-starter/src/main/resources/example/sharding-readwrite/*.yaml /mnt/disk1/shardingproxy/conf/
