@@ -58,24 +58,32 @@ spec:
       {{- end }}
 
       volumes:
+      ## javaagent configuration volume.
       - name: agentConfig
         configMap:
           name: {{ include "shardingproxy.fullname" . }}-agentConfig
+
+      ## sharding rules configuration volume.
       {{- range $index, $value := .Values.shardingConfigs}}
       - name: {{$index}}
         configMap:
           name: {{ include "shardingproxy.fullname" . }}-{{$index}}
       {{- end}}
+
+      ## sharding data(transactions) volume.
+      - name: shardingData
       {{- if not .Values.shardingproxy.persistence.enabled }}
-      - name: shardingLog
         emptyDir: {}
       {{- else if .Values.shardingproxy.persistence.existingClaim }}
-      - name: shardingLog
         persistentVolumeClaim:
         {{- with .Values.shardingproxy.persistence.existingClaim }}
           claimName: {{ tpl . $ }}
         {{- end }}
       {{- end }}
+
+      ## sharding log volume.
+      - name: shardingLog
+        emptyDir: {}
 
       containers:
         - name: {{ .Chart.Name }}
@@ -105,14 +113,20 @@ spec:
           #  name: {{ include "shardingproxy.fullname" . }}-env
 
           volumeMounts:
+          ## javaagent configuration volume.
           - name: agentConfig
             mountPath: "/opt/shardingproxy/ext-lib/agentlib/conf/agent.yaml"
-          - name: shardingLog
-            mountPath: "/var/log/shardingproxy/"
+          ## sharding rules configuration volume.
           {{- range $index, $value := .Values.shardingConfigs}}
           - name: {{$index}}
             mountPath: "/opt/shardingproxy/conf/config-{{$index}}.yaml"
           {{- end}}
+          ## sharding rules volume.
+          - name: shardingData
+            mountPath: "/opt/shardingproxy/data/"
+          ## sharding log volume.
+          - name: shardingLog
+            mountPath: "/opt/shardingproxy/log/"
 
           livenessProbe:
             initialDelaySeconds: 10
