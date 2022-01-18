@@ -90,6 +90,7 @@ docker run -d \
 -e SHARDING_PORT=3308 \
 -v /mnt/disk1/shardingproxy/ext-lib/agentlib/conf/:/opt/shardingproxy/ext-lib/agentlib/conf/ \
 -v /mnt/disk1/shardingproxy/conf/:/opt/shardingproxy/conf/ \
+-v /mnt/disk1/shardingproxy/data/:/opt/shardingproxy/data/ \
 -v /mnt/disk1/log/shardingproxy/:/opt/shardingproxy/log/ \
 -p 3308:3308 \
 wl4g/shardingproxy:2.0.0_5.1.0
@@ -218,7 +219,7 @@ cd xcloud-shardingproxy
 mvn clean install -DskipTests -Dmaven.test.skip=true -T 2C
 ```
 
-### 3.2 Example developer debugging
+### 3.2 Startup debugging
 
 > The following is the schematic configuration of the example, please  correct configure it in eclipse and idea development tools.
 
@@ -237,8 +238,11 @@ export PLUGINS_PATH=${SP_BASE_DIR}/xcloud-shardingproxy-startertension/target/sh
 ## Or, only set the target dir of the extension plugin jar.
 #export PLUGINS_PATH=${SP_BASE_DIR}/xcloud-shardingproxy-agent-extension/target/
 
-java ${SP_JAVAAGENT} -jar shardingproxy-${SP_VERSION}-bin.jar 3308 ${SP_CONF_DIR}
-#java ${SP_JAVAAGENT} -cp xxx com.wl4g.ShardingProxy 3308 ${SP_CONF_DIR}
+java \
+-Djava.net.preferIPv4Stack=true ${SP_JAVAAGENT} \
+-Dcom.atomikos.icatch.log_base_dir=/tmp/atomikos \
+-cp .conf/*:ext-lib/*:lib/* \
+com.wl4g.ShardingProxy 3308 ${SP_CONF_DIR}
 ```
 
 ## 4. FAQ

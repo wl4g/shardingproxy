@@ -56,8 +56,9 @@ dataSources:
 # Schema rules configuration.
 rules:
 #################################### Sharding rules group0 ####################################
-# @see:https://shardingsphere.apache.org/document/current/en/user-manual/shardingsphere-jdbc/builtin-algorithm/sharding/
- - !SHARDING
+## @see:https://shardingsphere.apache.org/document/current/en/user-manual/shardingsphere-jdbc/builtin-algorithm/sharding/
+## @see:org.apache.shardingsphere.sharding.api.config.ShardingRuleConfiguration
+- !SHARDING
   tables:
     t_user:
       actualDataNodes: rw_userdb_g0db${0..2}.t_user_${0..2}
@@ -98,7 +99,8 @@ rules:
       type: SNOWFLAKE
       props:
         worker-id: '1' # Range[0,1024),see:org.apache.shardingsphere.sharding.algorithm.keygen.SnowflakeKeyGenerateAlgorithm#getWorkerId()
- - !READWRITE_SPLITTING
+## @see:org.apache.shardingsphere.readwritesplitting.api.ReadwriteSplittingRuleConfiguration
+- !READWRITE_SPLITTING
   dataSources:
     rw_userdb_g0db0:
       writeDataSourceName: ds_userdb_g0db0_1
@@ -121,7 +123,8 @@ rules:
   loadBalancers:
     r_lb_0:
       type: RANDOM
- - !DB_DISCOVERY
+## @see:org.apache.shardingsphere.readwritesplitting.api.DatabaseDiscoveryRuleConfiguration
+- !DB_DISCOVERY
    dataSources:
      ha_userdb_g0db0:
        discoveryTypeName: cn_south1_a1_mgr_g0_0
@@ -158,6 +161,7 @@ rules:
          # see: https://github.com/mysql/mysql-server/blob/mysql-5.7.30/rapid/plugin/group_replication/src/plugin.cc#L1726
          # see: SELECT * FROM performance_schema.global_variables WHERE VARIABLE_NAME='group_replication_group_name'
          group-name: 5db40c3c-180c-11e9-afbf-005056ac6820
+         ## @see:org.apache.shardingsphere.dbdiscovery.mgr.MGRDatabaseDiscoveryType#extDiscoveryConfig
          extensionDiscoveryConfigJson: |-
            {
              "memberHostMappings": [{
