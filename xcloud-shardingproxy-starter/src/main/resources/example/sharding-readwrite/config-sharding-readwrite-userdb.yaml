@@ -34,6 +34,8 @@ extensionDefaultDataSource:
 # Specification datasource configuration.
 dataSources:
 #################################### Sharding datasource group0 ####################################
+  ds_userdb_single:
+    url: 'jdbc:mysql://n0.rds.local:3306/userdb_single?serverTimezone=UTC&useSSL=false&allowMultiQueries=true&characterEncoding=utf-8'
   ds_userdb_g0db0_0:
     url: 'jdbc:mysql://n0.rds.local:3306/userdb_g0db0?serverTimezone=UTC&useSSL=false&allowMultiQueries=true&characterEncoding=utf-8'
   ds_userdb_g0db0_1:
@@ -55,6 +57,10 @@ dataSources:
 
 # Schema rules configuration.
 rules:
+## @see:org.apache.shardingsphere.singletable.config.SingleTableRuleConfiguration
+## @see:org.apache.shardingsphere.singletable.yaml.config.swapper.SingleTableRuleConfigurationYamlSwapper#getRuleTagName
+- !SINGLE
+  defaultDataSource: ds_userdb_single
 #################################### Sharding rules group0 ####################################
 ## @see:https://shardingsphere.apache.org/document/current/en/user-manual/shardingsphere-jdbc/builtin-algorithm/sharding/
 ## @see:org.apache.shardingsphere.sharding.api.config.ShardingRuleConfiguration
