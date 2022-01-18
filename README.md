@@ -381,3 +381,9 @@ Under the same schemaName, multiple sharding databases must be the same. See sou
   -e PORT=3308 \
   apache/shardingsphere-proxy:5.1.0
   ```
+
+### 4.4 How to gracefully name dataSources when there are too many actual db-instances to sharding?
+
+- Recommended naming spec: `ds_<dbSchema>_<regionNumber>_<zoneNumber>_<dbClusterNumber>_<instanceNumber>`, &nbsp; For example the abbreviation is named: `ds_userdb_r0z1mgr2i2`, &nbsp; This means: Instance 2 belongs to MySQL group replication cluster 2 under Availability Zone 1 under Data Center(Region) 0.
+
+- See example configuration: [config-sharding-readwrite-userdb.yaml](xcloud-shardingproxy-starter/src/main/resources/example/sharding-readwrite/server.yaml)

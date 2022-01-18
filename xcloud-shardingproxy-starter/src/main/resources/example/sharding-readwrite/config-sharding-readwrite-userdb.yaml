@@ -36,24 +36,24 @@ dataSources:
 #################################### Sharding datasource group0 ####################################
   ds_userdb_single:
     url: 'jdbc:mysql://n0.rds.local:3306/userdb_single?serverTimezone=UTC&useSSL=false&allowMultiQueries=true&characterEncoding=utf-8'
-  ds_userdb_g0db0_0:
-    url: 'jdbc:mysql://n0.rds.local:3306/userdb_g0db0?serverTimezone=UTC&useSSL=false&allowMultiQueries=true&characterEncoding=utf-8'
-  ds_userdb_g0db0_1:
-    url: 'jdbc:mysql://n1.rds.local:3306/userdb_g0db0?serverTimezone=UTC&useSSL=false&allowMultiQueries=true&characterEncoding=utf-8'
-  ds_userdb_g0db0_2:
-    url: 'jdbc:mysql://n2.rds.local:3306/userdb_g0db0?serverTimezone=UTC&useSSL=false&allowMultiQueries=true&characterEncoding=utf-8'
-  ds_userdb_g0db1_0:
-    url: 'jdbc:mysql://n0.rds.local:3306/userdb_g0db1?serverTimezone=UTC&useSSL=false&allowMultiQueries=true&characterEncoding=utf-8'
-  ds_userdb_g0db1_1:
-    url: 'jdbc:mysql://n1.rds.local:3306/userdb_g0db1?serverTimezone=UTC&useSSL=false&allowMultiQueries=true&characterEncoding=utf-8'
-  ds_userdb_g0db1_2:
-    url: 'jdbc:mysql://n2.rds.local:3306/userdb_g0db1?serverTimezone=UTC&useSSL=false&allowMultiQueries=true&characterEncoding=utf-8'
-  ds_userdb_g0db2_0:
-    url: 'jdbc:mysql://n0.rds.local:3306/userdb_g0db2?serverTimezone=UTC&useSSL=false&allowMultiQueries=true&characterEncoding=utf-8'
-  ds_userdb_g0db2_1:
-    url: 'jdbc:mysql://n1.rds.local:3306/userdb_g0db2?serverTimezone=UTC&useSSL=false&allowMultiQueries=true&characterEncoding=utf-8'
-  ds_userdb_g0db2_2:
-    url: 'jdbc:mysql://n2.rds.local:3306/userdb_g0db2?serverTimezone=UTC&useSSL=false&allowMultiQueries=true&characterEncoding=utf-8'
+  ds_userdb_r0z0mgr0i0:
+    url: 'jdbc:mysql://n0.rds.local:3306/userdb_r0z0mgr0?serverTimezone=UTC&useSSL=false&allowMultiQueries=true&characterEncoding=utf-8'
+  ds_userdb_r0z0mgr0i1:
+    url: 'jdbc:mysql://n1.rds.local:3306/userdb_r0z0mgr0?serverTimezone=UTC&useSSL=false&allowMultiQueries=true&characterEncoding=utf-8'
+  ds_userdb_r0z0mgr0i2:
+    url: 'jdbc:mysql://n2.rds.local:3306/userdb_r0z0mgr0?serverTimezone=UTC&useSSL=false&allowMultiQueries=true&characterEncoding=utf-8'
+  ds_userdb_r0z0mgr1i0:
+    url: 'jdbc:mysql://n0.rds.local:3306/userdb_r0z0mgr1?serverTimezone=UTC&useSSL=false&allowMultiQueries=true&characterEncoding=utf-8'
+  ds_userdb_r0z0mgr1i1:
+    url: 'jdbc:mysql://n1.rds.local:3306/userdb_r0z0mgr1?serverTimezone=UTC&useSSL=false&allowMultiQueries=true&characterEncoding=utf-8'
+  ds_userdb_r0z0mgr1i2:
+    url: 'jdbc:mysql://n2.rds.local:3306/userdb_r0z0mgr1?serverTimezone=UTC&useSSL=false&allowMultiQueries=true&characterEncoding=utf-8'
+  ds_userdb_r0z0mgr2i0:
+    url: 'jdbc:mysql://n0.rds.local:3306/userdb_r0z0mgr2?serverTimezone=UTC&useSSL=false&allowMultiQueries=true&characterEncoding=utf-8'
+  ds_userdb_r0z0mgr2i1:
+    url: 'jdbc:mysql://n1.rds.local:3306/userdb_r0z0mgr2?serverTimezone=UTC&useSSL=false&allowMultiQueries=true&characterEncoding=utf-8'
+  ds_userdb_r0z0mgr2i2:
+    url: 'jdbc:mysql://n2.rds.local:3306/userdb_r0z0mgr2?serverTimezone=UTC&useSSL=false&allowMultiQueries=true&characterEncoding=utf-8'
 
 # Schema rules configuration.
 rules:
@@ -67,8 +67,7 @@ rules:
 - !SHARDING
   tables:
     t_user:
-      actualDataNodes: rw_userdb_g0db${0..2}.t_user_${0..2}
-      #actualDataNodes: 'rw_userdb_g0db0.t_user_${0..3},rw_userdb_g0db1.t_user_${0..2},rw_userdb_g0db2.t_user_${0..2},rw_userdb_g0db${0..2}.t_user_${0..2}'
+      actualDataNodes: rw_userdb_r0z0mgr${0..2}.t_user_${0..2}
       #databaseStrategy:
       tableStrategy:
         standard:
@@ -89,11 +88,11 @@ rules:
     #alg_complex_smart_mod_g0_0:
     #  type: SMART_MOD
     #  props:
-    #    algorithm-expression: '_g0db0->0,1,2,3|_g0db1->4,5,6|_g0db2->7,8,9'
+    #    algorithm-expression: '_r0z0mgr0->0,1,2,3|_r0z0mgr1->4,5,6|_r0z0mgr2->7,8,9'
     alg_database_inline_g0_0:
       type: INLINE
       props:
-        algorithm-expression: rw_userdb_g0db${(id % 9) as int}
+        algorithm-expression: rw_userdb_r0z0mgr${(id % 9) as int}
     alg_table_volume_range_g0_0: # see:org.apache.shardingsphere.sharding.algorithm.sharding.range.VolumeBasedRangeShardingAlgorithm
       type: VOLUME_RANGE2
       props: # Must use quotation marks(string) or you cannot get them.
@@ -108,23 +107,23 @@ rules:
 ## @see:org.apache.shardingsphere.readwritesplitting.api.ReadwriteSplittingRuleConfiguration
 - !READWRITE_SPLITTING
   dataSources:
-    rw_userdb_g0db0:
-      writeDataSourceName: ds_userdb_g0db0_1
+    rw_userdb_r0z0mgr0:
+      writeDataSourceName: ds_userdb_r0z0mgr0i1
       readDataSourceNames:
-        - ds_userdb_g0db0_1
-        - ds_userdb_g0db0_2
+        - ds_userdb_r0z0mgr0i1
+        - ds_userdb_r0z0mgr0i2
       loadBalancerName: r_lb_0
-    rw_userdb_g0db1:
-      writeDataSourceName: ds_userdb_g0db1_1
+    rw_userdb_r0z0mgr1:
+      writeDataSourceName: ds_userdb_r0z0mgr1i1
       readDataSourceNames:
-        - ds_userdb_g0db1_1
-        - ds_userdb_g0db1_2
+        - ds_userdb_r0z0mgr1i1
+        - ds_userdb_r0z0mgr1i2
       loadBalancerName: r_lb_0
-    rw_userdb_g0db2:
-      writeDataSourceName: ds_userdb_g0db2_1
+    rw_userdb_r0z0mgr2:
+      writeDataSourceName: ds_userdb_r0z0mgr2i1
       readDataSourceNames:
-        - ds_userdb_g0db2_1
-        - ds_userdb_g0db2_2
+        - ds_userdb_r0z0mgr2i1
+        - ds_userdb_r0z0mgr2i2
       loadBalancerName: r_lb_0
   loadBalancers:
     r_lb_0:
@@ -132,34 +131,34 @@ rules:
 ## @see:org.apache.shardingsphere.readwritesplitting.api.DatabaseDiscoveryRuleConfiguration
 - !DB_DISCOVERY
    dataSources:
-     ha_userdb_g0db0:
-       discoveryTypeName: cn_south1_a1_mgr_g0_0
-       discoveryHeartbeatName: mgr_heartbeat_0
+     ha_userdb_r0z0mgr0:
+       discoveryTypeName: dis_r0z0mgrx
+       discoveryHeartbeatName: default_mgr_heartbeat
        dataSourceNames:
-         - ds_userdb_g0db0_0
-         - ds_userdb_g0db0_1
-         - ds_userdb_g0db0_2
-     ha_userdb_g0db1:
-       discoveryTypeName: cn_south1_a1_mgr_g0_0
-       discoveryHeartbeatName: mgr_heartbeat_0
+         - ds_userdb_r0z0mgr0i0
+         - ds_userdb_r0z0mgr0i1
+         - ds_userdb_r0z0mgr0i2
+     ha_userdb_r0z0mgr1:
+       discoveryTypeName: dis_r0z0mgrx
+       discoveryHeartbeatName: default_mgr_heartbeat
        dataSourceNames:
-         - ds_userdb_g0db1_0
-         - ds_userdb_g0db1_1
-         - ds_userdb_g0db1_2
-     ha_userdb_g0db2:
-       discoveryTypeName: cn_south1_a1_mgr_g0_0
-       discoveryHeartbeatName: mgr_heartbeat_0
+         - ds_userdb_r0z0mgr1i0
+         - ds_userdb_r0z0mgr1i1
+         - ds_userdb_r0z0mgr1i2
+     ha_userdb_r0z0mgr2:
+       discoveryTypeName: dis_r0z0mgrx
+       discoveryHeartbeatName: default_mgr_heartbeat
        dataSourceNames:
-         - ds_userdb_g0db2_0
-         - ds_userdb_g0db2_1
-         - ds_userdb_g0db2_2
+         - ds_userdb_r0z0mgr2i0
+         - ds_userdb_r0z0mgr2i1
+         - ds_userdb_r0z0mgr2i2
    discoveryHeartbeats:
-     mgr_heartbeat_0:
+     default_mgr_heartbeat:
        props:
          keep-alive-cron: '0/5 * * * * ?'
    discoveryTypes:
      # HA MGR architecture see: https://blog.csdn.net/n88Lpo/article/details/118315051
-     cn_south1_a1_mgr_g0_0:
+     dis_r0z0mgrx:
        type: MGR
        props:
          # Must be consistent with the MGR configuration group name.

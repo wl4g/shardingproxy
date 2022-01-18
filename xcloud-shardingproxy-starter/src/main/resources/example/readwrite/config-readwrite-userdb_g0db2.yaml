@@ -18,7 +18,7 @@
 ##################### Configuration of 'userdb' by group sharding v5 #######################
 
 # External logical database schema.
-schemaName: userdb_g0db2
+schemaName: userdb_r0z0mgr2
 
 # Extension default datasource configuration.
 # @see:com.wl4g.shardingproxy.config.ProxyConfigurationLoader2.loadRuleConfiguration
@@ -33,23 +33,23 @@ extensionDefaultDataSource:
 
 # Datasource configuration.
 dataSources:
-  ds_userdb_g0db2_0:
-    url: 'jdbc:mysql://n0.rds.local:3306/userdb_g0db2?serverTimezone=UTC&useSSL=false&allowMultiQueries=true&characterEncoding=utf-8'
-  ds_userdb_g0db2_1:
-    url: 'jdbc:mysql://n1.rds.local:3306/userdb_g0db2?serverTimezone=UTC&useSSL=false&allowMultiQueries=true&characterEncoding=utf-8'
-  ds_userdb_g0db2_2:
-    url: 'jdbc:mysql://n2.rds.local:3306/userdb_g0db2?serverTimezone=UTC&useSSL=false&allowMultiQueries=true&characterEncoding=utf-8'
+  ds_userdb_r0z0mgr2i0:
+    url: 'jdbc:mysql://n0.rds.local:3306/userdb_r0z0mgr2i0?serverTimezone=UTC&useSSL=false&allowMultiQueries=true&characterEncoding=utf-8'
+  ds_userdb_r0z0mgr2i1:
+    url: 'jdbc:mysql://n1.rds.local:3306/userdb_r0z0mgr2i1?serverTimezone=UTC&useSSL=false&allowMultiQueries=true&characterEncoding=utf-8'
+  ds_userdb_r0z0mgr2i2:
+    url: 'jdbc:mysql://n2.rds.local:3306/userdb_r0z0mgr2i2?serverTimezone=UTC&useSSL=false&allowMultiQueries=true&characterEncoding=utf-8'
 
 # Schema rules configuration.
 rules:
 ## @see:org.apache.shardingsphere.readwritesplitting.api.ReadwriteSplittingRuleConfiguration
 - !READWRITE_SPLITTING
   dataSources:
-    ds_rw_userdb_g0db2:
-      writeDataSourceName: ds_userdb_g0db2_0
+    ds_rw_userdb_r0z0mgr2:
+      writeDataSourceName: ds_userdb_r0z0mgr2i0
       readDataSourceNames:
-        - ds_userdb_g0db2_1
-        - ds_userdb_g0db2_2
+        - ds_userdb_r0z0mgr2i1
+        - ds_userdb_r0z0mgr2i2
       loadBalancerName: r_lb_0
   loadBalancers:
     r_lb_0:
@@ -57,20 +57,20 @@ rules:
 ## @see:org.apache.shardingsphere.readwritesplitting.api.DatabaseDiscoveryRuleConfiguration
 - !DB_DISCOVERY
    dataSources:
-     ha_userdb_g0db2:
-       discoveryTypeName: cn_south1_a1_mgr_g0_0
-       discoveryHeartbeatName: mgr_heartbeat_0
+     ha_userdb_r0z0mgr2:
+       discoveryTypeName: dis_r0z0mgr2
+       discoveryHeartbeatName: default_mgr_heartbeat
        dataSourceNames:
-         - ds_userdb_g0db2_0
-         - ds_userdb_g0db2_1
-         - ds_userdb_g0db2_2
+         - ds_userdb_r0z0mgr2i0
+         - ds_userdb_r0z0mgr2i1
+         - ds_userdb_r0z0mgr2i2
    discoveryHeartbeats:
-     mgr_heartbeat_0:
+     default_mgr_heartbeat:
        props:
          keep-alive-cron: '0/5 * * * * ?'
    discoveryTypes:
      # HA MGR architecture see: https://blog.csdn.net/n88Lpo/article/details/118315051
-     cn_south1_a1_mgr_g0_0:
+     dis_r0z0mgr2:
        type: MGR
        props:
          # Must be consistent with the MGR configuration group name.
