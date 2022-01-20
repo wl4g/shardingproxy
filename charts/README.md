@@ -17,7 +17,7 @@ To install the chart with the release name `shardingproxy`:
 
 ```bash
 git clone https://github.com/wl4g/xcloud-shardingproxy.git
-cd xcloud-shardingproxy/kubernetes/helm/
+cd xcloud-shardingproxy/charts/
 helm install shardingproxy .
 ```
 

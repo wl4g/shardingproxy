@@ -40,7 +40,7 @@ mode:
 rules:
 - !AUTHORITY
   users: # Note: it will cover the account number of the real database!!!
-    - userdb@:123456
+    - root@:123456
   provider:
     type: ALL_PRIVILEGES_PERMITTED # ALL_PRIVILEGES_PERMITTED|NATIVE
     #props:
