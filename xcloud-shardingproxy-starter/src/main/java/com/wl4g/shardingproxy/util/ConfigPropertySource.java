@@ -31,6 +31,13 @@ import java.util.regex.Pattern;
 public class ConfigPropertySource extends Properties {
     private static final long serialVersionUID = -1021135946737652193L;
 
+    public ConfigPropertySource() {
+    }
+
+    public ConfigPropertySource(Properties props) {
+        putAll(props);
+    }
+
     @Override
     public Object get(Object key) {
         return getProperty((String) key);
@@ -44,23 +51,30 @@ public class ConfigPropertySource extends Properties {
         value = findEnvironmentValue(key);
         if (isNull(value)) {
             value = findEnvironmentValue(pointToHump(key));
-        } else if (isNull(value)) {
+        }
+        if (isNull(value)) {
             value = findEnvironmentValue(pointToLine(key));
-        } else if (isNull(value)) {
+        }
+        if (isNull(value)) {
             value = findEnvironmentValue(humpToLine(key));
-        } else if (isNull(value)) {
+        }
+        if (isNull(value)) {
             value = findEnvironmentValue(lineToHump(key));
         }
         // The secondary priority to get from the configuration.
-        else if (isNull(value)) {
+        if (isNull(value)) {
             value = super.getProperty(key);
-        } else if (isNull(value)) {
+        }
+        if (isNull(value)) {
             value = super.getProperty(pointToHump(key));
-        } else if (isNull(value)) {
+        }
+        if (isNull(value)) {
             value = super.getProperty(pointToLine(key));
-        } else if (isNull(value)) {
+        }
+        if (isNull(value)) {
             value = super.getProperty(humpToLine(key));
-        } else if (isNull(value)) {
+        }
+        if (isNull(value)) {
             value = super.getProperty(lineToHump(key));
         }
 

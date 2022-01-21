@@ -34,16 +34,48 @@ mode:
       operationTimeoutMilliseconds: 500
   overwrite: false
 
-# Global rules configuration.
-# @see:org.apache.shardingsphere.proxy.config.yaml.YamlProxyRuleConfiguration#rules
-# @see:org.apache.shardingsphere.authority.yaml.config.YamlAuthorityRuleConfiguration
+## Global rules configuration.
+## @see:org.apache.shardingsphere.proxy.config.yaml.YamlProxyRuleConfiguration#rules
+## @see:org.apache.shardingsphere.authority.yaml.config.YamlAuthorityRuleConfiguration
+## @see:https://shardingsphere.apache.org/document/current/cn/user-manual/shardingsphere-proxy/yaml-config/authentication/
 rules:
 - !AUTHORITY
-  users: # Note: it will cover the account number of the real database!!!
+  users: # Notice: it will cover the account number of the real database!!!
     - root@:123456
+    - orderdb@:123456
+    - userdb@:123456
   provider:
-    type: ALL_PRIVILEGES_PERMITTED # ALL_PRIVILEGES_PERMITTED|NATIVE
-    #props:
+    type: SCHEMA_PRIVILEGES_PERMITTED # ALL_PRIVILEGES_PERMITTED|SCHEMA_PRIVILEGES_PERMITTED|NATIVE(5.x@deprecated)
+    props:
+      user-schema-mappings: root@=orderdb,root@=userdb,orderdb@=orderdb,userdb@=userdb
+      user-admission-strategy: |-
+        {
+          "granted": {
+            "orderdb": ["default_ddl_safety", "base_dml_safety", "slight_strict_dml_safety"],
+            "userdb": ["default_ddl_safety", "base_dml_safety"]
+          },
+          "strategy": {
+            "default_ddl_safety": [{
+              "anyBlacklistSQLs": [
+                "(.*)drop(\\s+)schema(\\s+)(.+)",
+                "(.*)drop(\\s+)database(\\s+)(.+)",
+                "(.*)drop(\\s+)table(\\s+)(.+)",
+                "(.*)alert(\\s+)database(\\s+)(.+)",
+                "(.*)alert(\\s+)table(\\s+)(.+)"
+              ]
+            }],
+            "base_dml_safety": [{
+              "delete": {
+                "requiredWhereCondidtion": true
+              }
+            }],
+            "slight_strict_dml_safety": [{
+              "update": {
+                "requiredWhereCondidtion": true
+              }
+            }]
+          }
+        }
 #- !TRANSACTION
 #  defaultType: XA
 #  providerType: Atomikos

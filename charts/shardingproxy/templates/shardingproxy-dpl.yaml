@@ -132,14 +132,20 @@ spec:
             initialDelaySeconds: 10
             periodSeconds: 5
             timeoutSeconds: 10
+            failureThreshold: 5
+            successThreshold: 1
             httpGet:
               scheme: HTTP
+              #httpHeaders:
               path: /-/healthy
               port: prometheus
 
           readinessProbe:
             initialDelaySeconds: 15
             periodSeconds: 20
+            timeoutSeconds: 10
+            failureThreshold: 5
+            successThreshold: 1
             tcpSocket:
               port: proxy
 
