@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.wl4g</groupId>
 	<artifactId>xcloud-shardingproxy</artifactId>
-	<version>2.0.0_5.1.0</version>
+	<version>2.1.0_5.1.0</version>
 	<packaging>pom</packaging>
 	<name>XCloud ShardingProxy</name>
 	<url>http://xcloud.wl4g.com</url>
@@ -67,6 +67,7 @@
 		<java.version>1.8</java.version>
 		<shardingsphere.version>5.1.0</shardingsphere.version>
 		<prometheus.version>0.11.0</prometheus.version>
+		<lombok.version>1.18.4</lombok.version>
 		<snakeyaml.version>1.16</snakeyaml.version>
 		<curator.version>5.1.0</curator.version>
 		<byte-buddy.version>1.11.18</byte-buddy.version>
@@ -96,6 +97,11 @@
 				<version>2.0.0</version>
 				<type>pom</type>
 				<scope>import</scope>
+			</dependency>
+			<dependency>
+				<groupId>org.projectlombok</groupId>
+				<artifactId>lombok</artifactId>
+				<version>${lombok.version}</version>
 			</dependency>
 			<!-- <dependency> -->
 			<!-- <groupId>com.google.guava</groupId> -->

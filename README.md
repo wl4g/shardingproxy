@@ -37,16 +37,16 @@ GROUP_NAME                            NODE_ID                               NODE
 
 Notice: The example of non average slicing is not recommended for production (scenario: slicing according to different machine performance weight), because shardingsphere:5.1.0, It is recommended to use average sharding.
 
-- [orderdb-sharding.sql](xcloud-shardingproxy-starter/exampledata/orderdb-sharding.sql) (**sharding example of uniform matrix**, recommended for General Developers)
+- [userdb-sharding.sql](xcloud-shardingproxy-starter/exampledata/userdb-sharding.sql) (**sharding example of uniform matrix**, recommended for General Developers)
 
 ```bash
-echo "source $PROJECT_HOME/xcloud-shardingproxy-starter/exampledata/sharding/orderdb-sharding.sql" | mysql -h172.8.8.111 -P3306 -uroot -p123456
+echo "source $PROJECT_HOME/xcloud-shardingproxy-starter/exampledata/sharding/userdb-sharding.sql" | mysql -h172.8.8.111 -P3306 -uroot -p123456
 ```
 
-- [uneven-userdb-sharding.sql](xcloud-shardingproxy-starter/exampledata/uneven-userdb-sharding.sql) (**sharding example of non-uniform matrix**, recommended for Advanced Developers)
+- [orderdb-sharding-uneven.sql](xcloud-shardingproxy-starter/exampledata/orderdb-sharding-uneven.sql) (**sharding example of non-uniform matrix**, recommended for Advanced Developers)
 
 ```bash
-echo "source $PROJECT_HOME/xcloud-shardingproxy-starter/exampledata/sharding/uneven-userdb-sharding.sql" | mysql -h172.8.8.111 -P3306 -uroot -p123456
+echo "source $PROJECT_HOME/xcloud-shardingproxy-starter/exampledata/sharding/orderdb-sharding-uneven.sql" | mysql -h172.8.8.111 -P3306 -uroot -p123456
 ```
 
 ### 1.3 Deploy on Docker (Testing recommend)
@@ -102,7 +102,7 @@ docker run -d \
 -v /mnt/disk1/shardingproxy/data/:/opt/shardingproxy/data/ \
 -v /mnt/disk1/log/shardingproxy/:/opt/shardingproxy/log/ \
 -p 3308:3308 \
-wl4g/shardingproxy:2.0.0_5.1.0
+wl4g/shardingproxy:2.1.0_5.1.0
 ```
 
 - Testing access shardingproxy
@@ -110,7 +110,7 @@ wl4g/shardingproxy:2.0.0_5.1.0
   - Select operation. (Simulate 100 this query operation and observe the Tracing UI)
 
   ```bash
-  for i in `seq 1 100`; do echo 'use userdb; select * from t_user' | mysql -h127.0.0.1 -P3308 -uroot -p123456; done
+  for i in `seq 1 100`; do echo 'use userdb; select * from t_user' | mysql -h127.0.0.1 -P3308 -uuserdb -p123456; done
   ```
 
   - Update operation
@@ -269,7 +269,7 @@ mvn clean install -DskipTests -Dmaven.test.skip=true -T 2C
 
 ```bash
 export SP_BASE_DIR=/opt/xcloud-shardingproxy
-export SP_VERSION='2.0.0_5.1.0'
+export SP_VERSION='2.1.0_5.1.0'
 export SP_CONF_DIR=${SP_BASE_DIR}/xcloud-shardingproxy-starter/src/main/resources/example/sharding-readwrite/
 export SP_JAVAAGENT=${SP_BASE_DIR}/xcloud-shardingproxy-agent-bootstrap/target/xcloud-shardingproxy-agent-bootstrap-${SP_VERSION}.jar
 
@@ -277,7 +277,7 @@ export SP_JAVAAGENT=${SP_BASE_DIR}/xcloud-shardingproxy-agent-bootstrap/target/x
 export AGENT_PATH=${SP_BASE_DIR}/xcloud-shardingproxy-starter/src/main/resources/agent
 
 ## Sets the dir for more plugins.
-export PLUGINS_PATH=${SP_BASE_DIR}/xcloud-shardingproxy-startertension/target/shardingproxy-2.0.0_5.1.0-bin/ext-lib/agentlib/plugins
+export PLUGINS_PATH=${SP_BASE_DIR}/xcloud-shardingproxy-startertension/target/shardingproxy-2.1.0_5.1.0-bin/ext-lib/agentlib/plugins
 
 ## Or, only set the target dir of the extension plugin jar.
 #export PLUGINS_PATH=${SP_BASE_DIR}/xcloud-shardingproxy-agent-extension/target/

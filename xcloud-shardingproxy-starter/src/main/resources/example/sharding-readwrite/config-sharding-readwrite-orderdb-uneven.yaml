@@ -1,0 +1,320 @@
+#
+# Licensed to the Apache Software Foundation (ASF) under one or more
+# contributor license agreements.  See the NOTICE file distributed with
+# this work for additional information regarding copyright ownership.
+# The ASF licenses this file to You under the Apache License, Version 2.0
+# (the "License"); you may not use this file except in compliance with
+# the License.  You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+
+##################### Configuration of 'orderdb' by group sharding v5.1.0 #######################
+
+# External logical database schema.
+schemaName: orderdb
+
+# Extension default datasource configuration.
+# @see:com.wl4g.shardingproxy.config.ProxyConfigurationLoader2.loadRuleConfiguration
+extensionDefaultDataSource:
+  username: root
+  password: 123456
+  connectionTimeoutMilliseconds: 30000
+  idleTimeoutMilliseconds: 60000
+  maxLifetimeMilliseconds: 1800000
+  maxPoolSize: 50
+  minPoolSize: 1
+
+# Specification datasource configuration.
+dataSources:
+## ----------------------------------- Sharding Group 0 dataSources -----------------------------------
+  ## MGR cluster 0
+  ## Instance 0
+  ds_orderdb_r0z0mgr0i0_db0:
+    url: 'jdbc:mysql://n0.rds.local:3306/orderdb_r0z0mgr0db0?serverTimezone=UTC&useSSL=false&allowMultiQueries=true&characterEncoding=utf-8'
+  ds_orderdb_r0z0mgr0i0_db1:
+    url: 'jdbc:mysql://n0.rds.local:3306/orderdb_r0z0mgr0db0?serverTimezone=UTC&useSSL=false&allowMultiQueries=true&characterEncoding=utf-8'
+  ## Instance 1
+  ds_orderdb_r0z0mgr0i1_db0:
+    url: 'jdbc:mysql://n1.rds.local:3306/orderdb_r0z0mgr0db0?serverTimezone=UTC&useSSL=false&allowMultiQueries=true&characterEncoding=utf-8'
+  ds_orderdb_r0z0mgr0i1_db1:
+    url: 'jdbc:mysql://n1.rds.local:3306/orderdb_r0z0mgr0db1?serverTimezone=UTC&useSSL=false&allowMultiQueries=true&characterEncoding=utf-8'
+  ## Instance 2
+  ds_orderdb_r0z0mgr0i2_db0:
+    url: 'jdbc:mysql://n2.rds.local:3306/orderdb_r0z0mgr0db0?serverTimezone=UTC&useSSL=false&allowMultiQueries=true&characterEncoding=utf-8'
+  ds_orderdb_r0z0mgr0i2_db1:
+    url: 'jdbc:mysql://n2.rds.local:3306/orderdb_r0z0mgr0db1?serverTimezone=UTC&useSSL=false&allowMultiQueries=true&characterEncoding=utf-8'
+  ## MGR cluster 1
+  ## Instance 0
+  ds_orderdb_r0z0mgr1i0_db0:
+    url: 'jdbc:mysql://n0.rds.local:3306/orderdb_r0z0mgr1db0?serverTimezone=UTC&useSSL=false&allowMultiQueries=true&characterEncoding=utf-8'
+  ds_orderdb_r0z0mgr1i0_db1:
+    url: 'jdbc:mysql://n0.rds.local:3306/orderdb_r0z0mgr1db1?serverTimezone=UTC&useSSL=false&allowMultiQueries=true&characterEncoding=utf-8'
+  ds_orderdb_r0z0mgr1i0_db2:
+    url: 'jdbc:mysql://n0.rds.local:3306/orderdb_r0z0mgr1db2?serverTimezone=UTC&useSSL=false&allowMultiQueries=true&characterEncoding=utf-8'
+  ds_orderdb_r0z0mgr1i0_db3:
+    url: 'jdbc:mysql://n0.rds.local:3306/orderdb_r0z0mgr1db3?serverTimezone=UTC&useSSL=false&allowMultiQueries=true&characterEncoding=utf-8'
+  ## Instance 1
+  ds_orderdb_r0z0mgr1i1_db0:
+    url: 'jdbc:mysql://n1.rds.local:3306/orderdb_r0z0mgr1db0?serverTimezone=UTC&useSSL=false&allowMultiQueries=true&characterEncoding=utf-8'
+  ds_orderdb_r0z0mgr1i1_db1:
+    url: 'jdbc:mysql://n1.rds.local:3306/orderdb_r0z0mgr1db1?serverTimezone=UTC&useSSL=false&allowMultiQueries=true&characterEncoding=utf-8'
+  ds_orderdb_r0z0mgr1i1_db2:
+    url: 'jdbc:mysql://n1.rds.local:3306/orderdb_r0z0mgr1db2?serverTimezone=UTC&useSSL=false&allowMultiQueries=true&characterEncoding=utf-8'
+  ds_orderdb_r0z0mgr1i1_db3:
+    url: 'jdbc:mysql://n1.rds.local:3306/orderdb_r0z0mgr1db3?serverTimezone=UTC&useSSL=false&allowMultiQueries=true&characterEncoding=utf-8'
+  ## Instance 2
+  ds_orderdb_r0z0mgr1i2_db0:
+    url: 'jdbc:mysql://n2.rds.local:3306/orderdb_r0z0mgr1db0?serverTimezone=UTC&useSSL=false&allowMultiQueries=true&characterEncoding=utf-8'
+  ds_orderdb_r0z0mgr1i2_db1:
+    url: 'jdbc:mysql://n2.rds.local:3306/orderdb_r0z0mgr1db1?serverTimezone=UTC&useSSL=false&allowMultiQueries=true&characterEncoding=utf-8'
+  ds_orderdb_r0z0mgr1i2_db2:
+    url: 'jdbc:mysql://n2.rds.local:3306/orderdb_r0z0mgr1db2?serverTimezone=UTC&useSSL=false&allowMultiQueries=true&characterEncoding=utf-8'
+  ds_orderdb_r0z0mgr1i2_db3:
+    url: 'jdbc:mysql://n2.rds.local:3306/orderdb_r0z0mgr1db3?serverTimezone=UTC&useSSL=false&allowMultiQueries=true&characterEncoding=utf-8'
+  ## MGR cluster single (no-sharding)
+  ds_orderdb_r0z0mgr2_single:
+    url: 'jdbc:mysql://n0.rds.local:3306/orderdb_r0z0mgr2_single?serverTimezone=UTC&useSSL=false&allowMultiQueries=true&characterEncoding=utf-8'
+
+# Schema rules configuration.
+rules:
+## ----------------------------------- Sharding Group 0 rules -----------------------------------
+## @see:org.apache.shardingsphere.singletable.config.SingleTableRuleConfiguration
+## @see:org.apache.shardingsphere.singletable.yaml.config.swapper.SingleTableRuleConfigurationYamlSwapper#getRuleTagName
+- !SINGLE
+  defaultDataSource: ds_orderdb_r0z0mgr2_single
+## @see:https://shardingsphere.apache.org/document/current/en/user-manual/shardingsphere-jdbc/builtin-algorithm/sharding/
+## @see:org.apache.shardingsphere.sharding.api.config.ShardingRuleConfiguration
+## @see:org.apache.shardingsphere.sharding.route.engine.type.standard.ShardingStandardRoutingEngine#route
+- !SHARDING
+  tables:
+    t_user:
+      # Union collection definition of all available actual dataSources.
+      actualDataNodes: rw_orderdb_r0z0mgr${0..1}_db${0..3}.t_user_${0..7}
+      #databaseStrategy:
+      tableStrategy:
+        standard:
+          shardingColumn: id
+          shardingAlgorithmName: alg_table_group_volume_inline_g0_1
+      keyGenerateStrategy:
+        column: id
+        keyGeneratorName: gen_snowflake_g0_0
+  bindingTables:
+  - t_user
+  defaultTableStrategy:
+  defaultDatabaseStrategy:
+    standard:
+      shardingColumn: id
+      shardingAlgorithmName: alg_database_group_volume_inline_g0_1
+  keyGenerators:
+    gen_snowflake_g0_0:
+      type: SNOWFLAKE
+      props:
+        worker-id: '1' # Range[0,1024),see:org.apache.shardingsphere.sharding.algorithm.keygen.SnowflakeKeyGenerateAlgorithm#getWorkerId()
+  shardingAlgorithms:
+    ## @see:com.wl4g.shardingproxy.algorithm.GroupVolumeInlineShardingAlgorithm
+    alg_database_group_volume_inline_g0_1:
+      type: UNEVEN_GROUP_VOLUME_INLINE
+      props:
+        algorithm-expression: |-
+          {
+            "id": [{
+                "lowerClose": 0,
+                "upperOpen": 40000000,
+                "prefixStr": "rw_orderdb_r0z0mgr0_db",
+                "suffixExpr": "${(id % 8) as int}",
+                "resultMapping": {
+                  "0": [0, 1, 2, 3],
+                  "1": [4, 5, 6, 7]
+                }
+            }, {
+                "lowerClose": 40000000,
+                "upperOpen": 200000000,
+                "prefixStr": "rw_orderdb_r0z0mgr1_db",
+                "suffixExpr": "${(id % 32) as int}",
+                "resultMapping": {
+                  "0": [0, 1, 2, 3, 4, 5, 6, 7],
+                  "1": [8, 9, 10, 11, 12, 13, 14, 15],
+                  "2": [16, 17, 18, 19, 20, 21, 22, 23],
+                  "3": [24, 25, 26, 27, 28, 29, 20, 31]
+                }
+            }]
+          }
+    ## @see:com.wl4g.shardingproxy.algorithm.GroupVolumeInlineShardingAlgorithm
+    alg_table_group_volume_inline_g0_1:
+      type: UNEVEN_GROUP_VOLUME_INLINE
+      props:
+        algorithm-expression: |-
+          {
+            "id": [{
+                "lowerClose": 0,
+                "upperOpen": 10000000,
+                "prefixStr": "t_user_",
+                "suffixExpr": "${0}"
+            }, {
+                "lowerClose": 10000000,
+                "upperOpen": 20000000,
+                "prefixStr": "t_user_",
+                "suffixExpr": "${1}"
+            }, {
+                "lowerClose": 20000000,
+                "upperOpen": 30000000,
+                "prefixStr": "t_user_",
+                "suffixExpr": "${2}"
+            }, {
+                "lowerClose": 30000000,
+                "upperOpen": 40000000,
+                "prefixStr": "t_user_",
+                "suffixExpr": "${3}"
+            }, {
+                "lowerClose": 40000000,
+                "upperOpen": 60000000,
+                "prefixStr": "t_user_",
+                "suffixExpr": "${0}"
+            }, {
+                "lowerClose": 60000000,
+                "upperOpen": 80000000,
+                "prefixStr": "t_user_",
+                "suffixExpr": "${1}"
+            }, {
+                "lowerClose": 80000000,
+                "upperOpen": 100000000,
+                "prefixStr": "t_user_",
+                "suffixExpr": "${2}"
+            }, {
+                "lowerClose": 100000000,
+                "upperOpen": 120000000,
+                "prefixStr": "t_user_",
+                "suffixExpr": "${3}"
+            }, {
+                "lowerClose": 120000000,
+                "upperOpen": 140000000,
+                "prefixStr": "t_user_",
+                "suffixExpr": "${4}"
+            }, {
+                "lowerClose": 140000000,
+                "upperOpen": 160000000,
+                "prefixStr": "t_user_",
+                "suffixExpr": "${5}"
+            }, {
+                "lowerClose": 160000000,
+                "upperOpen": 160000000,
+                "prefixStr": "t_user_",
+                "suffixExpr": "${6}"
+            }, {
+                "lowerClose": 180000000,
+                "upperOpen": 200000000,
+                "prefixStr": "t_user_",
+                "suffixExpr": "${7}"
+            }]
+          }
+## @see:org.apache.shardingsphere.readwritesplitting.api.ReadwriteSplittingRuleConfiguration
+- !READWRITE_SPLITTING
+  dataSources:
+    rw_orderdb_r0z0mgr0_db0:
+      writeDataSourceName: ds_orderdb_r0z0mgr0i1_db0
+      readDataSourceNames:
+        - ds_orderdb_r0z0mgr0i1_db0
+        - ds_orderdb_r0z0mgr0i2_db0
+      loadBalancerName: r_lb_0
+    rw_orderdb_r0z0mgr0_db1:
+      writeDataSourceName: ds_orderdb_r0z0mgr0i1_db1
+      readDataSourceNames:
+        - ds_orderdb_r0z0mgr0i1_db1
+        - ds_orderdb_r0z0mgr0i2_db1
+      loadBalancerName: r_lb_0
+    rw_orderdb_r0z0mgr1_db0:
+      writeDataSourceName: ds_orderdb_r0z0mgr1i1_db0
+      readDataSourceNames:
+        - ds_orderdb_r0z0mgr1i1_db0
+        - ds_orderdb_r0z0mgr1i2_db0
+    rw_orderdb_r0z0mgr1_db1:
+      writeDataSourceName: ds_orderdb_r0z0mgr1i1_db1
+      readDataSourceNames:
+        - ds_orderdb_r0z0mgr1i1_db1
+        - ds_orderdb_r0z0mgr1i2_db1
+      loadBalancerName: r_lb_0
+    rw_orderdb_r0z0mgr1_db2:
+      writeDataSourceName: ds_orderdb_r0z0mgr1i1_db2
+      readDataSourceNames:
+        - ds_orderdb_r0z0mgr1i1_db2
+        - ds_orderdb_r0z0mgr1i2_db2
+      loadBalancerName: r_lb_0
+    rw_orderdb_r0z0mgr1_db3:
+      writeDataSourceName: ds_orderdb_r0z0mgr1i1_db3
+      readDataSourceNames:
+        - ds_orderdb_r0z0mgr1i1_db3
+        - ds_orderdb_r0z0mgr1i2_db3
+      loadBalancerName: r_lb_0
+  loadBalancers:
+    r_lb_0:
+      type: RANDOM
+## @see:org.apache.shardingsphere.readwritesplitting.api.DatabaseDiscoveryRuleConfiguration
+- !DB_DISCOVERY
+   dataSources:
+     ha_orderdb_r0z0mgr0:
+       discoveryTypeName: default_dis_r0z0mgr
+       discoveryHeartbeatName: default_mgr_heartbeat
+       dataSourceNames:
+         # Instance 0
+         - ds_orderdb_r0z0mgr0i0_db0
+         - ds_orderdb_r0z0mgr0i0_db1
+         # Instance 1
+         - ds_orderdb_r0z0mgr0i1_db0
+         - ds_orderdb_r0z0mgr0i1_db1
+         # Instance 2
+         - ds_orderdb_r0z0mgr0i2_db0
+         - ds_orderdb_r0z0mgr0i2_db1
+     ha_orderdb_r0z0mgr1:
+       discoveryTypeName: default_dis_r0z0mgr
+       discoveryHeartbeatName: default_mgr_heartbeat
+       dataSourceNames:
+         # Instance 0
+         - ds_orderdb_r0z0mgr1i0_db0
+         - ds_orderdb_r0z0mgr1i0_db1
+         - ds_orderdb_r0z0mgr1i0_db2
+         # Instance 1
+         - ds_orderdb_r0z0mgr1i1_db0
+         - ds_orderdb_r0z0mgr1i1_db1
+         - ds_orderdb_r0z0mgr1i1_db2
+         # Instance 2
+         - ds_orderdb_r0z0mgr1i2_db0
+         - ds_orderdb_r0z0mgr1i2_db1
+         - ds_orderdb_r0z0mgr1i2_db2
+   discoveryHeartbeats:
+     default_mgr_heartbeat:
+       props:
+         keep-alive-cron: '0/5 * * * * ?'
+   discoveryTypes:
+     # HA MGR architecture see: https://blog.csdn.net/n88Lpo/article/details/118315051
+     default_dis_r0z0mgr:
+       type: MGR
+       props:
+         # Must be consistent with the MGR configuration group name.
+         # see: https://github.com/apache/shardingsphere/blob/5.1.0/shardingsphere-features/shardingsphere-db-discovery/shardingsphere-db-discovery-provider/shardingsphere-db-discovery-mgr/src/main/java/org/apache/shardingsphere/dbdiscovery/mgr/MGRDatabaseDiscoveryType.java#L104
+         # see: https://github.com/mysql/mysql-server/blob/mysql-5.7.30/rapid/plugin/group_replication/src/plugin.cc#L1726
+         # see: SELECT * FROM performance_schema.global_variables WHERE VARIABLE_NAME='group_replication_group_name'
+         group-name: 5db40c3c-180c-11e9-afbf-005056ac6820
+         ## @see:org.apache.shardingsphere.dbdiscovery.mgr.MGRDatabaseDiscoveryType#extDiscoveryConfig
+         extensionDiscoveryConfigJson: |-
+           {
+             "memberHostMappings": [{
+                 "rds-mgr-0:3306": [
+                     "n0.rds.local:3306"
+                 ]
+             }, {
+                 "rds-mgr-1:3306": [
+                     "n1.rds.local:3306"
+                 ]
+             }, {
+                 "rds-mgr-2:3306": [
+                     "n2.rds.local:3306"
+                 ]
+             }]
+           }

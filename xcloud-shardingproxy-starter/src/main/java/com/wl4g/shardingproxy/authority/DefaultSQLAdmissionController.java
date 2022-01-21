@@ -16,22 +16,14 @@
 package com.wl4g.shardingproxy.authority;
 
 import static com.wl4g.component.common.collection.CollectionUtils2.safeList;
-import static com.wl4g.component.common.collection.CollectionUtils2.safeMap;
 import static com.wl4g.component.common.reflect.ReflectionUtils2.findFieldNullable;
 import static com.wl4g.component.common.reflect.ReflectionUtils2.getField;
-import static com.wl4g.component.common.serialize.JacksonUtils.parseJSON;
 import static java.lang.String.format;
-import static java.util.stream.Collectors.toSet;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 
 import java.lang.reflect.Field;
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 import java.util.Properties;
-import java.util.Set;
 import java.util.function.Function;
 import java.util.regex.Pattern;
 
@@ -56,11 +48,10 @@ import org.apache.shardingsphere.sql.parser.sql.common.statement.dml.InsertState
 import org.apache.shardingsphere.sql.parser.sql.common.statement.dml.SelectStatement;
 import org.apache.shardingsphere.sql.parser.sql.common.statement.dml.UpdateStatement;
 
-import com.wl4g.shardingproxy.authority.DefaultSQLAdmissionController.AdmissionStrategyConfiguration.StrategySpec;
+import com.wl4g.shardingproxy.authority.AdmissionStrategyConfiguration.StrategySpec;
 import com.wl4g.shardingproxy.util.ConfigPropertySource;
 
 import lombok.Getter;
-import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -277,121 +268,6 @@ public class DefaultSQLAdmissionController implements SQLAdmissionController {
             }
         }
         return PASSED;
-    }
-
-    @Getter
-    @Setter
-    public static class AdmissionStrategyConfiguration {
-
-        private Map<String, List<String>> granted = new HashMap<>();
-        private Map<String, List<StrategySpec>> strategy = new HashMap<>();
-
-        // Merged granted collection.
-        private Map<String, Set<StrategySpec>> merged = new HashMap<>();
-
-        public static AdmissionStrategyConfiguration build(final String json) {
-            if (isBlank(json)) {
-                return new AdmissionStrategyConfiguration();
-            }
-            AdmissionStrategyConfiguration that = parseJSON(json, AdmissionStrategyConfiguration.class);
-            // Merging granted strategy.
-            safeMap(that.getGranted()).forEach((username, strategyNames) -> that.getMerged().put(username,
-                    safeMap(that.getStrategy()).entrySet().stream().filter(s -> safeList(strategyNames).contains(s.getKey()))
-                            .map(e -> e.getValue()).flatMap(s -> s.stream()).collect(toSet())));
-            return that;
-        }
-
-        @Getter
-        @Setter
-        public static class StrategySpec {
-            private SelectSpec select = SelectSpec.EMPTY;
-            private InsertSpec insert = InsertSpec.EMPTY;
-            private UpdateSpec update = UpdateSpec.EMPTY;
-            private DeleteSpec delete = DeleteSpec.EMPTY;
-            private AlertDatabaseSpec alertDatabase = AlertDatabaseSpec.EMPTY;
-            private AlertTableSpec alertTable = AlertTableSpec.EMPTY;
-            private CreateDatabaseSpec createDatabase = CreateDatabaseSpec.EMPTY;
-            private CreateTableSpec createTable = CreateTableSpec.EMPTY;
-            private CreateFunctionSpec createFunction = CreateFunctionSpec.EMPTY;
-            private DropDatabaseSpec dropDatabase = DropDatabaseSpec.EMPTY;
-            private DropTableSpec dropTable = DropTableSpec.EMPTY;
-            private TruncateSpec truncate = TruncateSpec.EMPTY;
-            private List<String> anyBlacklistSQLs = new ArrayList<>();
-        }
-
-        @Getter
-        @Setter
-        public static class SelectSpec {
-            public static final SelectSpec EMPTY = new SelectSpec();
-        }
-
-        @Getter
-        @Setter
-        public static class InsertSpec {
-            public static final InsertSpec EMPTY = new InsertSpec();
-        }
-
-        @Getter
-        @Setter
-        public static class UpdateSpec {
-            public static final UpdateSpec EMPTY = new UpdateSpec();
-            private boolean requiredWhereCondidtion = false;
-        }
-
-        @Getter
-        @Setter
-        public static class DeleteSpec {
-            public static final DeleteSpec EMPTY = new DeleteSpec();
-            private boolean requiredWhereCondidtion = false;
-        }
-
-        @Getter
-        @Setter
-        public static class AlertDatabaseSpec {
-            public static final AlertDatabaseSpec EMPTY = new AlertDatabaseSpec();
-        }
-
-        @Getter
-        @Setter
-        public static class AlertTableSpec {
-            public static final AlertTableSpec EMPTY = new AlertTableSpec();
-        }
-
-        @Getter
-        @Setter
-        public static class CreateDatabaseSpec {
-            public static final CreateDatabaseSpec EMPTY = new CreateDatabaseSpec();
-        }
-
-        @Getter
-        @Setter
-        public static class CreateTableSpec {
-            public static final CreateTableSpec EMPTY = new CreateTableSpec();
-        }
-
-        @Getter
-        @Setter
-        public static class CreateFunctionSpec {
-            public static final CreateFunctionSpec EMPTY = new CreateFunctionSpec();
-        }
-
-        @Getter
-        @Setter
-        public static class DropDatabaseSpec {
-            public static final DropDatabaseSpec EMPTY = new DropDatabaseSpec();
-        }
-
-        @Getter
-        @Setter
-        public static class DropTableSpec {
-            public static final DropTableSpec EMPTY = new DropTableSpec();
-        }
-
-        @Getter
-        @Setter
-        public static class TruncateSpec {
-            public static final TruncateSpec EMPTY = new TruncateSpec();
-        }
     }
 
 }
