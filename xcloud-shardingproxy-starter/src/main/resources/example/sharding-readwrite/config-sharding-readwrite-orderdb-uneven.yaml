@@ -94,9 +94,9 @@ rules:
 ## @see:org.apache.shardingsphere.sharding.route.engine.type.standard.ShardingStandardRoutingEngine#route
 - !SHARDING
   tables:
-    t_user:
+    t_order:
       # Union collection definition of all available actual dataSources.
-      actualDataNodes: rw_orderdb_r0z0mgr${0..1}_db${0..3}.t_user_${0..7}
+      actualDataNodes: rw_orderdb_r0z0mgr${0..1}_db${0..3}.t_order_${0..7}
       #databaseStrategy:
       tableStrategy:
         standard:
@@ -106,7 +106,7 @@ rules:
         column: id
         keyGeneratorName: gen_snowflake_g0_0
   bindingTables:
-  - t_user
+  - t_order
   defaultTableStrategy:
   defaultDatabaseStrategy:
     standard:
@@ -155,62 +155,62 @@ rules:
             "id": [{
                 "lowerClose": 0,
                 "upperOpen": 10000000,
-                "prefixStr": "t_user_",
+                "prefixStr": "t_order_",
                 "suffixExpr": "${0}"
             }, {
                 "lowerClose": 10000000,
                 "upperOpen": 20000000,
-                "prefixStr": "t_user_",
+                "prefixStr": "t_order_",
                 "suffixExpr": "${1}"
             }, {
                 "lowerClose": 20000000,
                 "upperOpen": 30000000,
-                "prefixStr": "t_user_",
+                "prefixStr": "t_order_",
                 "suffixExpr": "${2}"
             }, {
                 "lowerClose": 30000000,
                 "upperOpen": 40000000,
-                "prefixStr": "t_user_",
+                "prefixStr": "t_order_",
                 "suffixExpr": "${3}"
             }, {
                 "lowerClose": 40000000,
                 "upperOpen": 60000000,
-                "prefixStr": "t_user_",
+                "prefixStr": "t_order_",
                 "suffixExpr": "${0}"
             }, {
                 "lowerClose": 60000000,
                 "upperOpen": 80000000,
-                "prefixStr": "t_user_",
+                "prefixStr": "t_order_",
                 "suffixExpr": "${1}"
             }, {
                 "lowerClose": 80000000,
                 "upperOpen": 100000000,
-                "prefixStr": "t_user_",
+                "prefixStr": "t_order_",
                 "suffixExpr": "${2}"
             }, {
                 "lowerClose": 100000000,
                 "upperOpen": 120000000,
-                "prefixStr": "t_user_",
+                "prefixStr": "t_order_",
                 "suffixExpr": "${3}"
             }, {
                 "lowerClose": 120000000,
                 "upperOpen": 140000000,
-                "prefixStr": "t_user_",
+                "prefixStr": "t_order_",
                 "suffixExpr": "${4}"
             }, {
                 "lowerClose": 140000000,
                 "upperOpen": 160000000,
-                "prefixStr": "t_user_",
+                "prefixStr": "t_order_",
                 "suffixExpr": "${5}"
             }, {
                 "lowerClose": 160000000,
                 "upperOpen": 160000000,
-                "prefixStr": "t_user_",
+                "prefixStr": "t_order_",
                 "suffixExpr": "${6}"
             }, {
                 "lowerClose": 180000000,
                 "upperOpen": 200000000,
-                "prefixStr": "t_user_",
+                "prefixStr": "t_order_",
                 "suffixExpr": "${7}"
             }]
           }

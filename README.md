@@ -216,14 +216,14 @@ EOF
 
 > Like regular springboot applications, for example, use [EFK](https://github.com/elastic/beats) to collect, or use [loki](https://github.com/grafana/loki), [fluentbit](https://github.com/fluent/fluent-bit) and other components to collect application logs uniformly in the [kubernetes](https://kubernetes.io) environment.
 
-### 2.5 Configuring SQLs auditing strategy
+### 2.5 Configuring SQLs auditing (Optional)
 
 - [example auditing server.yaml#rules.provider.props.user-admission-strategy](xcloud-shardingproxy-starter/src/main/resources/example/server.yaml)
 
 - Testing effect
 
 ```bash
-$ mysql -h127.0.0.1 -P3308 -uorderdb -p123456
+$ mysql -h127.0.0.1 -P3308 -uuserdb -p123456
 
 mysql: [Warning] Using a password on the command line interface can be insecure.
 Welcome to the MySQL monitor.  Commands end with ; or \g.
@@ -237,18 +237,76 @@ affiliates. Other names may be trademarks of their respective
 owners.
 Type 'help;' or '\h' for help. Type '\c' to clear the current input statement.
 
-mysql> use orderdb;
+mysql> use userdb;
 Database changed
 mysql> 
-mysql> delete from t_order where 1=1;
+mysql> delete from t_user where 1=1;
 Query OK, 12 rows affected (0.09 sec)
 mysql> 
-mysql> delete from t_order;
+mysql> delete from t_user;
 ERROR 1997 (C1997): Runtime exception: [SQL checking failed. Error message: Access SQL failed to execute. - Execute delete table empty condition the DML statement permission deined.]
 mysql> 
-mysql> drop table t_order;
+mysql> drop table t_user;
 ERROR 1997 (C1997): Runtime exception: [SQL checking failed. Error message: Access SQL failed to execute. - Execute SQL statement of blocklist permission deined.]
 mysql>
+```
+
+### 2.6 Configuring encryption column (Optional)
+
+- [example auditing config-sharding-readwrite-userdb.yaml](xcloud-shardingproxy-starter/src/main/resources/example/sharding-readwrite/config-sharding-readwrite-userdb.yaml)
+
+- Testing effect
+
+```bash
+$ mysql -h127.0.0.1 -P3308 -uuserdb -p123456
+
+mysql: [Warning] Using a password on the command line interface can be insecure.
+Welcome to the MySQL monitor.  Commands end with ; or \g.
+Your MySQL connection id is 2
+Server version: 5.7.30-log-ShardingSphere-Proxy 5.1.0 MySQL Community Server (GPL)
+
+Copyright (c) 2000, 2019, Oracle and/or its affiliates. All rights reserved.
+
+Oracle is a registered trademark of Oracle Corporation and/or its
+affiliates. Other names may be trademarks of their respective
+owners.
+Type 'help;' or '\h' for help. Type '\c' to clear the current input statement.
+
+mysql> use userdb;
+Database changed
+mysql> 
+mysql> select * from t_user;
+Empty set (0.01 sec)
+mysql> insert into `t_user` (`id`, `name`, `pwd`) values (20001, 'tom01', 'Washington@1776');
+Query OK, 1 row affected (0.04 sec)
+mysql> select * from t_user;
++-------+------------+-----------------+
+| id    | name       | pwd             |
++-------+------------+-----------------+
+| 20001 | tom01 | Washington@1776 |
++-------+------------+-----------------+
+1 row in set (0.02 sec)
+mysql>
+```
+
+- ShardingSphere logging
+
+```log
+[INFO ] 18:22:10.935 [ShardingSphere-Command-4] ShardingSphere-SQL - Logic SQL: insert into `t_user` (`id`, `name`, `pwd`) values (20001, 'tom01', 'Washington@1776')
+[INFO ] 18:22:10.935 [ShardingSphere-Command-4] ShardingSphere-SQL - SQLStatement: MySQLInsertStatement(setAssignment=Optional.empty, onDuplicateKeyColumns=Optional.empty)
+[INFO ] 18:22:10.935 [ShardingSphere-Command-4] ShardingSphere-SQL - Actual SQL: ds_userdb_db1_w1 ::: insert into `t_user_0` (`id`, `name`, pwd) values (20001, 'tom01', 'XDPzQ5jCbJZgC3MhEkpeOQ==')
+
+[INFO ] 18:23:30.711 [ShardingSphere-Command-3] ShardingSphere-SQL - Logic SQL: select * from t_user
+[INFO ] 18:23:30.711 [ShardingSphere-Command-3] ShardingSphere-SQL - SQLStatement: MySQLSelectStatement(limit=Optional.empty, lock=Optional.empty, window=Optional.empty)
+[INFO ] 18:23:30.711 [ShardingSphere-Command-3] ShardingSphere-SQL - Actual SQL: ds_userdb_db0_r1 ::: select `t_user_0`.`id`, `t_user_0`.`name`, `t_user_0`.`pwd` AS `pwd` from t_user_0 UNION ALL select `t_user_2`.`id`, `t_user_2`.`name`, `t_user_2`.`pwd` AS `pwd` from t_user_2 UNION ALL select `t_user_3`.`id`, `t_user_3`.`name`, `t_user_3`.`pwd` AS `pwd` from t_user_3
+[INFO ] 18:23:30.711 [ShardingSphere-Command-3] ShardingSphere-SQL - Actual SQL: ds_userdb_db0_r2 ::: select `t_user_1`.`id`, `t_user_1`.`name`, `t_user_1`.`pwd` AS `pwd` from t_user_1
+[INFO ] 18:23:30.711 [ShardingSphere-Command-3] ShardingSphere-SQL - Actual SQL: ds_userdb_db1_r2 ::: select `t_user_0`.`id`, `t_user_0`.`name`, `t_user_0`.`pwd` AS `pwd` from t_user_0 UNION ALL select `t_user_3`.`id`, `t_user_3`.`name`, `t_user_3`.`pwd` AS `pwd` from t_user_3
+[INFO ] 18:23:30.711 [ShardingSphere-Command-3] ShardingSphere-SQL - Actual SQL: ds_userdb_db1_r1 ::: select `t_user_1`.`id`, `t_user_1`.`name`, `t_user_1`.`pwd` AS `pwd` from t_user_1 UNION ALL select `t_user_2`.`id`, `t_user_2`.`name`, `t_user_2`.`pwd` AS `pwd` from t_user_2
+[INFO ] 18:23:30.711 [ShardingSphere-Command-3] ShardingSphere-SQL - Actual SQL: ds_userdb_db2_r1 ::: select `t_user_0`.`id`, `t_user_0`.`name`, `t_user_0`.`pwd` AS `pwd` from t_user_0 UNION ALL select `t_user_2`.`id`, `t_user_2`.`name`, `t_user_2`.`pwd` AS `pwd` from t_user_2
+[INFO ] 18:23:30.711 [ShardingSphere-Command-3] ShardingSphere-SQL - Actual SQL: ds_userdb_db2_r2 ::: select `t_user_1`.`id`, `t_user_1`.`name`, `t_user_1`.`pwd` AS `pwd` from t_user_1 UNION ALL select `t_user_3`.`id`, `t_user_3`.`name`, `t_user_3`.`pwd` AS `pwd` from t_user_3
+[INFO ] 18:23:30.711 [ShardingSphere-Command-3] ShardingSphere-SQL - Actual SQL: ds_userdb_db3_r1 ::: select `t_user_0`.`id`, `t_user_0`.`name`, `t_user_0`.`pwd` AS `pwd` from t_user_0 UNION ALL select `t_user_3`.`id`, `t_user_3`.`name`, `t_user_3`.`pwd` AS `pwd` from t_user_3
+[INFO ] 18:23:30.712 [ShardingSphere-Command-3] ShardingSphere-SQL - Actual SQL: ds_userdb_db3_r2 ::: select `t_user_1`.`id`, `t_user_1`.`name`, `t_user_1`.`pwd` AS `pwd` from t_user_1 UNION ALL select `t_user_2`.`id`, `t_user_2`.`name`, `t_user_2`.`pwd` AS `pwd` from t_user_2
+
 ```
 
 ## 3. Developer guide

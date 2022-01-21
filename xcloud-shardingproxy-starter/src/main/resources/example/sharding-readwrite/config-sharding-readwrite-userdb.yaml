@@ -17,11 +17,11 @@
 
 ##################### Configuration of 'userdb' by group sharding v5.1.0 #######################
 
-# External logical database schema.
+## External logical database schema.
 schemaName: userdb
 
-# Extension default datasource configuration.
-# @see:com.wl4g.shardingproxy.config.ProxyConfigurationLoader2.loadRuleConfiguration
+## Extension default datasource configuration.
+## @see:com.wl4g.shardingproxy.config.ProxyConfigurationLoader2.loadRuleConfiguration
 extensionDefaultDataSource:
   username: root
   password: 123456
@@ -31,13 +31,13 @@ extensionDefaultDataSource:
   maxPoolSize: 50
   minPoolSize: 1
 
-# Specification datasource configuration.
+## Specification datasource configuration.
 dataSources:
   ## MGR cluster 0
   ## Instance 0
-  ds_userdb_db0:
+  ds_userdb_db0_w1:
     url: 'jdbc:mysql://n0.rds.local:3306/userdb_db0?serverTimezone=UTC&useSSL=false&allowMultiQueries=true&characterEncoding=utf-8'
-  ds_userdb_db1:
+  ds_userdb_db1_w1:
     url: 'jdbc:mysql://n0.rds.local:3306/userdb_db0?serverTimezone=UTC&useSSL=false&allowMultiQueries=true&characterEncoding=utf-8'
   ## Instance 1
   ds_userdb_db0_r1:
@@ -51,9 +51,9 @@ dataSources:
     url: 'jdbc:mysql://n2.rds.local:3306/userdb_db1?serverTimezone=UTC&useSSL=false&allowMultiQueries=true&characterEncoding=utf-8'
   ## MGR cluster 1
   ## Instance 0
-  ds_userdb_db2:
+  ds_userdb_db2_w1:
     url: 'jdbc:mysql://n0.rds.local:3306/userdb_db2?serverTimezone=UTC&useSSL=false&allowMultiQueries=true&characterEncoding=utf-8'
-  ds_userdb_db3:
+  ds_userdb_db3_w1:
     url: 'jdbc:mysql://n0.rds.local:3306/userdb_db3?serverTimezone=UTC&useSSL=false&allowMultiQueries=true&characterEncoding=utf-8'
   ## Instance 1
   ds_userdb_db2_r1:
@@ -80,9 +80,9 @@ rules:
 ## @see:org.apache.shardingsphere.sharding.route.engine.type.standard.ShardingStandardRoutingEngine#route
 - !SHARDING
   tables:
-    t_order:
+    t_user:
       # Union collection definition of all available actual dataSources.
-      actualDataNodes: rw_userdb_db${0..3}.t_order_${0..3}
+      actualDataNodes: rw_userdb_db${0..3}.t_user_${0..3}
       #databaseStrategy:
       tableStrategy:
         standard:
@@ -92,7 +92,7 @@ rules:
         column: id
         keyGeneratorName: gen_snowflake_g0_0
   bindingTables:
-  - t_order
+  - t_user
   defaultTableStrategy:
   defaultDatabaseStrategy:
     standard:
@@ -125,41 +125,41 @@ rules:
         sharding-ranges: "20000000,40000000,60000000,80000000"
 ## @see:https://shardingsphere.apache.org/document/current/cn/reference/encrypt/
 - !ENCRYPT
+  #queryWithCipherColumn: true
   encryptors:
-    aes_encryptor_0:
+    aes_encryptor:
       type: AES
       props:
-        aes-key-value: 123456abc
+        aes-key-value: 12345678abcdefgh
   tables:
     t_user:
       columns:
-        pwd:
-          #plainColumn: pwd
-          cipherColumn: pwd_cipher
+        pwd: # logic column name.
           encryptorName: aes_encryptor
-  queryWithCipherColumn: false
+          #plainColumn: pwd
+          cipherColumn: pwd
 ## @see:org.apache.shardingsphere.readwritesplitting.api.ReadwriteSplittingRuleConfiguration
 - !READWRITE_SPLITTING
   dataSources:
     rw_userdb_db0:
-      writeDataSourceName: ds_userdb_db0
+      writeDataSourceName: ds_userdb_db0_w1
       readDataSourceNames:
         - ds_userdb_db0_r1
         - ds_userdb_db0_r2
       loadBalancerName: r_lb_0
     rw_userdb_db1:
-      writeDataSourceName: ds_userdb_db1
+      writeDataSourceName: ds_userdb_db1_w1
       readDataSourceNames:
         - ds_userdb_db1_r1
         - ds_userdb_db1_r2
       loadBalancerName: r_lb_0
     rw_userdb_db2:
-      writeDataSourceName: ds_userdb_db2
+      writeDataSourceName: ds_userdb_db2_w1
       readDataSourceNames:
         - ds_userdb_db2_r1
         - ds_userdb_db2_r2
     rw_userdb_db3:
-      writeDataSourceName: ds_userdb_db3
+      writeDataSourceName: ds_userdb_db3_w1
       readDataSourceNames:
         - ds_userdb_db3_r1
         - ds_userdb_db3_r2
@@ -170,32 +170,32 @@ rules:
 ## @see:org.apache.shardingsphere.readwritesplitting.api.DatabaseDiscoveryRuleConfiguration
 - !DB_DISCOVERY
    dataSources:
-     ha_userdb_:
+     ha_userdb_mgr0:
        discoveryTypeName: default_dis_mgr
        discoveryHeartbeatName: default_mgr_heartbeat
        dataSourceNames:
          # Instance 0
-         - ds_userdb_db0
-         - ds_userdb_db1
+         - ds_userdb_db0_w1
+         - ds_userdb_db1_w1
          # Instance 1
          - ds_userdb_db0_r1
          - ds_userdb_db1_r1
          # Instance 2
          - ds_userdb_db0_r2
          - ds_userdb_db1_r2
-     ha_userdb_:
+     ha_userdb_mgr1:
        discoveryTypeName: default_dis_mgr
        discoveryHeartbeatName: default_mgr_heartbeat
        dataSourceNames:
          # Instance 0
-         - ds_userdb_db0
-         - ds_userdb_db1
+         - ds_userdb_db2_w1
+         - ds_userdb_db3_w1
          # Instance 1
-         - ds_userdb_db0_r1
-         - ds_userdb_db1_r1
+         - ds_userdb_db2_r1
+         - ds_userdb_db3_r1
          # Instance 2
-         - ds_userdb_db0_r2
-         - ds_userdb_db1_r2
+         - ds_userdb_db2_r2
+         - ds_userdb_db3_r2
    discoveryHeartbeats:
      default_mgr_heartbeat:
        props:
