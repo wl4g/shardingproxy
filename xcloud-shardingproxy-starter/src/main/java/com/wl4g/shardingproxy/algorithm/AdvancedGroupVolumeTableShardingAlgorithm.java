@@ -34,25 +34,75 @@ import groovy.lang.Closure;
 import lombok.extern.slf4j.Slf4j;
 
 /**
- * Based group volume range sharding algorithm.
+ * The dataSources(databases) sharding based on advanced heterogeneous grouping
+ * algorithm.
  * 
  * for example:
  * 
  * <pre>
- * {
- *   "id": [
- *     {
- *       lowerClose: 0,
- *       upperOpen: 4000_0000,
- *       expression: "rw_userdb_r0z0mgr0_db${(id % 2) as int}"
- *     },
- *     {
- *       lowerClose: 4000_0000,
- *       upperOpen: 20000_0000,
- *       expression: "rw_userdb_r0z0mgr1_db${(id % 7) as int}"
- *     }
- *   ]
- * }
+ *    {
+ *      "id": [{
+ *          "lowerClose": 0,
+ *          "upperOpen": 10000000,
+ *          "prefixStr": "t_order_",
+ *          "suffixExpr": "${0}"
+ *      }, {
+ *          "lowerClose": 10000000,
+ *          "upperOpen": 20000000,
+ *          "prefixStr": "t_order_",
+ *          "suffixExpr": "${1}"
+ *      }, {
+ *          "lowerClose": 20000000,
+ *          "upperOpen": 30000000,
+ *          "prefixStr": "t_order_",
+ *          "suffixExpr": "${2}"
+ *      }, {
+ *          "lowerClose": 30000000,
+ *          "upperOpen": 40000000,
+ *          "prefixStr": "t_order_",
+ *          "suffixExpr": "${3}"
+ *      }, {
+ *          "lowerClose": 40000000,
+ *          "upperOpen": 60000000,
+ *          "prefixStr": "t_order_",
+ *          "suffixExpr": "${0}"
+ *      }, {
+ *          "lowerClose": 60000000,
+ *          "upperOpen": 80000000,
+ *          "prefixStr": "t_order_",
+ *          "suffixExpr": "${1}"
+ *      }, {
+ *          "lowerClose": 80000000,
+ *          "upperOpen": 100000000,
+ *          "prefixStr": "t_order_",
+ *          "suffixExpr": "${2}"
+ *      }, {
+ *          "lowerClose": 100000000,
+ *          "upperOpen": 120000000,
+ *          "prefixStr": "t_order_",
+ *          "suffixExpr": "${3}"
+ *      }, {
+ *          "lowerClose": 120000000,
+ *          "upperOpen": 140000000,
+ *          "prefixStr": "t_order_",
+ *          "suffixExpr": "${4}"
+ *      }, {
+ *          "lowerClose": 140000000,
+ *          "upperOpen": 160000000,
+ *          "prefixStr": "t_order_",
+ *          "suffixExpr": "${5}"
+ *      }, {
+ *          "lowerClose": 160000000,
+ *          "upperOpen": 160000000,
+ *          "prefixStr": "t_order_",
+ *          "suffixExpr": "${6}"
+ *      }, {
+ *          "lowerClose": 180000000,
+ *          "upperOpen": 200000000,
+ *          "prefixStr": "t_order_",
+ *          "suffixExpr": "${7}"
+ *      }]
+ *    }
  * </pre>
  * 
  * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
@@ -60,7 +110,7 @@ import lombok.extern.slf4j.Slf4j;
  * @since v1.0.0
  */
 @Slf4j
-public class GroupTableVolumeShardingAlgorithm extends BaseGroupVolumeShardingAlgorithm {
+public class AdvancedGroupVolumeTableShardingAlgorithm extends BaseGroupVolumeShardingAlgorithm {
 
     @Override
     public Collection<String> doSharding(final Collection<String> availableTargetNames,

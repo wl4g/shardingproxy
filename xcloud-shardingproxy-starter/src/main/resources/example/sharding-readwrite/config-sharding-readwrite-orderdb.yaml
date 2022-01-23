@@ -93,7 +93,7 @@ rules:
 - !SHARDING
   tables:
     t_order:
-      ## Union collection definition of all available actual dataSources.
+      ## The union set definition of all available actual dataSources.(Notice: dataSource sharding based on advanced heterogeneous grouping algorithm)
       ## @see:org.apache.shardingsphere.sharding.rule.TableRule#TableRule()
       actualDataNodes: rw_orderdb_r0z0mgr0_db${0..1}.t_order_${0..3},rw_orderdb_r0z0mgr1_db${0..3}.t_order_${0..7}
       #databaseStrategy:

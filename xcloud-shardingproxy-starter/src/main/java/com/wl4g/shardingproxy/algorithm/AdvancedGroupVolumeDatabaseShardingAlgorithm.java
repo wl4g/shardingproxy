@@ -24,7 +24,8 @@ import org.apache.shardingsphere.sharding.api.sharding.standard.RangeShardingVal
 import lombok.extern.slf4j.Slf4j;
 
 /**
- * Based group volume range sharding algorithm.
+ * The dataSources(tables) sharding based on advanced heterogeneous grouping
+ * algorithm.
  * 
  * for example:
  * 
@@ -50,7 +51,7 @@ import lombok.extern.slf4j.Slf4j;
  * @since v1.0.0
  */
 @Slf4j
-public class GroupDatabaseVolumeShardingAlgorithm extends BaseGroupVolumeShardingAlgorithm {
+public class AdvancedGroupVolumeDatabaseShardingAlgorithm extends BaseGroupVolumeShardingAlgorithm {
 
     @Override
     public Collection<String> doSharding(final Collection<String> availableTargetNames,
@@ -62,7 +63,7 @@ public class GroupDatabaseVolumeShardingAlgorithm extends BaseGroupVolumeShardin
 
     @Override
     public String getType() {
-        return "GROUP_VOLUME_DATABASE";
+        return "ADVANCED_GROUP_VOLUME_DATABASE";
     }
 
 }
