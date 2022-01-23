@@ -48,7 +48,7 @@ rules:
     type: SCHEMA_PRIVILEGES_PERMITTED # ALL_PRIVILEGES_PERMITTED|SCHEMA_PRIVILEGES_PERMITTED|NATIVE(5.x@deprecated)
     props:
       user-schema-mappings: root@=orderdb,root@=userdb,orderdb@=orderdb,userdb@=userdb
-      user-admission-strategy: |-
+      user-object-privileges: |-
         {
           "granted": {
             "orderdb": ["default_ddl_safety", "base_dml_safety", "slight_strict_dml_safety"],

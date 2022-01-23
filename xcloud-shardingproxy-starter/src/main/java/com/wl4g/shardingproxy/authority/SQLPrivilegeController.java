@@ -18,13 +18,13 @@ package com.wl4g.shardingproxy.authority;
 import org.apache.shardingsphere.infra.executor.check.SQLCheckResult;
 
 /**
- * {@link SQLAdmissionController}
+ * {@link SQLPrivilegeController}
  * 
  * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
  * @version 2022-01-21 v1.0.0
  * @since v1.0.0
  */
-public interface SQLAdmissionController {
+public interface SQLPrivilegeController {
 
     SQLCheckResult execute();
 }

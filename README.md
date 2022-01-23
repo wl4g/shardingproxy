@@ -43,10 +43,10 @@ Notice: The example of non average slicing is not recommended for production (sc
 echo "source $PROJECT_HOME/xcloud-shardingproxy-starter/exampledata/sharding/userdb-sharding.sql" | mysql -h172.8.8.111 -P3306 -uroot -p123456
 ```
 
-- [orderdb-sharding-v1beta1.sql](xcloud-shardingproxy-starter/exampledata/orderdb-sharding-v1beta1.sql) (**sharding example of non-uniform matrix**, recommended for advanced developers)
+- [orderdb-sharding.sql](xcloud-shardingproxy-starter/exampledata/orderdb-sharding.sql) (**sharding example of non-uniform matrix**, recommended for advanced developers)
 
 ```bash
-echo "source $PROJECT_HOME/xcloud-shardingproxy-starter/exampledata/sharding/orderdb-sharding-v1beta1.sql" | mysql -h172.8.8.111 -P3306 -uroot -p123456
+echo "source $PROJECT_HOME/xcloud-shardingproxy-starter/exampledata/sharding/orderdb-sharding.sql" | mysql -h172.8.8.111 -P3306 -uroot -p123456
 ```
 
 ### 1.3 Deploy on Docker (Testing recommend)

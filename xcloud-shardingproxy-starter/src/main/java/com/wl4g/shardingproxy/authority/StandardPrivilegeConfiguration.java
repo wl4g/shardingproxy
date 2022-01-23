@@ -31,7 +31,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 /**
- * {@link AdmissionStrategyConfiguration}
+ * {@link StandardPrivilegeConfiguration}
  * 
  * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
  * @version 2022-01-20 v1.0.0
@@ -39,18 +39,18 @@ import lombok.Setter;
  */
 @Getter
 @Setter
-public class AdmissionStrategyConfiguration {
+public class StandardPrivilegeConfiguration {
     private Map<String, List<String>> granted = new HashMap<>();
     private Map<String, List<StrategySpec>> strategy = new HashMap<>();
 
     // Merged granted collection.
     private Map<String, Set<StrategySpec>> merged = new HashMap<>();
 
-    public static AdmissionStrategyConfiguration build(final String json) {
+    public static StandardPrivilegeConfiguration build(final String json) {
         if (isBlank(json)) {
-            return new AdmissionStrategyConfiguration();
+            return new StandardPrivilegeConfiguration();
         }
-        AdmissionStrategyConfiguration that = parseJSON(json, AdmissionStrategyConfiguration.class);
+        StandardPrivilegeConfiguration that = parseJSON(json, StandardPrivilegeConfiguration.class);
         // Merging granted strategy.
         safeMap(that.getGranted()).forEach((username, strategyNames) -> that.getMerged().put(username,
                 safeMap(that.getStrategy()).entrySet().stream().filter(s -> safeList(strategyNames).contains(s.getKey()))

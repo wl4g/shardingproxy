@@ -48,14 +48,14 @@ import org.apache.shardingsphere.sql.parser.sql.common.statement.dml.InsertState
 import org.apache.shardingsphere.sql.parser.sql.common.statement.dml.SelectStatement;
 import org.apache.shardingsphere.sql.parser.sql.common.statement.dml.UpdateStatement;
 
-import com.wl4g.shardingproxy.authority.AdmissionStrategyConfiguration.StrategySpec;
+import com.wl4g.shardingproxy.authority.StandardPrivilegeConfiguration.StrategySpec;
 import com.wl4g.shardingproxy.util.ConfigPropertySource;
 
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
 /**
- * {@link DefaultSQLAdmissionController}
+ * {@link StandardSQLPrivilegeController}
  * 
  * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
  * @version 2022-01-21 v1.0.0
@@ -63,8 +63,8 @@ import lombok.extern.slf4j.Slf4j;
  */
 @Slf4j
 @Getter
-public class DefaultSQLAdmissionController implements SQLAdmissionController {
-    private static final String PROP_KEY = "user-admission-strategy";
+public class StandardSQLPrivilegeController implements SQLPrivilegeController {
+    private static final String PROP_KEY = "user-object-privileges";
     private static final Field PROVIDER_FIELD = findFieldNullable(AuthorityRule.class, "provider",
             AuthorityProvideAlgorithm.class);
     private static final Field USERS_FIELD = findFieldNullable(AuthorityRule.class, "users", Collection.class);
@@ -78,9 +78,9 @@ public class DefaultSQLAdmissionController implements SQLAdmissionController {
     private final AuthorityProvideAlgorithm provider;
     private final Collection<ShardingSphereUser> users;
     private final ConfigPropertySource props;
-    private final AdmissionStrategyConfiguration strategyConfig;
+    private final StandardPrivilegeConfiguration strategyConfig;
 
-    public DefaultSQLAdmissionController(final SQLStatement sqlStatement, final Grantee grantee,
+    public StandardSQLPrivilegeController(final SQLStatement sqlStatement, final Grantee grantee,
             final AuthorityRule authorityRule) {
         this.sqlStatement = sqlStatement;
         this.grantee = grantee;
@@ -90,7 +90,7 @@ public class DefaultSQLAdmissionController implements SQLAdmissionController {
         this.props = (provider instanceof SchemaPrivilegesPermittedAuthorityProviderAlgorithm)
                 ? new ConfigPropertySource(getField(PROPS_FIELD, provider, true))
                 : new ConfigPropertySource();
-        this.strategyConfig = AdmissionStrategyConfiguration.build(props.getProperty(PROP_KEY));
+        this.strategyConfig = StandardPrivilegeConfiguration.build(props.getProperty(PROP_KEY));
     }
 
     @Override

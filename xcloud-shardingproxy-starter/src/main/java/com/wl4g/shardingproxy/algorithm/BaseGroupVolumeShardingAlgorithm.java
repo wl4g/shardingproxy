@@ -30,7 +30,6 @@ import static java.util.stream.Collectors.toList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -38,13 +37,11 @@ import java.util.Properties;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shardingsphere.sharding.api.sharding.standard.PreciseShardingValue;
-import org.apache.shardingsphere.sharding.api.sharding.standard.RangeShardingValue;
 import org.apache.shardingsphere.sharding.api.sharding.standard.StandardShardingAlgorithm;
 import org.apache.shardingsphere.sharding.support.InlineExpressionParser;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.google.common.base.Preconditions;
-import com.google.common.collect.BoundType;
 import com.google.common.collect.Range;
 
 import groovy.lang.Closure;
@@ -80,7 +77,8 @@ import lombok.extern.slf4j.Slf4j;
  * @since v1.0.0
  */
 @Slf4j
-public class UnevenGroupVolumeInlineShardingAlgorithm implements StandardShardingAlgorithm<Comparable<?>> {
+@Getter
+public abstract class BaseGroupVolumeShardingAlgorithm implements StandardShardingAlgorithm<Comparable<?>> {
 
     private static final String ALGORITHM_EXPRESSION_KEY = "algorithm-expression";
 
@@ -102,8 +100,12 @@ public class UnevenGroupVolumeInlineShardingAlgorithm implements StandardShardin
         Integer partition = getPartition(shardingValue.getColumnName(), shardingValue.getValue());
         // miss range index.
         if (isNull(partition)) {
-            // TODO by default first
-            return availableTargetNames.iterator().next();
+            // When it does not belong to any partition, it has exceeded the
+            // scope of the shard configuration, and it is reasonable to query
+            // no data.
+            throw new IllegalArgumentException(format(
+                    "Shard value: %s does not match any shard configuration range, please confirm whether the shard configuration is correct",
+                    shardingValue));
         }
 
         AlgorithmExpression expr = algorithmExprMap.getOrDefault(shardingValue.getColumnName(), emptyList()).get(partition);
@@ -131,49 +133,15 @@ public class UnevenGroupVolumeInlineShardingAlgorithm implements StandardShardin
         return expr.getPrefixStr().concat(candidateTargetNames.get(0));
     }
 
-    @Override
-    public Collection<String> doSharding(final Collection<String> availableTargetNames,
-            final RangeShardingValue<Comparable<?>> shardingValue) {
-        // for example: 4000_0000<=shardingValue<=5000_0000
-        // step1: choose partitions by condition range
-        // step2: iterate partitions processing
-
-        Collection<String> result = new LinkedHashSet<>(availableTargetNames.size());
-        if (availableTargetNames.iterator().next().contains("t_user")) {
-            long lowerValue = getLowerValue(shardingValue.getColumnName(), shardingValue.getValueRange());
-            long upperValue = getUpperValue(shardingValue.getColumnName(), shardingValue.getValueRange());
-            Range<Comparable<?>> rangeValue = Range.range(lowerValue, BoundType.CLOSED, upperValue, BoundType.OPEN);
-
-            for (Entry<Integer, Range<Comparable<?>>> entry : partitionRangeMap
-                    .getOrDefault(shardingValue.getColumnName(), emptyMap()).entrySet()) {
-                // Check if two range have intersection?
-                if (hasIntersection(rangeValue, entry.getValue())) {
-                    List<AlgorithmExpression> expressions = algorithmExprMap.getOrDefault(shardingValue.getColumnName(),
-                            emptyList());
-                    AlgorithmExpression expr = expressions.get(entry.getKey());
-                    Closure<?> closure = createClosure(expr.getSuffixExpr());
-                    closure.setProperty(shardingValue.getColumnName(), -1);
-                    result.add(expr.getPrefixStr().concat(closure.call().toString()));
-                }
-            }
-        } else {
-            result.add(availableTargetNames.iterator().next());
-        }
-
-        log.debug("Determined range sharding targets: {}, by shardingValue: {}, availableTargetNames: {}", result, shardingValue,
-                availableTargetNames);
-        return result;
-    }
-
-    private Long getLowerValue(final String columnName, final Range<Comparable<?>> valueRange) {
+    protected Long getLowerValue(final String columnName, final Range<Comparable<?>> valueRange) {
         return valueRange.hasLowerBound() ? Long.parseLong(valueRange.lowerEndpoint().toString()) : 0;
     }
 
-    private Long getUpperValue(final String columnName, final Range<Comparable<?>> valueRange) {
+    protected Long getUpperValue(final String columnName, final Range<Comparable<?>> valueRange) {
         return valueRange.hasUpperBound() ? Long.parseLong(valueRange.upperEndpoint().toString()) : partitionRangeMap.size() - 1;
     }
 
-    private Integer getPartition(final String columnName, final Comparable<?> value) {
+    protected Integer getPartition(final String columnName, final Comparable<?> value) {
         for (Entry<Integer, Range<Comparable<?>>> entry : partitionRangeMap.getOrDefault(columnName, emptyMap()).entrySet()) {
             if (entry.getValue().contains(Long.parseLong(value.toString()))) {
                 return entry.getKey();
@@ -182,10 +150,18 @@ public class UnevenGroupVolumeInlineShardingAlgorithm implements StandardShardin
         return null;
     }
 
-    private Closure<?> createClosure(String expressionString) {
+    protected Closure<?> createClosure(String expressionString) {
         Closure<?> result = new InlineExpressionParser(expressionString).evaluateClosure().rehydrate(new Expando(), null, null);
         result.setResolveStrategy(Closure.DELEGATE_ONLY);
         return result;
+    }
+
+    protected boolean hasIntersection(Range<Comparable<?>> rangeValue, Range<Comparable<?>> range) {
+        try {
+            return !range.intersection(rangeValue).isEmpty();
+        } catch (IllegalArgumentException e) {
+            return false;
+        }
     }
 
     private void initPartitionRange() {
@@ -205,22 +181,9 @@ public class UnevenGroupVolumeInlineShardingAlgorithm implements StandardShardin
         });
     }
 
-    private boolean hasIntersection(Range<Comparable<?>> rangeValue, Range<Comparable<?>> range) {
-        try {
-            return !range.intersection(rangeValue).isEmpty();
-        } catch (IllegalArgumentException e) {
-            return false;
-        }
-    }
-
-    @Override
-    public String getType() {
-        return "UNEVEN_GROUP_VOLUME_INLINE";
-    }
-
     @Getter
     @Setter
-    static class AlgorithmExpression {
+    public static class AlgorithmExpression {
         private Long lowerClose;
         private Long upperOpen;
         private String prefixStr;

@@ -33,7 +33,6 @@ extensionDefaultDataSource:
 
 # Specification datasource configuration.
 dataSources:
-## ----------------------------------- Sharding Group 0 dataSources -----------------------------------
   ## MGR cluster 0
   ## Instance 0
   ds_orderdb_r0z0mgr0i0_db0:
@@ -84,7 +83,6 @@ dataSources:
 
 # Schema rules configuration.
 rules:
-## ----------------------------------- Sharding Group 0 rules -----------------------------------
 ## @see:org.apache.shardingsphere.singletable.config.SingleTableRuleConfiguration
 ## @see:org.apache.shardingsphere.singletable.yaml.config.swapper.SingleTableRuleConfigurationYamlSwapper#getRuleTagName
 - !SINGLE
@@ -95,8 +93,9 @@ rules:
 - !SHARDING
   tables:
     t_order:
-      # Union collection definition of all available actual dataSources.
-      actualDataNodes: rw_orderdb_r0z0mgr${0..1}_db${0..3}.t_order_${0..7}
+      ## Union collection definition of all available actual dataSources.
+      ## @see:org.apache.shardingsphere.sharding.rule.TableRule#TableRule()
+      actualDataNodes: rw_orderdb_r0z0mgr0_db${0..1}.t_order_${0..3},rw_orderdb_r0z0mgr1_db${0..3}.t_order_${0..7}
       #databaseStrategy:
       tableStrategy:
         standard:
@@ -120,7 +119,7 @@ rules:
   shardingAlgorithms:
     ## @see:com.wl4g.shardingproxy.algorithm.GroupVolumeInlineShardingAlgorithm
     alg_database_group_volume_inline_g0_1:
-      type: UNEVEN_GROUP_VOLUME_INLINE
+      type: GROUP_VOLUME_DATABASE
       props:
         algorithm-expression: |-
           {
@@ -148,7 +147,7 @@ rules:
           }
     ## @see:com.wl4g.shardingproxy.algorithm.GroupVolumeInlineShardingAlgorithm
     alg_table_group_volume_inline_g0_1:
-      type: UNEVEN_GROUP_VOLUME_INLINE
+      type: GROUP_VOLUME_TABLE
       props:
         algorithm-expression: |-
           {

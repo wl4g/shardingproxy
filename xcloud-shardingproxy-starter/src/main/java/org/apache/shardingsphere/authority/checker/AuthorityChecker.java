@@ -50,7 +50,7 @@ import org.apache.shardingsphere.sql.parser.sql.common.statement.dml.SelectState
 import org.apache.shardingsphere.sql.parser.sql.common.statement.dml.UpdateStatement;
 import org.apache.shardingsphere.sql.parser.sql.dialect.statement.mysql.dal.MySQLShowDatabasesStatement;
 
-import com.wl4g.shardingproxy.authority.DefaultSQLAdmissionController;
+import com.wl4g.shardingproxy.authority.StandardSQLPrivilegeController;
 
 /**
  * Authority checker.
@@ -169,7 +169,7 @@ public final class AuthorityChecker implements SQLChecker<AuthorityRule> {
     //
     private SQLCheckResult doSQLAdmission(final SQLStatement sqlStatement, final Grantee grantee,
             final AuthorityRule authorityRule) {
-        return new DefaultSQLAdmissionController(sqlStatement, grantee, authorityRule).execute();
+        return new StandardSQLPrivilegeController(sqlStatement, grantee, authorityRule).execute();
     }
 
     public int getOrder() {
