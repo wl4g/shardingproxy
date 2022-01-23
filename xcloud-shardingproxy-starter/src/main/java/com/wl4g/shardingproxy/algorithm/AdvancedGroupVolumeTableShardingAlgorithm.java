@@ -147,7 +147,7 @@ public class AdvancedGroupVolumeTableShardingAlgorithm extends BaseGroupVolumeSh
 
     @Override
     public String getType() {
-        return "GROUP_VOLUME_TABLE";
+        return "ADVANCED_GROUP_VOLUME_TABLE";
     }
 
 }

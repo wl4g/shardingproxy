@@ -102,7 +102,7 @@ docker run -d \
 -v /mnt/disk1/shardingproxy/data/:/opt/shardingproxy/data/ \
 -v /mnt/disk1/log/shardingproxy/:/opt/shardingproxy/log/ \
 -p 3308:3308 \
-wl4g/shardingproxy:2.1.0_5.1.0
+wl4g/shardingproxy:latest
 ```
 
 - Testing access shardingproxy
@@ -327,7 +327,7 @@ mvn clean install -DskipTests -Dmaven.test.skip=true -T 2C
 
 ```bash
 export SP_BASE_DIR=/opt/xcloud-shardingproxy
-export SP_VERSION='2.1.0_5.1.0'
+export SP_VERSION='2.2.0_5.1.0'
 export SP_CONF_DIR=${SP_BASE_DIR}/xcloud-shardingproxy-starter/src/main/resources/example/sharding-readwrite/
 export SP_JAVAAGENT=${SP_BASE_DIR}/xcloud-shardingproxy-agent-bootstrap/target/xcloud-shardingproxy-agent-bootstrap-${SP_VERSION}.jar
 
@@ -335,7 +335,7 @@ export SP_JAVAAGENT=${SP_BASE_DIR}/xcloud-shardingproxy-agent-bootstrap/target/x
 export AGENT_PATH=${SP_BASE_DIR}/xcloud-shardingproxy-starter/src/main/resources/agent
 
 ## Sets the dir for more plugins.
-export PLUGINS_PATH=${SP_BASE_DIR}/xcloud-shardingproxy-startertension/target/shardingproxy-2.1.0_5.1.0-bin/ext-lib/agentlib/plugins
+export PLUGINS_PATH=${SP_BASE_DIR}/xcloud-shardingproxy-startertension/target/shardingproxy-2.2.0_5.1.0-bin/ext-lib/agentlib/plugins
 
 ## Or, only set the target dir of the extension plugin jar.
 #export PLUGINS_PATH=${SP_BASE_DIR}/xcloud-shardingproxy-agent-extension/target/

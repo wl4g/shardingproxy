@@ -14,5 +14,5 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-com.wl4g.shardingproxy.algorithm.GroupDatabaseVolumeShardingAlgorithm
-com.wl4g.shardingproxy.algorithm.GroupTableVolumeShardingAlgorithm
+com.wl4g.shardingproxy.algorithm.AdvancedGroupVolumeDatabaseShardingAlgorithm
+com.wl4g.shardingproxy.algorithm.AdvancedGroupVolumeTableShardingAlgorithm

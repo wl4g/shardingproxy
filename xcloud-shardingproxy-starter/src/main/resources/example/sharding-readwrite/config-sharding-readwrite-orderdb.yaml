@@ -119,7 +119,7 @@ rules:
   shardingAlgorithms:
     ## @see:com.wl4g.shardingproxy.algorithm.GroupVolumeInlineShardingAlgorithm
     alg_database_group_volume_inline_g0_1:
-      type: GROUP_VOLUME_DATABASE
+      type: ADVANCED_GROUP_VOLUME_DATABASE
       props:
         algorithm-expression: |-
           {
@@ -147,7 +147,7 @@ rules:
           }
     ## @see:com.wl4g.shardingproxy.algorithm.GroupVolumeInlineShardingAlgorithm
     alg_table_group_volume_inline_g0_1:
-      type: GROUP_VOLUME_TABLE
+      type: ADVANCED_GROUP_VOLUME_TABLE
       props:
         algorithm-expression: |-
           {
