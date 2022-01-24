@@ -15,6 +15,11 @@
  */
 package com.wl4g.shardingproxy.dbdiscovery.mgr;
 
+import static com.wl4g.component.common.serialize.JacksonUtils.toJSONString;
+import static java.lang.System.out;
+
+import org.junit.Test;
+
 import com.wl4g.shardingproxy.dbdiscovery.ExtensionDiscoveryConfiguration;
 
 /**
@@ -26,16 +31,16 @@ import com.wl4g.shardingproxy.dbdiscovery.ExtensionDiscoveryConfiguration;
  */
 public class ExtensionDiscoveryConfigTests {
 
-    public static void main(String[] args) {
+    @Test
+    public void parseExtensionDiscoveryConfiguration() {
         String json = "{\n" + "             \"memberHostMappings\": [{\n" + "                 \"n0.rds.local:3306\": [\n"
                 + "                     \"localhost:33061\"\n" + "                 ]\n" + "             }, {\n"
                 + "                 \"n1.rds.local:3306\": [\n" + "                     \"localhost:33062\"\n"
                 + "                 ]\n" + "             }, {\n" + "                 \"n2.rds.local:3306\": [\n"
                 + "                     \"localhost:33063\"\n" + "                 ]\n" + "             }]\n" + "           }";
 
-        System.out.println(json);
         ExtensionDiscoveryConfiguration config = ExtensionDiscoveryConfiguration.Util.build(json);
-        System.out.println(config.getMemberHostMappings().get(0));
+        out.println(toJSONString(config));
     }
 
 }

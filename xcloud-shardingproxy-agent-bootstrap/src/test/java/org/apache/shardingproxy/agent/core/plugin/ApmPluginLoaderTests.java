@@ -20,6 +20,8 @@ import static java.util.Arrays.asList;
 import java.io.File;
 import java.util.LinkedList;
 
+import org.junit.Test;
+
 /**
  * {@link ApmPluginLoaderTests}
  * 
@@ -29,7 +31,8 @@ import java.util.LinkedList;
  */
 public class ApmPluginLoaderTests {
 
-    public static void main(String[] args) {
+    @Test
+    public void testJVMClassLoaderOrder() {
         File[] jarFiles = { new File("ext-lib/agentlib/plugins/opentelemetry-exporter-otlp-trace-1.3.0.jar"),
                 new File("ext-lib/agentlib/plugins/simpleclient_hotspot-0.11.0.jar"),
                 new File("ext-lib/agentlib/plugins/opentelemetry-exporter-otlp-common-1.3.0.jar"),

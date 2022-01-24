@@ -100,7 +100,7 @@ rules:
       tableStrategy:
         standard:
           shardingColumn: id
-          shardingAlgorithmName: alg_table_group_volume_inline_g0_1
+          shardingAlgorithmName: alg_group_volume_table_g0_1
       keyGenerateStrategy:
         column: id
         keyGeneratorName: gen_snowflake_g0_0
@@ -110,15 +110,15 @@ rules:
   defaultDatabaseStrategy:
     standard:
       shardingColumn: id
-      shardingAlgorithmName: alg_database_group_volume_inline_g0_1
+      shardingAlgorithmName: alg_group_volume_database_g0_1
   keyGenerators:
     gen_snowflake_g0_0:
       type: SNOWFLAKE
       props:
         worker-id: '1' # Range[0,1024),see:org.apache.shardingsphere.sharding.algorithm.keygen.SnowflakeKeyGenerateAlgorithm#getWorkerId()
   shardingAlgorithms:
-    ## @see:com.wl4g.shardingproxy.algorithm.GroupVolumeInlineShardingAlgorithm
-    alg_database_group_volume_inline_g0_1:
+    ## @see:com.wl4g.shardingproxy.algorithm.AdvancedGroupVolumeDatabaseShardingAlgorithm
+    alg_group_volume_database_g0_1:
       type: ADVANCED_GROUP_VOLUME_DATABASE
       props:
         algorithm-expression: |-
@@ -145,8 +145,8 @@ rules:
                 }
             }]
           }
-    ## @see:com.wl4g.shardingproxy.algorithm.GroupVolumeInlineShardingAlgorithm
-    alg_table_group_volume_inline_g0_1:
+    ## @see:com.wl4g.shardingproxy.algorithm.AdvancedGroupVolumeTableShardingAlgorithm
+    alg_group_volume_table_g0_1:
       type: ADVANCED_GROUP_VOLUME_TABLE
       props:
         algorithm-expression: |-

@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.shardingproxy.util;
+package com.wl4g.shardingproxy.support;
 
 import static java.lang.String.format;
 import static java.lang.System.out;
@@ -21,6 +21,7 @@ import static java.lang.System.out;
 import java.util.List;
 
 import org.apache.shardingsphere.sharding.support.InlineExpressionParser;
+import org.junit.Test;
 
 import groovy.lang.Closure;
 import groovy.util.Expando;
@@ -34,36 +35,31 @@ import groovy.util.Expando;
  */
 public class InlineExpressionParserTests {
 
-    public static void main(String[] args) {
-        testClosureExpr();
-        testActualNodesExpr1();
-        testActualNodesExpr2();
+    @Test
+    public void parseShardingColumnExpr() {
+        doParseShardingIDExpr("${9}");
+        doParseShardingIDExpr("9");
     }
 
-    public static void testClosureExpr() {
-        // String inlineExpr = "${9}";
-        String inlineExpr = "9";
-        System.out.println(format("----------------%s-------------------", inlineExpr));
+    @Test
+    public void testParseActualNodesExpr() {
+        doParseActualNodesExpr("rw_orderdb_r0z0mgr${0..1}_db${0..3}.t_order_${0..7}");
+        doParseActualNodesExpr("rw_orderdb_r0z0mgr0_db${0..1}.t_order_${0..3},rw_orderdb_r0z0mgr1_db${0..3}.t_order_${0..7}");
+    }
+
+    private void doParseShardingIDExpr(String inlineExpr) {
+        System.out.println(format("---------------- inlineExpr: %s -------------------", inlineExpr));
         Closure<?> closure = new InlineExpressionParser(inlineExpr).evaluateClosure().rehydrate(new Expando(), null, null);
         closure.setResolveStrategy(Closure.DELEGATE_ONLY);
         closure.setProperty("id", -1);
         System.out.println(closure.call().toString());
     }
 
-    public static void testActualNodesExpr1() {
-        String actualNodesExpr = "rw_orderdb_r0z0mgr${0..1}_db${0..3}.t_order_${0..7}";
-        System.out.println(format("----------------%s-------------------", actualNodesExpr));
+    private void doParseActualNodesExpr(String actualNodesExpr) {
+        System.out.println(format("---------------- actualNodesExpr: %s -------------------", actualNodesExpr));
         List<String> dataNodes = new InlineExpressionParser(actualNodesExpr).splitAndEvaluate();
         dataNodes.stream().forEach(dn -> out.println(dn));
-        out.println(dataNodes.size());
-    }
-
-    public static void testActualNodesExpr2() {
-        String actualNodesExpr = "rw_orderdb_r0z0mgr0_db${0..1}.t_order_${0..3},rw_orderdb_r0z0mgr1_db${0..3}.t_order_${0..7}";
-        System.out.println(format("----------------%s-------------------", actualNodesExpr));
-        List<String> dataNodes = new InlineExpressionParser(actualNodesExpr).splitAndEvaluate();
-        dataNodes.stream().forEach(dn -> out.println(dn));
-        out.println(dataNodes.size());
+        out.println(format("size: %s", dataNodes.size()));
     }
 
 }
