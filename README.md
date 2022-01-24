@@ -216,9 +216,9 @@ EOF
 
 > Like regular springboot applications, for example, use [EFK](https://github.com/elastic/beats) to collect, or use [loki](https://github.com/grafana/loki), [fluentbit](https://github.com/fluent/fluent-bit) and other components to collect application logs uniformly in the [kubernetes](https://kubernetes.io) environment.
 
-### 2.5 Configuring SQLs auditing (Optional)
+### 2.5 Configuring SQLs privilege (Optional)
 
-- [example auditing server.yaml#rules.provider.props.user-admission-strategy](xcloud-shardingproxy-starter/src/main/resources/example/server.yaml)
+- [example privilege server.yaml#rules.provider.props.user-admission-strategy](xcloud-shardingproxy-starter/src/main/resources/example/server.yaml)
 
 - Testing effect
 
@@ -335,7 +335,7 @@ export SP_JAVAAGENT=${SP_BASE_DIR}/xcloud-shardingproxy-agent-bootstrap/target/x
 export AGENT_PATH=${SP_BASE_DIR}/xcloud-shardingproxy-starter/src/main/resources/agent
 
 ## Sets the dir for more plugins.
-export PLUGINS_PATH=${SP_BASE_DIR}/xcloud-shardingproxy-startertension/target/shardingproxy-2.2.0_5.1.0-bin/ext-lib/agentlib/plugins
+export PLUGINS_PATH=${SP_BASE_DIR}/xcloud-shardingproxy-starter/target/shardingproxy-${SP_VERSION}-bin/ext-lib/agentlib/plugins
 
 ## Or, only set the target dir of the extension plugin jar.
 #export PLUGINS_PATH=${SP_BASE_DIR}/xcloud-shardingproxy-agent-extension/target/
