@@ -15,10 +15,10 @@
 # limitations under the License.
 #
 
-##################### Configuration of 'userdb' by group sharding v5 #######################
+##################### Configuration of 'orderdb' by group sharding v5 #######################
 
 # External logical database schema.
-schemaName: userdb_r0z0mgr1
+schemaName: orderdb_r0z0mgr0
 
 # Extension default datasource configuration.
 # @see:com.wl4g.shardingproxy.config.ProxyConfigurationLoader2.loadRuleConfiguration
@@ -33,23 +33,23 @@ extensionDefaultDataSource:
 
 # Datasource configuration.
 dataSources:
-  ds_userdb_r0z0mgr1i0:
-    url: 'jdbc:mysql://n0.rds.local:3306/userdb_r0z0mgr1db1?serverTimezone=UTC&useSSL=false&allowMultiQueries=true&characterEncoding=utf-8'
-  ds_userdb_r0z0mgr1i1:
-    url: 'jdbc:mysql://n1.rds.local:3306/userdb_r0z0mgr1db1?serverTimezone=UTC&useSSL=false&allowMultiQueries=true&characterEncoding=utf-8'
-  ds_userdb_r0z0mgr1i2:
-    url: 'jdbc:mysql://n2.rds.local:3306/userdb_r0z0mgr1db1?serverTimezone=UTC&useSSL=false&allowMultiQueries=true&characterEncoding=utf-8'
+  ds_orderdb_r0z0mgr0i0:
+    url: 'jdbc:mysql://n0.rds.local:3306/orderdb_r0z0mgr0db0?serverTimezone=UTC&useSSL=false&allowMultiQueries=true&characterEncoding=utf-8'
+  ds_orderdb_r0z0mgr0i1:
+    url: 'jdbc:mysql://n1.rds.local:3306/orderdb_r0z0mgr0db0?serverTimezone=UTC&useSSL=false&allowMultiQueries=true&characterEncoding=utf-8'
+  ds_orderdb_r0z0mgr0i2:
+    url: 'jdbc:mysql://n2.rds.local:3306/orderdb_r0z0mgr0db0?serverTimezone=UTC&useSSL=false&allowMultiQueries=true&characterEncoding=utf-8'
 
 # Schema rules configuration.
 rules:
 ## @see:org.apache.shardingsphere.readwritesplitting.api.ReadwriteSplittingRuleConfiguration
 - !READWRITE_SPLITTING
   dataSources:
-    ds_rw_userdb_r0z0mgr1:
-      writeDataSourceName: ds_userdb_r0z0mgr1i0
+    rw_orderdb_r0z0mgr0:
+      writeDataSourceName: ds_orderdb_r0z0mgr0i0
       readDataSourceNames:
-        - ds_userdb_r0z0mgr1i1
-        - ds_userdb_r0z0mgr1i2
+        - ds_orderdb_r0z0mgr0i1
+        - ds_orderdb_r0z0mgr0i2
       loadBalancerName: r_lb_0
   loadBalancers:
     r_lb_0:
@@ -57,20 +57,20 @@ rules:
 ## @see:org.apache.shardingsphere.readwritesplitting.api.DatabaseDiscoveryRuleConfiguration
 - !DB_DISCOVERY
    dataSources:
-     ha_userdb_r0z0mgr1:
-       discoveryTypeName: dis_r0z0mgr1
+     ha_orderdb_r0z0mgr0:
+       discoveryTypeName: dis_r0z0mgr0
        discoveryHeartbeatName: default_mgr_heartbeat
        dataSourceNames:
-         - ds_userdb_r0z0mgr1i0
-         - ds_userdb_r0z0mgr1i1
-         - ds_userdb_r0z0mgr1i2
+         - ds_orderdb_r0z0mgr0i0
+         - ds_orderdb_r0z0mgr0i1
+         - ds_orderdb_r0z0mgr0i2
    discoveryHeartbeats:
      default_mgr_heartbeat:
        props:
          keep-alive-cron: '0/5 * * * * ?'
    discoveryTypes:
      # HA MGR architecture see: https://blog.csdn.net/n88Lpo/article/details/118315051
-     dis_r0z0mgr1:
+     dis_r0z0mgr0:
        type: MGR
        props:
          # Must be consistent with the MGR configuration group name.

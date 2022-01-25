@@ -21,7 +21,8 @@
 schemaName: userdb
 
 ## Extension default datasource configuration.
-## @see:com.wl4g.shardingproxy.config.ProxyConfigurationLoader2.loadRuleConfiguration
+## @see:com.wl4g.shardingproxy.config.ProxyConfigurationLoader2#loadRuleConfiguration
+## @see:org.apache.shardingsphere.mode.manager.cluster.coordinator.ClusterContextManagerCoordinator#renew(RuleConfigurationsChangedEvent)
 extensionDefaultDataSource:
   username: root
   password: 123456
