@@ -67,7 +67,7 @@ rules:
     t_bill:
       ## The union set definition of all available actual dataSources.(Notice: dataSource sharding based on advanced heterogeneous grouping algorithm)
       ## @see:org.apache.shardingsphere.sharding.rule.TableRule#TableRule()
-      actualDataNodes: rw_paymentdb_r0z0mgrdb${0..1}.t_bill_${0..1824}
+      actualDataNodes: rw_paymentdb_r0z0mgrdb${0..1}.t_bill_${0..2192} # from:(2020-01-01 00:00:00~2025-12-31 00:00:00)/86400sec
       #databaseStrategy:
       tableStrategy:
         standard:
