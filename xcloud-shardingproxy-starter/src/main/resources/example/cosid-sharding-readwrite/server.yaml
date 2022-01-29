@@ -36,31 +36,19 @@ rules:
 - !AUTHORITY
   users: # Notice: it will cover the account number of the real database!!!
     - root@:123456
-    - userdb_admin0@:123456
-    - warehousedb_admin0@:123456
-    - paymentdb_admin0@:123456
-    - orderdb_admin0@:123456
+    - orderdb@:123456
+    - userdb@:123456
   provider:
     type: SCHEMA_PRIVILEGES_PERMITTED # ALL_PRIVILEGES_PERMITTED|SCHEMA_PRIVILEGES_PERMITTED|NATIVE(5.x@deprecated)
     props:
-      user-schema-mappings: "\
-         root@=userdb,\
-         root@=warehousedb,\
-         root@=paymentdb,\
-         root@=orderdb,\
-         userdb_admin0@=userdb,\
-         warehousedb_admin0@=warehousedb,\
-         paymentdb_admin0@=paymentdb,\
-         orderdb_admin0@=orderdb"
+      user-schema-mappings: root@=orderdb,root@=userdb,orderdb@=orderdb,userdb@=userdb
       user-object-privileges: |-
         {
           "granted": {
-            "userdb_admin0": "default_ddl_safety, base_dml_safety",
-            "warehousedb_admin0": "default_ddl_safety, base_dml_safety, slight_strict_dml_safety",
-            "paymentdb_admin0": "default_ddl_safety, base_dml_safety, slight_strict_dml_safety, general_strict_dml_safety",
-            "orderdb_admin0": "default_ddl_safety, base_dml_safety, slight_strict_dml_safety"
+            "orderdb": ["default_ddl_safety", "base_dml_safety", "slight_strict_dml_safety"],
+            "userdb": ["default_ddl_safety", "base_dml_safety"]
           },
-          "privileges": {
+          "strategy": {
             "default_ddl_safety": [{
               "anyBlacklistSQLs": [
                 "(.*)drop(\\s+)schema(\\s+)(.+)",
@@ -78,11 +66,6 @@ rules:
             "slight_strict_dml_safety": [{
               "update": {
                 "requiredWhereCondidtion": true
-              }
-            }],
-            "general_strict_dml_safety": [{
-              "select": {
-                "anyDenied": true
               }
             }]
           }

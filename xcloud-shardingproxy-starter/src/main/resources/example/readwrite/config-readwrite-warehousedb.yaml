@@ -15,10 +15,8 @@
 # limitations under the License.
 #
 
-##################### Configuration of 'orderdb' by group sharding v5 #######################
-
 # External logical database schema.
-schemaName: orderdb_r0z0mgr2
+schemaName: warehousedb
 
 # Extension default datasource configuration.
 # @see:com.wl4g.shardingproxy.config.ProxyConfigurationLoader2.loadRuleConfiguration
@@ -33,50 +31,52 @@ extensionDefaultDataSource:
 
 # Datasource configuration.
 dataSources:
-  ds_orderdb_r0z0mgr2i0:
-    url: 'jdbc:mysql://n0.rds.local:3306/orderdb_r0z0mgr2db2?serverTimezone=UTC&useSSL=false&allowMultiQueries=true&characterEncoding=utf-8'
-  ds_orderdb_r0z0mgr2i1:
-    url: 'jdbc:mysql://n1.rds.local:3306/orderdb_r0z0mgr2db2?serverTimezone=UTC&useSSL=false&allowMultiQueries=true&characterEncoding=utf-8'
-  ds_orderdb_r0z0mgr2i2:
-    url: 'jdbc:mysql://n2.rds.local:3306/orderdb_r0z0mgr2db2?serverTimezone=UTC&useSSL=false&allowMultiQueries=true&characterEncoding=utf-8'
+  ds_warehousedb_r0z0mgr0i0:
+    url: 'jdbc:mysql://n0.rds.local:3306/warehousedb?serverTimezone=UTC&useSSL=false&allowMultiQueries=true&characterEncoding=utf-8'
+  ds_warehousedb_r0z0mgr0i1:
+    url: 'jdbc:mysql://n1.rds.local:3306/warehousedb?serverTimezone=UTC&useSSL=false&allowMultiQueries=true&characterEncoding=utf-8'
+  ds_warehousedb_r0z0mgr0i2:
+    url: 'jdbc:mysql://n2.rds.local:3306/warehousedb?serverTimezone=UTC&useSSL=false&allowMultiQueries=true&characterEncoding=utf-8'
 
 # Schema rules configuration.
 rules:
 ## @see:org.apache.shardingsphere.readwritesplitting.api.ReadwriteSplittingRuleConfiguration
 - !READWRITE_SPLITTING
   dataSources:
-    ds_rw_orderdb_r0z0mgr2:
-      writeDataSourceName: ds_orderdb_r0z0mgr2i0
-      readDataSourceNames:
-        - ds_orderdb_r0z0mgr2i1
-        - ds_orderdb_r0z0mgr2i2
+    rw_warehousedb_r0z0mgr0:
+      type: Static
       loadBalancerName: r_lb_0
+      props:
+        write-data-source-name: ds_warehousedb_r0z0mgr0i0
+        read-data-source-names: ds_warehousedb_r0z0mgr0i1,ds_warehousedb_r0z0mgr0i2
   loadBalancers:
     r_lb_0:
       type: RANDOM
+
 ## @see:org.apache.shardingsphere.readwritesplitting.api.DatabaseDiscoveryRuleConfiguration
 - !DB_DISCOVERY
    dataSources:
-     ha_orderdb_r0z0mgr2:
-       discoveryTypeName: dis_r0z0mgr2
+     ha_warehousedb_r0z0mgr0:
+       discoveryTypeName: default_dis_mgr
        discoveryHeartbeatName: default_mgr_heartbeat
        dataSourceNames:
-         - ds_orderdb_r0z0mgr2i0
-         - ds_orderdb_r0z0mgr2i1
-         - ds_orderdb_r0z0mgr2i2
+         - ds_warehousedb_r0z0mgr0i0
+         - ds_warehousedb_r0z0mgr0i1
+         - ds_warehousedb_r0z0mgr0i2
    discoveryHeartbeats:
      default_mgr_heartbeat:
        props:
          keep-alive-cron: '0/5 * * * * ?'
    discoveryTypes:
-     # HA MGR architecture see: https://blog.csdn.net/n88Lpo/article/details/118315051
-     dis_r0z0mgr2:
+     ## HA MGR architecture @see: https://blog.csdn.net/n88Lpo/article/details/118315051
+     default_dis_mgr:
        type: MGR
        props:
-         # Must be consistent with the MGR configuration group name.
-         # see: https://github.com/apache/shardingsphere/blob/5.1.0/shardingsphere-features/shardingsphere-db-discovery/shardingsphere-db-discovery-provider/shardingsphere-db-discovery-mgr/src/main/java/org/apache/shardingsphere/dbdiscovery/mgr/MGRDatabaseDiscoveryType.java#L104
-         # see: https://github.com/mysql/mysql-server/blob/mysql-5.7.30/rapid/plugin/group_replication/src/plugin.cc#L1726
-         # see: SELECT * FROM performance_schema.global_variables WHERE VARIABLE_NAME='group_replication_group_name'
+         ## Must be consistent with the MGR configuration group name.
+         ## @see:https://github.com/apache/shardingsphere/blob/5.1.0/shardingsphere-features/shardingsphere-db-discovery/shardingsphere-db-discovery-provider/shardingsphere-db-discovery-mgr/src/main/java/org/apache/shardingsphere/dbdiscovery/mgr/MGRDatabaseDiscoveryType.java#L95
+         ## @see:https://github.com/apache/shardingsphere/blob/5.1.0/examples/shardingsphere-sample/shardingsphere-example-generated/shardingsphere-proxy-sample/shardingsphere-proxy-cluster-etcd-local-db-discovery-example/src/main/resources/conf/config-db-discovery.yaml#L56
+         ## @see:https://github.com/mysql/mysql-server/blob/mysql-5.7.30/rapid/plugin/group_replication/src/plugin.cc#L1726
+         ## @see:SELECT * FROM performance_schema.global_variables WHERE VARIABLE_NAME='group_replication_group_name'
          group-name: 5db40c3c-180c-11e9-afbf-005056ac6820
          ## @see:org.apache.shardingsphere.dbdiscovery.mgr.MGRDatabaseDiscoveryType#extDiscoveryConfig
          extensionDiscoveryConfigJson: |-

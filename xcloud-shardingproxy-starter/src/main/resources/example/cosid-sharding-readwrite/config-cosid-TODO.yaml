@@ -14,5 +14,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-com.wl4g.shardingproxy.algorithm.GroupVolumeDatabaseShardingAlgorithm
-com.wl4g.shardingproxy.algorithm.GroupVolumeTableShardingAlgorithm
+# @see:https://cosid.ahoo.me/config/shardingsphere.html#snowflakeintervalshardingalgorithm
+# @see:https://github.com/apache/shardingsphere/pull/14132
+

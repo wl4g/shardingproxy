@@ -35,19 +35,33 @@ GROUP_NAME                            NODE_ID                               NODE
 
 ### 1.2 Initializing example database
 
-Notice: The example of non average slicing is not recommended for production (scenario: slicing according to different machine performance weight), because shardingsphere:5.1.0, It is recommended to use average sharding.
+Notice: All the following example cases are for reference only in the production system and are not optimal solutions. Please combine them according to the actual needs of your business.
 
-- [userdb-sharding.sql](xcloud-shardingproxy-starter/exampledata/userdb-sharding.sql) (**sharding example of uniform matrix**, recommended for General Developers)
-
-```bash
-echo "source $PROJECT_HOME/xcloud-shardingproxy-starter/exampledata/sharding/userdb-sharding.sql" | mysql -h172.8.8.111 -P3306 -uroot -p123456
-```
-
-- [orderdb-sharding.sql](xcloud-shardingproxy-starter/exampledata/orderdb-sharding.sql) (**sharding example of non-uniform(heter) matrix**, recommended for advanced developers)
+- **Case 1:** **Readwrite example and no-sharding** (recommended for getting started developers)
 
 ```bash
-echo "source $PROJECT_HOME/xcloud-shardingproxy-starter/exampledata/sharding/orderdb-sharding.sql" | mysql -h172.8.8.111 -P3306 -uroot -p123456
+cd $PROJECT_HOME/xcloud-shardingproxy-starter/src/main/resources/example/
+echo "source readwrite/readwrite-warehousedb.sql" | mysql -h172.8.8.111 -P3306 -uroot -p123456
 ```
+
+- **Case 2:** **Sharding example of based auto interval** (recommended for general developers)
+
+```bash
+echo "source interval-sharding-readwrite/interval-sharding-readwrite-paymentdb.sql" | mysql -h172.8.8.111 -P3306 -uroot -p123456
+```
+
+- **Case 3:** **Sharding example of uniform matrix** (recommended for general developers)
+
+```bash
+echo "source mod-sharding-readwrite/mod-sharding-readwrite-userdb.sql" | mysql -h172.8.8.111 -P3306 -uroot -p123456
+```
+
+- **Case 4:** **Sharding example of non-uniform(heter) group matrix** (recommended for advanced developers)
+
+```bash
+echo "source group-sharding-readwrite/group-sharding-readwrite-orderdb.sql" | mysql -h172.8.8.111 -P3306 -uroot -p123456
+```
+
 
 ### 1.3 Deploy on Docker (Testing recommend)
 
@@ -110,19 +124,18 @@ wl4g/shardingproxy:latest
   - Select operation. (Simulate 100 this query operation and observe the Tracing UI)
 
   ```bash
-  for i in `seq 1 100`; do echo 'use userdb; select * from t_user' | mysql -h127.0.0.1 -P3308 -uuserdb -p123456; done
+  for i in `seq 1 100`; do echo 'use userdb; select * from t_user' | mysql -h127.0.0.1 -P3308 -uuser_admin0 -p123456; done
   ```
 
   - Update operation
 
-  ```sql
-  mysql -h127.0.0.1 -P3308 -uroot -p123456
-  
-  use userdb;
-  SELECT * FROM userdb.t_user;
-  INSERT INTO userdb.t_user (id, name) VALUES (10000000, 'user-insert-1111');
-  UPDATE userdb.t_user SET name='user-update-2222' WHERE id=10000000;
-  DELETE FROM userdb.t_user WHERE id=10000000;
+  ```bash
+  echo "use userdb;
+  select * from t_user;
+  insert into t_user (id, name) VALUES (10000000, 'user(insert) 10000000');
+  update t_user set name='user(update) 10000002' WHERE id=10000000;
+  delete from t_user WHERE id=10000000;
+  " | mysql -h127.0.0.1 -P3308 -uuser_admin0 -p123456
   ```
 
 - Testing scrape prometheus metrics

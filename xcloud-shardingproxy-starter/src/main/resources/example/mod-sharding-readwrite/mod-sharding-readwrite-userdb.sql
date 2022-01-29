@@ -1,18 +1,18 @@
 -- MGR (MySQL group replication) cluster 0
-drop schema if exists userdb_db0;
-drop schema if exists userdb_db1;
+drop schema if exists userdb_r0z0mgr0db0; -- region0/zone0/mgrCluster0/database0 like to: cn_south1_a1_mgr0_userdb0
+drop schema if exists userdb_r0z0mgr0db1;
 -- MGR (MySQL group replication) cluster 1
-drop schema if exists userdb_db2;
-drop schema if exists userdb_db3;
+drop schema if exists userdb_r0z0mgr1db2;
+drop schema if exists userdb_r0z0mgr1db3;
 -- Small database that do not participate in sharding.
 drop schema if exists userdb_single;
 
 -- --------------------------------- Sharding of MGR cluster 0, matrix: 4db x 4table) --------------------------------------
 
--- db0
-drop schema if exists userdb_db0;
-create schema if not exists userdb_db0;
-use userdb_db0;
+-- mgr0.db0
+drop schema if exists userdb_r0z0mgr0db0;
+create schema if not exists userdb_r0z0mgr0db0;
+use userdb_r0z0mgr0db0;
 drop table if exists t_user_0;
 drop table if exists t_user_1;
 drop table if exists t_user_2;
@@ -26,10 +26,10 @@ insert into `t_user_1` (`id`, `name`, `pwd`) values (20000100,'jack-20000100 fro
 insert into `t_user_2` (`id`, `name`, `pwd`) values (40000100,'jack-40000100 from db0.t2',null);
 insert into `t_user_3` (`id`, `name`, `pwd`) values (60000100,'jack-60000100 from db0.t3',null);
 
--- db1
-drop schema if exists userdb_db1;
-create schema if not exists userdb_db1;
-use userdb_db1;
+-- mgr0.db1
+drop schema if exists userdb_r0z0mgr0db1;
+create schema if not exists userdb_r0z0mgr0db1;
+use userdb_r0z0mgr0db1;
 drop table if exists t_user_0;
 drop table if exists t_user_1;
 drop table if exists t_user_2;
@@ -43,10 +43,10 @@ insert into `t_user_1` (`id`, `name`, `pwd`) values (20000101,'jack-20000101 fro
 insert into `t_user_2` (`id`, `name`, `pwd`) values (40000101,'jack-40000101 from db1.t2',null);
 insert into `t_user_3` (`id`, `name`, `pwd`) values (60000101,'jack-60000101 from db1.t3',null);
 
--- db2
-drop schema if exists userdb_db2;
-create schema if not exists userdb_db2;
-use userdb_db2;
+-- mgr1.db2
+drop schema if exists userdb_r0z0mgr1db2;
+create schema if not exists userdb_r0z0mgr1db2;
+use userdb_r0z0mgr1db2;
 drop table if exists t_user_0;
 drop table if exists t_user_1;
 drop table if exists t_user_2;
@@ -60,10 +60,10 @@ insert into `t_user_1` (`id`, `name`, `pwd`) values (20000102,'jack-20000102 fro
 insert into `t_user_2` (`id`, `name`, `pwd`) values (40000102,'jack-40000102 from db2.t2',null);
 insert into `t_user_3` (`id`, `name`, `pwd`) values (60000102,'jack-60000102 from db2.t3',null);
 
--- db3
-drop schema if exists userdb_db3;
-create schema if not exists userdb_db3;
-use userdb_db3;
+-- mgr1.db3
+drop schema if exists userdb_r0z0mgr1db3;
+create schema if not exists userdb_r0z0mgr1db3;
+use userdb_r0z0mgr1db3;
 drop table if exists t_user_0;
 drop table if exists t_user_1;
 drop table if exists t_user_2;

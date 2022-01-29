@@ -14,21 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.wl4g.shardingproxy.config;
 
-import static java.util.Objects.nonNull;
+import com.google.common.base.Preconditions;
+import com.wl4g.component.common.bean.BeanUtils2;
 
-import java.io.File;
-import java.io.IOException;
-import java.net.URL;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.LinkedHashMap;
-import java.util.LinkedList;
-import java.util.Optional;
-import java.util.regex.Pattern;
-import java.util.stream.Collectors;
-
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
+import lombok.SneakyThrows;
 import org.apache.shardingsphere.authority.yaml.config.YamlAuthorityRuleConfiguration;
 import org.apache.shardingsphere.infra.yaml.config.pojo.YamlRuleConfiguration;
 import org.apache.shardingsphere.infra.yaml.engine.YamlEngine;
@@ -37,11 +31,19 @@ import org.apache.shardingsphere.proxy.config.yaml.YamlDataSourceParameter;
 import org.apache.shardingsphere.proxy.config.yaml.YamlProxyRuleConfiguration;
 import org.apache.shardingsphere.proxy.config.yaml.YamlProxyServerConfiguration;
 
-import com.google.common.base.Preconditions;
-import com.wl4g.component.common.bean.BeanUtils2;
+import static java.util.Objects.nonNull;
 
-import lombok.AccessLevel;
-import lombok.NoArgsConstructor;
+import java.io.File;
+import java.io.IOException;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.LinkedList;
+import java.util.Optional;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 /**
  * Proxy configuration loader.
@@ -72,9 +74,10 @@ public final class ProxyConfigurationLoader2 {
                         (oldValue, currentValue) -> oldValue, LinkedHashMap::new)));
     }
 
+    @SneakyThrows(URISyntaxException.class)
     private static File getResourceFile(final String path) {
         URL url = ProxyConfigurationLoader2.class.getResource(path);
-        return null == url ? new File(path) : new File(url.getFile());
+        return null == url ? new File(path) : new File(url.toURI().getPath());
     }
 
     private static YamlProxyServerConfiguration loadServerConfiguration(final File yamlFile) throws IOException {
@@ -106,7 +109,6 @@ public final class ProxyConfigurationLoader2 {
         if (null == result) {
             return Optional.empty();
         }
-        Preconditions.checkNotNull(result.getSchemaName(), "Property `schemaName` in file `%s` is required.", yamlFile.getName());
 
         //
         // ADD for merge from default dataSource configuration.
@@ -123,6 +125,7 @@ public final class ProxyConfigurationLoader2 {
         }
         // ADD end
 
+        Preconditions.checkNotNull(result.getSchemaName(), "Property `schemaName` in file `%s` is required.", yamlFile.getName());
         Preconditions.checkState(!result.getDataSources().isEmpty(), "Data sources configuration in file `%s` is required.",
                 yamlFile.getName());
         return Optional.of(result);
