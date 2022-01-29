@@ -78,7 +78,7 @@ public class StandardSQLPrivilegeController implements SQLPrivilegeController {
     private final AuthorityProvideAlgorithm provider;
     private final Collection<ShardingSphereUser> users;
     private final ConfigPropertySource props;
-    private final StandardPrivilegeConfiguration strategyConfig;
+    private final StandardPrivilegeConfiguration privilegesConfig;
 
     public StandardSQLPrivilegeController(final SQLStatement sqlStatement, final Grantee grantee,
             final AuthorityRule authorityRule) {
@@ -90,7 +90,7 @@ public class StandardSQLPrivilegeController implements SQLPrivilegeController {
         this.props = (provider instanceof SchemaPrivilegesPermittedAuthorityProviderAlgorithm)
                 ? new ConfigPropertySource(getField(PROPS_FIELD, provider, true))
                 : new ConfigPropertySource();
-        this.strategyConfig = StandardPrivilegeConfiguration.build(props.getProperty(PROP_KEY));
+        this.privilegesConfig = StandardPrivilegeConfiguration.build(props.getProperty(PROP_KEY));
     }
 
     @Override
@@ -186,24 +186,34 @@ public class StandardSQLPrivilegeController implements SQLPrivilegeController {
     }
 
     private SQLCheckResult doSelectAdmission(SelectStatement statement) {
-        return PASSED;
+        return executeWithUserValidate(ss -> {
+            if (ss.getSelect().isRequiredWhereCondidtion() && !statement.getWhere().isPresent()) {
+                return new SQLCheckResult(false, "Execute select table empty condition the DML statement permission deined");
+            }
+            return PASSED;
+        });
     }
 
     private SQLCheckResult doInsertAdmission(InsertStatement statement) {
-        return PASSED;
+        return executeWithUserValidate(ss -> {
+            if (ss.getInsert().isAnyDenied()) {
+                return new SQLCheckResult(false, "Execute insert table empty condition the DML statement permission deined");
+            }
+            return PASSED;
+        });
     }
 
     private SQLCheckResult doUpdateAdmission(UpdateStatement statement) {
-        return executeWithStrategyValiate(ss -> {
+        return executeWithUserValidate(ss -> {
             if (ss.getUpdate().isRequiredWhereCondidtion() && !statement.getWhere().isPresent()) {
-                return new SQLCheckResult(false, "Execute delete table empty condition the DML statement permission deined");
+                return new SQLCheckResult(false, "Execute update table empty condition the DML statement permission deined");
             }
             return PASSED;
         });
     }
 
     private SQLCheckResult doDeleteAdmission(DeleteStatement statement) {
-        return executeWithStrategyValiate(ss -> {
+        return executeWithUserValidate(ss -> {
             if (ss.getDelete().isRequiredWhereCondidtion() && !statement.getWhere().isPresent()) {
                 return new SQLCheckResult(false, "Execute delete table empty condition the DML statement permission deined.");
             }
@@ -249,7 +259,7 @@ public class StandardSQLPrivilegeController implements SQLPrivilegeController {
         if (isBlank(sql)) {
             return PASSED;
         }
-        return executeWithStrategyValiate(ss -> {
+        return executeWithUserValidate(ss -> {
             for (String regex : ss.getAnyBlacklistSQLs()) {
                 Pattern p = Pattern.compile(regex, Pattern.CASE_INSENSITIVE);
                 if (p.matcher(sql).matches()) {
@@ -260,8 +270,8 @@ public class StandardSQLPrivilegeController implements SQLPrivilegeController {
         });
     }
 
-    private SQLCheckResult executeWithStrategyValiate(Function<StrategySpec, SQLCheckResult> func) {
-        for (StrategySpec ss : safeList(strategyConfig.getMerged().get(grantee.getUsername()))) {
+    private SQLCheckResult executeWithUserValidate(Function<StrategySpec, SQLCheckResult> func) {
+        for (StrategySpec ss : safeList(privilegesConfig.getMerged().get(grantee.getUsername()))) {
             SQLCheckResult result = func.apply(ss);
             if (!result.isPassed()) {
                 return result;

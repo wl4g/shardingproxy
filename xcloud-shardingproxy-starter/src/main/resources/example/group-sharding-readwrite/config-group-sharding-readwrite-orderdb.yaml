@@ -15,8 +15,6 @@
 # limitations under the License.
 #
 
-##################### Configuration of 'orderdb' by group sharding v5.1.0 #######################
-
 # External logical database schema.
 schemaName: orderdb
 
@@ -101,7 +99,7 @@ rules:
       tableStrategy:
         standard:
           shardingColumn: id
-          shardingAlgorithmName: alg_group_volume_table_g0_1
+          shardingAlgorithmName: alg_group_volume_table_g0_0
       keyGenerateStrategy:
         column: id
         keyGeneratorName: gen_snowflake_g0_0
@@ -111,15 +109,15 @@ rules:
   defaultDatabaseStrategy:
     standard:
       shardingColumn: id
-      shardingAlgorithmName: alg_group_volume_database_g0_1
+      shardingAlgorithmName: alg_group_volume_database_g0_0
   keyGenerators:
     gen_snowflake_g0_0:
       type: SNOWFLAKE
       props:
         worker-id: '1' # Range[0,1024),see:org.apache.shardingsphere.sharding.algorithm.keygen.SnowflakeKeyGenerateAlgorithm#getWorkerId()
   shardingAlgorithms:
-    ## @see:com.wl4g.shardingproxy.algorithm.AdvancedGroupVolumeDatabaseShardingAlgorithm
-    alg_group_volume_database_g0_1:
+    ## @see:com.wl4g.shardingproxy.algorithm.GroupVolumeDatabaseShardingAlgorithm
+    alg_group_volume_database_g0_0:
       type: ADVANCED_GROUP_VOLUME_DATABASE
       props:
         algorithm-expression: |-
@@ -146,8 +144,8 @@ rules:
                 }
             }]
           }
-    ## @see:com.wl4g.shardingproxy.algorithm.AdvancedGroupVolumeTableShardingAlgorithm
-    alg_group_volume_table_g0_1:
+    ## @see:com.wl4g.shardingproxy.algorithm.GroupVolumeTableShardingAlgorithm
+    alg_group_volume_table_g0_0:
       type: ADVANCED_GROUP_VOLUME_TABLE
       props:
         algorithm-expression: |-
@@ -259,7 +257,7 @@ rules:
 - !DB_DISCOVERY
    dataSources:
      ha_orderdb_r0z0mgr0:
-       discoveryTypeName: default_dis_r0z0mgr
+       discoveryTypeName: default_dis_mgr
        discoveryHeartbeatName: default_mgr_heartbeat
        dataSourceNames:
          # Instance 0
@@ -272,7 +270,7 @@ rules:
          - ds_orderdb_r0z0mgr0i2_db0
          - ds_orderdb_r0z0mgr0i2_db1
      ha_orderdb_r0z0mgr1:
-       discoveryTypeName: default_dis_r0z0mgr
+       discoveryTypeName: default_dis_mgr
        discoveryHeartbeatName: default_mgr_heartbeat
        dataSourceNames:
          # Instance 0
@@ -293,7 +291,7 @@ rules:
          keep-alive-cron: '0/5 * * * * ?'
    discoveryTypes:
      # HA MGR architecture see: https://blog.csdn.net/n88Lpo/article/details/118315051
-     default_dis_r0z0mgr:
+     default_dis_mgr:
        type: MGR
        props:
          # Must be consistent with the MGR configuration group name.

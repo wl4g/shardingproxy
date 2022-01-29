@@ -92,10 +92,8 @@ public final class MGRDatabaseDiscoveryType implements DatabaseDiscoveryType {
     private ExtensionDiscoveryConfiguration extDiscoveryConfig;
 
     @Override
-    public void checkDatabaseDiscoveryConfiguration(final String schemaName, final Map<String, DataSource> dataSourceMap)
-            throws SQLException {
-        try (Connection connection = dataSourceMap.get(oldPrimaryDataSource).getConnection();
-                Statement statement = connection.createStatement()) {
+    public void checkDatabaseDiscoveryConfiguration(String schemaName, DataSource dataSource) throws SQLException {
+        try (Connection connection = dataSource.getConnection(); Statement statement = connection.createStatement()) {
             checkPluginIsActive(statement);
             checkMemberCount(statement);
             checkServerGroupName(statement);

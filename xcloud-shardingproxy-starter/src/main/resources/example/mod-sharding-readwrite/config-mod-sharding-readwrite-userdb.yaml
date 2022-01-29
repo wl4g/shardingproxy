@@ -15,8 +15,6 @@
 # limitations under the License.
 #
 
-##################### Configuration of 'userdb' by group sharding v5.1.0 #######################
-
 ## External logical database schema.
 schemaName: userdb
 
@@ -36,36 +34,36 @@ extensionDefaultDataSource:
 dataSources:
   ## MGR cluster 0
   ## Instance 0
-  ds_userdb_db0_w1:
-    url: 'jdbc:mysql://n0.rds.local:3306/userdb_db0?serverTimezone=UTC&useSSL=false&allowMultiQueries=true&characterEncoding=utf-8'
-  ds_userdb_db1_w1:
-    url: 'jdbc:mysql://n0.rds.local:3306/userdb_db0?serverTimezone=UTC&useSSL=false&allowMultiQueries=true&characterEncoding=utf-8'
+  ds_userdb_r0z0mgr0db0i0:
+    url: 'jdbc:mysql://n0.rds.local:3306/userdb_r0z0mgr0db0?serverTimezone=UTC&useSSL=false&allowMultiQueries=true&characterEncoding=utf-8'
+  ds_userdb_r0z0mgr0db1i0:
+    url: 'jdbc:mysql://n0.rds.local:3306/userdb_r0z0mgr0db1?serverTimezone=UTC&useSSL=false&allowMultiQueries=true&characterEncoding=utf-8'
   ## Instance 1
-  ds_userdb_db0_r1:
-    url: 'jdbc:mysql://n1.rds.local:3306/userdb_db0?serverTimezone=UTC&useSSL=false&allowMultiQueries=true&characterEncoding=utf-8'
-  ds_userdb_db1_r1:
-    url: 'jdbc:mysql://n1.rds.local:3306/userdb_db1?serverTimezone=UTC&useSSL=false&allowMultiQueries=true&characterEncoding=utf-8'
+  ds_userdb_r0z0mgr0db0i1:
+    url: 'jdbc:mysql://n1.rds.local:3306/userdb_r0z0mgr0db0?serverTimezone=UTC&useSSL=false&allowMultiQueries=true&characterEncoding=utf-8'
+  ds_userdb_r0z0mgr0db1i1:
+    url: 'jdbc:mysql://n1.rds.local:3306/userdb_r0z0mgr0db1?serverTimezone=UTC&useSSL=false&allowMultiQueries=true&characterEncoding=utf-8'
   ## Instance 2
-  ds_userdb_db0_r2:
-    url: 'jdbc:mysql://n2.rds.local:3306/userdb_db0?serverTimezone=UTC&useSSL=false&allowMultiQueries=true&characterEncoding=utf-8'
-  ds_userdb_db1_r2:
-    url: 'jdbc:mysql://n2.rds.local:3306/userdb_db1?serverTimezone=UTC&useSSL=false&allowMultiQueries=true&characterEncoding=utf-8'
+  ds_userdb_r0z0mgr0db0i2:
+    url: 'jdbc:mysql://n2.rds.local:3306/userdb_r0z0mgr0db0?serverTimezone=UTC&useSSL=false&allowMultiQueries=true&characterEncoding=utf-8'
+  ds_userdb_r0z0mgr0db1i2:
+    url: 'jdbc:mysql://n2.rds.local:3306/userdb_r0z0mgr0db1?serverTimezone=UTC&useSSL=false&allowMultiQueries=true&characterEncoding=utf-8'
   ## MGR cluster 1
   ## Instance 0
-  ds_userdb_db2_w1:
-    url: 'jdbc:mysql://n0.rds.local:3306/userdb_db2?serverTimezone=UTC&useSSL=false&allowMultiQueries=true&characterEncoding=utf-8'
-  ds_userdb_db3_w1:
-    url: 'jdbc:mysql://n0.rds.local:3306/userdb_db3?serverTimezone=UTC&useSSL=false&allowMultiQueries=true&characterEncoding=utf-8'
+  ds_userdb_r0z0mgr1db2i0:
+    url: 'jdbc:mysql://n0.rds.local:3306/userdb_r0z0mgr1db2?serverTimezone=UTC&useSSL=false&allowMultiQueries=true&characterEncoding=utf-8'
+  ds_userdb_r0z0mgr1db3i0:
+    url: 'jdbc:mysql://n0.rds.local:3306/userdb_r0z0mgr1db3?serverTimezone=UTC&useSSL=false&allowMultiQueries=true&characterEncoding=utf-8'
   ## Instance 1
-  ds_userdb_db2_r1:
-    url: 'jdbc:mysql://n1.rds.local:3306/userdb_db2?serverTimezone=UTC&useSSL=false&allowMultiQueries=true&characterEncoding=utf-8'
-  ds_userdb_db3_r1:
-    url: 'jdbc:mysql://n1.rds.local:3306/userdb_db3?serverTimezone=UTC&useSSL=false&allowMultiQueries=true&characterEncoding=utf-8'
+  ds_userdb_r0z0mgr1db2i1:
+    url: 'jdbc:mysql://n1.rds.local:3306/userdb_r0z0mgr1db2?serverTimezone=UTC&useSSL=false&allowMultiQueries=true&characterEncoding=utf-8'
+  ds_userdb_r0z0mgr1db3i1:
+    url: 'jdbc:mysql://n1.rds.local:3306/userdb_r0z0mgr1db3?serverTimezone=UTC&useSSL=false&allowMultiQueries=true&characterEncoding=utf-8'
   ## Instance 2
-  ds_userdb_db2_r2:
-    url: 'jdbc:mysql://n2.rds.local:3306/userdb_db2?serverTimezone=UTC&useSSL=false&allowMultiQueries=true&characterEncoding=utf-8'
-  ds_userdb_db3_r2:
-    url: 'jdbc:mysql://n2.rds.local:3306/userdb_db3?serverTimezone=UTC&useSSL=false&allowMultiQueries=true&characterEncoding=utf-8'
+  ds_userdb_r0z0mgr1db2i2:
+    url: 'jdbc:mysql://n2.rds.local:3306/userdb_r0z0mgr1db2?serverTimezone=UTC&useSSL=false&allowMultiQueries=true&characterEncoding=utf-8'
+  ds_userdb_r0z0mgr1db3i2:
+    url: 'jdbc:mysql://n2.rds.local:3306/userdb_r0z0mgr1db3?serverTimezone=UTC&useSSL=false&allowMultiQueries=true&characterEncoding=utf-8'
   ## MGR cluster single (no-sharding)
   ds_userdb_single:
     url: 'jdbc:mysql://n0.rds.local:3306/userdb_single?serverTimezone=UTC&useSSL=false&allowMultiQueries=true&characterEncoding=utf-8'
@@ -83,7 +81,7 @@ rules:
   tables:
     t_user:
       # Union collection definition of all available actual dataSources.
-      actualDataNodes: rw_userdb_db${0..3}.t_user_${0..3}
+      actualDataNodes: rw_userdb_r0z0mgr0db${0..1}.t_user_${0..3},rw_userdb_r0z0mgr1db${2..3}.t_user_${0..3}
       #databaseStrategy:
       tableStrategy:
         standard:
@@ -142,28 +140,28 @@ rules:
 ## @see:org.apache.shardingsphere.readwritesplitting.api.ReadwriteSplittingRuleConfiguration
 - !READWRITE_SPLITTING
   dataSources:
-    rw_userdb_db0:
-      writeDataSourceName: ds_userdb_db0_w1
+    rw_userdb_r0z0mgr0db0:
+      writeDataSourceName: ds_userdb_r0z0mgr0db0i0
       readDataSourceNames:
-        - ds_userdb_db0_r1
-        - ds_userdb_db0_r2
+        - ds_userdb_r0z0mgr0db0i1
+        - ds_userdb_r0z0mgr0db0i2
       loadBalancerName: r_lb_0
-    rw_userdb_db1:
-      writeDataSourceName: ds_userdb_db1_w1
+    rw_userdb_r0z0mgr0db1:
+      writeDataSourceName: ds_userdb_r0z0mgr0db1i0
       readDataSourceNames:
-        - ds_userdb_db1_r1
-        - ds_userdb_db1_r2
+        - ds_userdb_r0z0mgr0db1i1
+        - ds_userdb_r0z0mgr0db1i2
       loadBalancerName: r_lb_0
-    rw_userdb_db2:
-      writeDataSourceName: ds_userdb_db2_w1
+    rw_userdb_r0z0mgr1db2:
+      writeDataSourceName: ds_userdb_r0z0mgr1db2i0
       readDataSourceNames:
-        - ds_userdb_db2_r1
-        - ds_userdb_db2_r2
-    rw_userdb_db3:
-      writeDataSourceName: ds_userdb_db3_w1
+        - ds_userdb_r0z0mgr1db2i1
+        - ds_userdb_r0z0mgr1db2i2
+    rw_userdb_r0z0mgr1db3:
+      writeDataSourceName: ds_userdb_r0z0mgr1db3i0
       readDataSourceNames:
-        - ds_userdb_db3_r1
-        - ds_userdb_db3_r2
+        - ds_userdb_r0z0mgr1db3i1
+        - ds_userdb_r0z0mgr1db3i2
       loadBalancerName: r_lb_0
   loadBalancers:
     r_lb_0:
@@ -176,27 +174,27 @@ rules:
        discoveryHeartbeatName: default_mgr_heartbeat
        dataSourceNames:
          # Instance 0
-         - ds_userdb_db0_w1
-         - ds_userdb_db1_w1
+         - ds_userdb_r0z0mgr0db0i0
+         - ds_userdb_r0z0mgr0db1i0
          # Instance 1
-         - ds_userdb_db0_r1
-         - ds_userdb_db1_r1
+         - ds_userdb_r0z0mgr0db0i1
+         - ds_userdb_r0z0mgr0db1i1
          # Instance 2
-         - ds_userdb_db0_r2
-         - ds_userdb_db1_r2
+         - ds_userdb_r0z0mgr0db0i2
+         - ds_userdb_r0z0mgr0db1i2
      ha_userdb_mgr1:
        discoveryTypeName: default_dis_mgr
        discoveryHeartbeatName: default_mgr_heartbeat
        dataSourceNames:
          # Instance 0
-         - ds_userdb_db2_w1
-         - ds_userdb_db3_w1
+         - ds_userdb_r0z0mgr1db2i0
+         - ds_userdb_r0z0mgr1db3i0
          # Instance 1
-         - ds_userdb_db2_r1
-         - ds_userdb_db3_r1
+         - ds_userdb_r0z0mgr1db2i1
+         - ds_userdb_r0z0mgr1db3i1
          # Instance 2
-         - ds_userdb_db2_r2
-         - ds_userdb_db3_r2
+         - ds_userdb_r0z0mgr1db2i2
+         - ds_userdb_r0z0mgr1db3i2
    discoveryHeartbeats:
      default_mgr_heartbeat:
        props:

@@ -41,7 +41,7 @@ import lombok.Setter;
 @Setter
 public class StandardPrivilegeConfiguration {
     private Map<String, List<String>> granted = new HashMap<>();
-    private Map<String, List<StrategySpec>> strategy = new HashMap<>();
+    private Map<String, List<StrategySpec>> privileges = new HashMap<>();
 
     // Merged granted collection.
     private Map<String, Set<StrategySpec>> merged = new HashMap<>();
@@ -53,7 +53,7 @@ public class StandardPrivilegeConfiguration {
         StandardPrivilegeConfiguration that = parseJSON(json, StandardPrivilegeConfiguration.class);
         // Merging granted strategy.
         safeMap(that.getGranted()).forEach((username, strategyNames) -> that.getMerged().put(username,
-                safeMap(that.getStrategy()).entrySet().stream().filter(s -> safeList(strategyNames).contains(s.getKey()))
+                safeMap(that.getPrivileges()).entrySet().stream().filter(s -> safeList(strategyNames).contains(s.getKey()))
                         .map(e -> e.getValue()).flatMap(s -> s.stream()).collect(toSet())));
         return that;
     }
@@ -80,12 +80,14 @@ public class StandardPrivilegeConfiguration {
     @Setter
     public static class SelectSpec {
         public static final SelectSpec EMPTY = new SelectSpec();
+        private boolean requiredWhereCondidtion = false;
     }
 
     @Getter
     @Setter
     public static class InsertSpec {
         public static final InsertSpec EMPTY = new InsertSpec();
+        private boolean anyDenied = false;
     }
 
     @Getter

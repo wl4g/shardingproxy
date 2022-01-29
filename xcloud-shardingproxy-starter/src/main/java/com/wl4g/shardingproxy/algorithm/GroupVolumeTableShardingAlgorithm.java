@@ -110,7 +110,7 @@ import lombok.extern.slf4j.Slf4j;
  * @since v1.0.0
  */
 @Slf4j
-public class AdvancedGroupVolumeTableShardingAlgorithm extends BaseGroupVolumeShardingAlgorithm {
+public class GroupVolumeTableShardingAlgorithm extends BaseGroupVolumeShardingAlgorithm {
 
     @Override
     public Collection<String> doSharding(final Collection<String> availableTargetNames,
