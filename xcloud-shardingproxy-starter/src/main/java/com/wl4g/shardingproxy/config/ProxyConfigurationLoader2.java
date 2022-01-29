@@ -27,8 +27,8 @@ import org.apache.shardingsphere.authority.yaml.config.YamlAuthorityRuleConfigur
 import org.apache.shardingsphere.infra.yaml.config.pojo.YamlRuleConfiguration;
 import org.apache.shardingsphere.infra.yaml.engine.YamlEngine;
 import org.apache.shardingsphere.proxy.config.YamlProxyConfiguration;
-import org.apache.shardingsphere.proxy.config.yaml.YamlProxyResourceConfiguration;
-import org.apache.shardingsphere.proxy.config.yaml.YamlProxySchemaConfiguration;
+import org.apache.shardingsphere.proxy.config.yaml.YamlDataSourceParameter;
+import org.apache.shardingsphere.proxy.config.yaml.YamlProxyRuleConfiguration;
 import org.apache.shardingsphere.proxy.config.yaml.YamlProxyServerConfiguration;
 
 import static java.util.Objects.nonNull;
@@ -53,7 +53,7 @@ public final class ProxyConfigurationLoader2 {
 
     private static final String SERVER_CONFIG_FILE = "server.yaml";
 
-    private static final Pattern SCHEMA_CONFIG_FILE_PATTERN = Pattern.compile("config-.+\\.yaml");
+    private static final Pattern RULE_CONFIG_FILE_PATTERN = Pattern.compile("config-.+\\.yaml");
 
     /**
      * Load configuration of ShardingSphere-Proxy.
@@ -68,9 +68,9 @@ public final class ProxyConfigurationLoader2 {
         YamlProxyServerConfiguration serverConfig = loadServerConfiguration(
                 getResourceFile(String.join("/", path, SERVER_CONFIG_FILE)));
         File configPath = getResourceFile(path);
-        Collection<YamlProxySchemaConfiguration> schemaConfigs = loadSchemaConfigurations(configPath);
+        Collection<YamlProxyRuleConfiguration> ruleConfigs = loadRuleConfigurations(configPath);
         return new YamlProxyConfiguration(serverConfig,
-                schemaConfigs.stream().collect(Collectors.toMap(YamlProxySchemaConfiguration::getSchemaName, each -> each,
+                ruleConfigs.stream().collect(Collectors.toMap(YamlProxyRuleConfiguration::getSchemaName, each -> each,
                         (oldValue, currentValue) -> oldValue, LinkedHashMap::new)));
     }
 
@@ -91,21 +91,21 @@ public final class ProxyConfigurationLoader2 {
         return result;
     }
 
-    private static Collection<YamlProxySchemaConfiguration> loadSchemaConfigurations(final File configPath) throws IOException {
+    private static Collection<YamlProxyRuleConfiguration> loadRuleConfigurations(final File configPath) throws IOException {
         Collection<String> loadedSchemaNames = new HashSet<>();
-        Collection<YamlProxySchemaConfiguration> result = new LinkedList<>();
+        Collection<YamlProxyRuleConfiguration> result = new LinkedList<>();
         for (File each : findRuleConfigurationFiles(configPath)) {
-            loadSchemaConfiguration(each).ifPresent(yamlProxyRuleConfig -> {
+            loadRuleConfiguration(each).ifPresent(yamlProxyRuleConfig -> {
                 Preconditions.checkState(loadedSchemaNames.add(yamlProxyRuleConfig.getSchemaName()),
-                        "Schema name `%s` must unique at all schema configurations.", yamlProxyRuleConfig.getSchemaName());
+                        "Schema name `%s` must unique at all rule configurations.", yamlProxyRuleConfig.getSchemaName());
                 result.add(yamlProxyRuleConfig);
             });
         }
         return result;
     }
 
-    private static Optional<YamlProxySchemaConfiguration> loadSchemaConfiguration(final File yamlFile) throws IOException {
-        YamlProxySchemaConfiguration result = YamlEngine.unmarshal(yamlFile, YamlProxySchemaConfiguration.class);
+    private static Optional<YamlProxyRuleConfiguration> loadRuleConfiguration(final File yamlFile) throws IOException {
+        YamlProxyRuleConfiguration result = YamlEngine.unmarshal(yamlFile, YamlProxyRuleConfiguration.class);
         if (null == result) {
             return Optional.empty();
         }
@@ -113,7 +113,7 @@ public final class ProxyConfigurationLoader2 {
         //
         // ADD for merge from default dataSource configuration.
         //
-        YamlProxyResourceConfiguration extensionDefaultDS = result.getExtensionDefaultDataSource();
+        YamlDataSourceParameter extensionDefaultDS = result.getExtensionDefaultDataSource();
         if (nonNull(extensionDefaultDS)) {
             result.getDataSources().forEach((name, ds) -> {
                 try {
@@ -132,6 +132,6 @@ public final class ProxyConfigurationLoader2 {
     }
 
     private static File[] findRuleConfigurationFiles(final File path) {
-        return path.listFiles(each -> SCHEMA_CONFIG_FILE_PATTERN.matcher(each.getName()).matches());
+        return path.listFiles(each -> RULE_CONFIG_FILE_PATTERN.matcher(each.getName()).matches());
     }
 }

@@ -28,20 +28,20 @@ import java.util.LinkedList;
 import java.util.Map;
 
 /**
- * YAML schema configuration for ShardingSphere-Proxy.
+ * Rule configuration for YAML.
  */
 @Getter
 @Setter
-public final class YamlProxySchemaConfiguration implements YamlConfiguration {
+public final class YamlProxyRuleConfiguration implements YamlConfiguration {
 
     private String schemaName;
 
     //
     // ADD custom properties.
     //
-    private YamlProxyResourceConfiguration extensionDefaultDataSource = new YamlProxyResourceConfiguration();
+    private YamlDataSourceParameter extensionDefaultDataSource = new YamlDataSourceParameter();
 
-    private Map<String, YamlProxyResourceConfiguration> dataSources = new HashMap<>();
+    private Map<String, YamlDataSourceParameter> dataSources = new HashMap<>();
 
     private Collection<YamlRuleConfiguration> rules = new LinkedList<>();
 }
