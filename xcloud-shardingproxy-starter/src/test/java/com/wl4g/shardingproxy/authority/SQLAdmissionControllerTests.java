@@ -15,7 +15,11 @@
  */
 package com.wl4g.shardingproxy.authority;
 
+import static com.wl4g.component.common.serialize.JacksonUtils.toJSONString;
+
 import java.util.regex.Pattern;
+
+import org.junit.Test;
 
 /**
  * {@link SQLAdmissionControllerTests}
@@ -26,7 +30,15 @@ import java.util.regex.Pattern;
  */
 public class SQLAdmissionControllerTests {
 
-    public static void main(String[] args) {
+    @Test
+    public void testParsePrivilegeConfiguration() {
+        String json = "{\"granted\":{\"userdb_admin0\":\"default_ddl_safety, base_dml_safety\",\"warehousedb_admin0\":\"default_ddl_safety, base_dml_safety, slight_strict_dml_safety\",\"paymentdb_admin0\":\"default_ddl_safety, base_dml_safety, slight_strict_dml_safety, general_strict_dml_safety\",\"orderdb_admin0\":\"default_ddl_safety, base_dml_safety, slight_strict_dml_safety\"},\"privileges\":{\"default_ddl_safety\":[{\"anyBlacklistSQLs\":[\"(.*)drop(\\\\s+)schema(\\\\s+)(.+)\",\"(.*)drop(\\\\s+)database(\\\\s+)(.+)\",\"(.*)drop(\\\\s+)table(\\\\s+)(.+)\",\"(.*)alert(\\\\s+)database(\\\\s+)(.+)\",\"(.*)alert(\\\\s+)table(\\\\s+)(.+)\"]}],\"base_dml_safety\":[{\"delete\":{\"requiredWhereCondidtion\":true}}],\"slight_strict_dml_safety\":[{\"update\":{\"requiredWhereCondidtion\":true}}],\"general_strict_dml_safety\":[{\"select\":{\"anyDenied\":true}}]}}";
+        StandardPrivilegeConfiguration config = StandardPrivilegeConfiguration.build(json);
+        System.out.println(toJSONString(config));
+    }
+
+    @Test
+    public void testRegexMatches() {
         Pattern p0 = Pattern.compile("(.*)drop(\\s+)schema(\\s+)(.+)", Pattern.CASE_INSENSITIVE);
         System.out.println(p0.matcher(" drop   schema if exists orderdb").matches());
 

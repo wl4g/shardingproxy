@@ -48,7 +48,7 @@ import org.apache.shardingsphere.sql.parser.sql.common.statement.dml.InsertState
 import org.apache.shardingsphere.sql.parser.sql.common.statement.dml.SelectStatement;
 import org.apache.shardingsphere.sql.parser.sql.common.statement.dml.UpdateStatement;
 
-import com.wl4g.shardingproxy.authority.StandardPrivilegeConfiguration.StrategySpec;
+import com.wl4g.shardingproxy.authority.StandardPrivilegeConfiguration.PrivilegeSpec;
 import com.wl4g.shardingproxy.util.ConfigPropertySource;
 
 import lombok.Getter;
@@ -78,7 +78,7 @@ public class StandardSQLPrivilegeController implements SQLPrivilegeController {
     private final AuthorityProvideAlgorithm provider;
     private final Collection<ShardingSphereUser> users;
     private final ConfigPropertySource props;
-    private final StandardPrivilegeConfiguration privilegesConfig;
+    private final StandardPrivilegeConfiguration config;
 
     public StandardSQLPrivilegeController(final SQLStatement sqlStatement, final Grantee grantee,
             final AuthorityRule authorityRule) {
@@ -90,7 +90,7 @@ public class StandardSQLPrivilegeController implements SQLPrivilegeController {
         this.props = (provider instanceof SchemaPrivilegesPermittedAuthorityProviderAlgorithm)
                 ? new ConfigPropertySource(getField(PROPS_FIELD, provider, true))
                 : new ConfigPropertySource();
-        this.privilegesConfig = StandardPrivilegeConfiguration.build(props.getProperty(PROP_KEY));
+        this.config = StandardPrivilegeConfiguration.build(props.getProperty(PROP_KEY));
     }
 
     @Override
@@ -270,8 +270,8 @@ public class StandardSQLPrivilegeController implements SQLPrivilegeController {
         });
     }
 
-    private SQLCheckResult executeWithUserValidate(Function<StrategySpec, SQLCheckResult> func) {
-        for (StrategySpec ss : safeList(privilegesConfig.getMerged().get(grantee.getUsername()))) {
+    private SQLCheckResult executeWithUserValidate(Function<PrivilegeSpec, SQLCheckResult> func) {
+        for (PrivilegeSpec ss : safeList(config.getMergedPrivileges().get(grantee.getUsername()))) {
             SQLCheckResult result = func.apply(ss);
             if (!result.isPassed()) {
                 return result;

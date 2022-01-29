@@ -48,34 +48,6 @@ dataSources:
     url: 'jdbc:mysql://n2.rds.local:3306/paymentdb_r0z0mgr0db0?serverTimezone=UTC&useSSL=false&allowMultiQueries=true&characterEncoding=utf-8'
   ds_paymentdb_r0z0mgr0i2_db1:
     url: 'jdbc:mysql://n2.rds.local:3306/paymentdb_r0z0mgr0db1?serverTimezone=UTC&useSSL=false&allowMultiQueries=true&characterEncoding=utf-8'
-  ## MGR cluster 1
-  ## Instance 0
-  ds_paymentdb_r0z0mgr1i0_db0:
-    url: 'jdbc:mysql://n0.rds.local:3306/paymentdb_r0z0mgr1db0?serverTimezone=UTC&useSSL=false&allowMultiQueries=true&characterEncoding=utf-8'
-  ds_paymentdb_r0z0mgr1i0_db1:
-    url: 'jdbc:mysql://n0.rds.local:3306/paymentdb_r0z0mgr1db1?serverTimezone=UTC&useSSL=false&allowMultiQueries=true&characterEncoding=utf-8'
-  ds_paymentdb_r0z0mgr1i0_db2:
-    url: 'jdbc:mysql://n0.rds.local:3306/paymentdb_r0z0mgr1db2?serverTimezone=UTC&useSSL=false&allowMultiQueries=true&characterEncoding=utf-8'
-  ds_paymentdb_r0z0mgr1i0_db3:
-    url: 'jdbc:mysql://n0.rds.local:3306/paymentdb_r0z0mgr1db3?serverTimezone=UTC&useSSL=false&allowMultiQueries=true&characterEncoding=utf-8'
-  ## Instance 1
-  ds_paymentdb_r0z0mgr1i1_db0:
-    url: 'jdbc:mysql://n1.rds.local:3306/paymentdb_r0z0mgr1db0?serverTimezone=UTC&useSSL=false&allowMultiQueries=true&characterEncoding=utf-8'
-  ds_paymentdb_r0z0mgr1i1_db1:
-    url: 'jdbc:mysql://n1.rds.local:3306/paymentdb_r0z0mgr1db1?serverTimezone=UTC&useSSL=false&allowMultiQueries=true&characterEncoding=utf-8'
-  ds_paymentdb_r0z0mgr1i1_db2:
-    url: 'jdbc:mysql://n1.rds.local:3306/paymentdb_r0z0mgr1db2?serverTimezone=UTC&useSSL=false&allowMultiQueries=true&characterEncoding=utf-8'
-  ds_paymentdb_r0z0mgr1i1_db3:
-    url: 'jdbc:mysql://n1.rds.local:3306/paymentdb_r0z0mgr1db3?serverTimezone=UTC&useSSL=false&allowMultiQueries=true&characterEncoding=utf-8'
-  ## Instance 2
-  ds_paymentdb_r0z0mgr1i2_db0:
-    url: 'jdbc:mysql://n2.rds.local:3306/paymentdb_r0z0mgr1db0?serverTimezone=UTC&useSSL=false&allowMultiQueries=true&characterEncoding=utf-8'
-  ds_paymentdb_r0z0mgr1i2_db1:
-    url: 'jdbc:mysql://n2.rds.local:3306/paymentdb_r0z0mgr1db1?serverTimezone=UTC&useSSL=false&allowMultiQueries=true&characterEncoding=utf-8'
-  ds_paymentdb_r0z0mgr1i2_db2:
-    url: 'jdbc:mysql://n2.rds.local:3306/paymentdb_r0z0mgr1db2?serverTimezone=UTC&useSSL=false&allowMultiQueries=true&characterEncoding=utf-8'
-  ds_paymentdb_r0z0mgr1i2_db3:
-    url: 'jdbc:mysql://n2.rds.local:3306/paymentdb_r0z0mgr1db3?serverTimezone=UTC&useSSL=false&allowMultiQueries=true&characterEncoding=utf-8'
   ## MGR cluster single (no-sharding)
   ds_paymentdb_r0z0mgr2_single:
     url: 'jdbc:mysql://n0.rds.local:3306/paymentdb_r0z0mgr2_single?serverTimezone=UTC&useSSL=false&allowMultiQueries=true&characterEncoding=utf-8'
@@ -86,25 +58,26 @@ rules:
 ## @see:org.apache.shardingsphere.singletable.yaml.config.swapper.SingleTableRuleConfigurationYamlSwapper#getRuleTagName
 - !SINGLE
   defaultDataSource: ds_paymentdb_r0z0mgr2_single
+
 ## @see:https://shardingsphere.apache.org/document/current/en/user-manual/shardingsphere-jdbc/builtin-algorithm/sharding/
 ## @see:org.apache.shardingsphere.sharding.api.config.ShardingRuleConfiguration
 ## @see:org.apache.shardingsphere.sharding.route.engine.type.standard.ShardingStandardRoutingEngine#route
 - !SHARDING
   tables:
-    t_order:
+    t_bill:
       ## The union set definition of all available actual dataSources.(Notice: dataSource sharding based on advanced heterogeneous grouping algorithm)
       ## @see:org.apache.shardingsphere.sharding.rule.TableRule#TableRule()
-      actualDataNodes: rw_paymentdb_r0z0mgr0_db${0..1}.t_order_${0..3},rw_paymentdb_r0z0mgr1_db${0..3}.t_order_${0..7}
+      actualDataNodes: rw_paymentdb_r0z0mgr0_db${0..1}.t_bill_${0..3}
       #databaseStrategy:
       tableStrategy:
         standard:
           shardingColumn: id
-          shardingAlgorithmName: alg_interval_table_0
+          shardingAlgorithmName: alg_auto_interval_table_0
       keyGenerateStrategy:
         column: id
         keyGeneratorName: gen_snowflake_g0_0
   bindingTables:
-  - t_order
+  - t_bill
   defaultTableStrategy:
   defaultDatabaseStrategy:
     standard:
@@ -117,57 +90,38 @@ rules:
         worker-id: '1' # Range[0,1024),see:org.apache.shardingsphere.sharding.algorithm.keygen.SnowflakeKeyGenerateAlgorithm#getWorkerId()
   shardingAlgorithms:
     alg_interval_database_0:
-      type: COSID_INTERVAL
-      props:
-        
-    ## @see:org.apache.shardingsphere.sharding.algorithm.sharding.datetime.IntervalShardingAlgorithm
-    alg_interval_table_0:
-      type: COSID_INTERVAL
+      type: AUTO_INTERVAL
       props:
         datetime-pattern: 'yyyy-MM-dd HH:mm:ss'
-        datetime-lower: 2021-01-01 00:00:00
-        datetime-upper: 2030-12-31 00:00:00
-        sharding-suffix-pattern: 
+        datetime-lower: '2020-01-01 00:00:00'
+        datetime-upper: '2030-12-31 00:00:00'
+        sharding-suffix-pattern: yyyyMM
         datetime-interval-amount: 1
-        datetime-interval-unit: 
+        datetime-interval-unit: MONTHS
+    ## @see:org.apache.shardingsphere.sharding.algorithm.sharding.datetime.IntervalShardingAlgorithm
+    alg_auto_interval_table_0:
+      type: INTERVAL
+      props:
+        datetime-lower: '2020-01-01 00:00:00'
+        datetime-upper: '2030-12-31 00:00:00'
+        sharding-seconds: 86400
+
 ## @see:org.apache.shardingsphere.readwritesplitting.api.ReadwriteSplittingRuleConfiguration
 - !READWRITE_SPLITTING
   dataSources:
     rw_paymentdb_r0z0mgr0_db0:
-      writeDataSourceName: ds_paymentdb_r0z0mgr0i1_db0
-      readDataSourceNames:
-        - ds_paymentdb_r0z0mgr0i1_db0
-        - ds_paymentdb_r0z0mgr0i2_db0
+      type: Static
+      loadBalancerName: r_lb_0
+      props:
+        write-data-source-name: ds_paymentdb_r0z0mgr0i1_db0
+        read-data-source-names: ds_paymentdb_r0z0mgr0i1_db0,ds_paymentdb_r0z0mgr0i2_db0
       loadBalancerName: r_lb_0
     rw_paymentdb_r0z0mgr0_db1:
-      writeDataSourceName: ds_paymentdb_r0z0mgr0i1_db1
-      readDataSourceNames:
-        - ds_paymentdb_r0z0mgr0i1_db1
-        - ds_paymentdb_r0z0mgr0i2_db1
+      type: Static
       loadBalancerName: r_lb_0
-    rw_paymentdb_r0z0mgr1_db0:
-      writeDataSourceName: ds_paymentdb_r0z0mgr1i1_db0
-      readDataSourceNames:
-        - ds_paymentdb_r0z0mgr1i1_db0
-        - ds_paymentdb_r0z0mgr1i2_db0
-    rw_paymentdb_r0z0mgr1_db1:
-      writeDataSourceName: ds_paymentdb_r0z0mgr1i1_db1
-      readDataSourceNames:
-        - ds_paymentdb_r0z0mgr1i1_db1
-        - ds_paymentdb_r0z0mgr1i2_db1
-      loadBalancerName: r_lb_0
-    rw_paymentdb_r0z0mgr1_db2:
-      writeDataSourceName: ds_paymentdb_r0z0mgr1i1_db2
-      readDataSourceNames:
-        - ds_paymentdb_r0z0mgr1i1_db2
-        - ds_paymentdb_r0z0mgr1i2_db2
-      loadBalancerName: r_lb_0
-    rw_paymentdb_r0z0mgr1_db3:
-      writeDataSourceName: ds_paymentdb_r0z0mgr1i1_db3
-      readDataSourceNames:
-        - ds_paymentdb_r0z0mgr1i1_db3
-        - ds_paymentdb_r0z0mgr1i2_db3
-      loadBalancerName: r_lb_0
+      props:
+        write-data-source-name: ds_paymentdb_r0z0mgr0i1_db1
+        read-data-source-names: ds_paymentdb_r0z0mgr0i1_db1,ds_paymentdb_r0z0mgr0i2_db1
   loadBalancers:
     r_lb_0:
       type: RANDOM
@@ -187,35 +141,20 @@ rules:
          # Instance 2
          - ds_paymentdb_r0z0mgr0i2_db0
          - ds_paymentdb_r0z0mgr0i2_db1
-     ha_paymentdb_r0z0mgr1:
-       discoveryTypeName: default_dis_r0z0mgr
-       discoveryHeartbeatName: default_mgr_heartbeat
-       dataSourceNames:
-         # Instance 0
-         - ds_paymentdb_r0z0mgr1i0_db0
-         - ds_paymentdb_r0z0mgr1i0_db1
-         - ds_paymentdb_r0z0mgr1i0_db2
-         # Instance 1
-         - ds_paymentdb_r0z0mgr1i1_db0
-         - ds_paymentdb_r0z0mgr1i1_db1
-         - ds_paymentdb_r0z0mgr1i1_db2
-         # Instance 2
-         - ds_paymentdb_r0z0mgr1i2_db0
-         - ds_paymentdb_r0z0mgr1i2_db1
-         - ds_paymentdb_r0z0mgr1i2_db2
    discoveryHeartbeats:
      default_mgr_heartbeat:
        props:
          keep-alive-cron: '0/5 * * * * ?'
    discoveryTypes:
-     # HA MGR architecture see: https://blog.csdn.net/n88Lpo/article/details/118315051
+     ## HA MGR architecture see: https://blog.csdn.net/n88Lpo/article/details/118315051
      default_dis_r0z0mgr:
        type: MGR
        props:
-         # Must be consistent with the MGR configuration group name.
-         # see: https://github.com/apache/shardingsphere/blob/5.1.0/shardingsphere-features/shardingsphere-db-discovery/shardingsphere-db-discovery-provider/shardingsphere-db-discovery-mgr/src/main/java/org/apache/shardingsphere/dbdiscovery/mgr/MGRDatabaseDiscoveryType.java#L104
-         # see: https://github.com/mysql/mysql-server/blob/mysql-5.7.30/rapid/plugin/group_replication/src/plugin.cc#L1726
-         # see: SELECT * FROM performance_schema.global_variables WHERE VARIABLE_NAME='group_replication_group_name'
+         ## Must be consistent with the MGR configuration group name.
+         ## @see:https://github.com/apache/shardingsphere/blob/5.1.0/shardingsphere-features/shardingsphere-db-discovery/shardingsphere-db-discovery-provider/shardingsphere-db-discovery-mgr/src/main/java/org/apache/shardingsphere/dbdiscovery/mgr/MGRDatabaseDiscoveryType.java#L95
+         ## @see:https://github.com/apache/shardingsphere/blob/5.1.0/examples/shardingsphere-sample/shardingsphere-example-generated/shardingsphere-proxy-sample/shardingsphere-proxy-cluster-etcd-local-db-discovery-example/src/main/resources/conf/config-db-discovery.yaml#L56
+         ## @see:https://github.com/mysql/mysql-server/blob/mysql-5.7.30/rapid/plugin/group_replication/src/plugin.cc#L1726
+         ## @see:SELECT * FROM performance_schema.global_variables WHERE VARIABLE_NAME='group_replication_group_name'
          group-name: 5db40c3c-180c-11e9-afbf-005056ac6820
          ## @see:org.apache.shardingsphere.dbdiscovery.mgr.MGRDatabaseDiscoveryType#extDiscoveryConfig
          extensionDiscoveryConfigJson: |-

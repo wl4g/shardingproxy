@@ -27,8 +27,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import com.google.common.base.Splitter;
+
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 
 /**
  * {@link StandardPrivilegeConfiguration}
@@ -37,30 +40,40 @@ import lombok.Setter;
  * @version 2022-01-20 v1.0.0
  * @since v1.0.0
  */
-@Getter
-@Setter
 public class StandardPrivilegeConfiguration {
-    private Map<String, List<String>> granted = new HashMap<>();
-    private Map<String, List<StrategySpec>> privileges = new HashMap<>();
 
-    // Merged granted collection.
-    private Map<String, Set<StrategySpec>> merged = new HashMap<>();
+    @Getter
+    @Setter
+    private Map<String, String> granted = new HashMap<>();
+    @Getter
+    @Setter
+    private Map<String, List<PrivilegeSpec>> privileges = new HashMap<>();
+
+    // ----- Merged granted and privileges. -----
+
+    @Getter
+    private final Map<String, List<String>> mergedGranted = new HashMap<>();
+    @Getter
+    private final Map<String, Set<PrivilegeSpec>> mergedPrivileges = new HashMap<>();
 
     public static StandardPrivilegeConfiguration build(final String json) {
         if (isBlank(json)) {
             return new StandardPrivilegeConfiguration();
         }
         StandardPrivilegeConfiguration that = parseJSON(json, StandardPrivilegeConfiguration.class);
-        // Merging granted strategy.
-        safeMap(that.getGranted()).forEach((username, strategyNames) -> that.getMerged().put(username,
-                safeMap(that.getPrivileges()).entrySet().stream().filter(s -> safeList(strategyNames).contains(s.getKey()))
+        // Merging granted collection.
+        safeMap(that.getGranted()).forEach((username, privilegeNames) -> that.getMergedGranted().put(username,
+                Splitter.on(",").omitEmptyStrings().trimResults().splitToList(privilegeNames)));
+        // Merging privileges collection.
+        safeMap(that.getMergedGranted()).forEach((username, privilegeNames) -> that.getMergedPrivileges().put(username,
+                safeMap(that.getPrivileges()).entrySet().stream().filter(s -> safeList(privilegeNames).contains(s.getKey()))
                         .map(e -> e.getValue()).flatMap(s -> s.stream()).collect(toSet())));
         return that;
     }
 
     @Getter
     @Setter
-    public static class StrategySpec {
+    public static class PrivilegeSpec {
         private SelectSpec select = SelectSpec.EMPTY;
         private InsertSpec insert = InsertSpec.EMPTY;
         private UpdateSpec update = UpdateSpec.EMPTY;
@@ -78,6 +91,7 @@ public class StandardPrivilegeConfiguration {
 
     @Getter
     @Setter
+    @ToString
     public static class SelectSpec {
         public static final SelectSpec EMPTY = new SelectSpec();
         private boolean requiredWhereCondidtion = false;
@@ -85,6 +99,7 @@ public class StandardPrivilegeConfiguration {
 
     @Getter
     @Setter
+    @ToString
     public static class InsertSpec {
         public static final InsertSpec EMPTY = new InsertSpec();
         private boolean anyDenied = false;
@@ -92,6 +107,7 @@ public class StandardPrivilegeConfiguration {
 
     @Getter
     @Setter
+    @ToString
     public static class UpdateSpec {
         public static final UpdateSpec EMPTY = new UpdateSpec();
         private boolean requiredWhereCondidtion = false;
@@ -99,6 +115,7 @@ public class StandardPrivilegeConfiguration {
 
     @Getter
     @Setter
+    @ToString
     public static class DeleteSpec {
         public static final DeleteSpec EMPTY = new DeleteSpec();
         private boolean requiredWhereCondidtion = false;
@@ -106,48 +123,56 @@ public class StandardPrivilegeConfiguration {
 
     @Getter
     @Setter
+    @ToString
     public static class AlertDatabaseSpec {
         public static final AlertDatabaseSpec EMPTY = new AlertDatabaseSpec();
     }
 
     @Getter
     @Setter
+    @ToString
     public static class AlertTableSpec {
         public static final AlertTableSpec EMPTY = new AlertTableSpec();
     }
 
     @Getter
     @Setter
+    @ToString
     public static class CreateDatabaseSpec {
         public static final CreateDatabaseSpec EMPTY = new CreateDatabaseSpec();
     }
 
     @Getter
     @Setter
+    @ToString
     public static class CreateTableSpec {
         public static final CreateTableSpec EMPTY = new CreateTableSpec();
     }
 
     @Getter
     @Setter
+    @ToString
     public static class CreateFunctionSpec {
         public static final CreateFunctionSpec EMPTY = new CreateFunctionSpec();
     }
 
     @Getter
     @Setter
+    @ToString
     public static class DropDatabaseSpec {
         public static final DropDatabaseSpec EMPTY = new DropDatabaseSpec();
     }
 
     @Getter
     @Setter
+    @ToString
     public static class DropTableSpec {
         public static final DropTableSpec EMPTY = new DropTableSpec();
     }
 
     @Getter
     @Setter
+    @ToString
     public static class TruncateSpec {
         public static final TruncateSpec EMPTY = new TruncateSpec();
     }
