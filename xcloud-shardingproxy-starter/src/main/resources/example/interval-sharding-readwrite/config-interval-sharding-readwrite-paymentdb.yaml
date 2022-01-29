@@ -90,7 +90,7 @@ rules:
         worker-id: '1' # Range[0,1024),see:org.apache.shardingsphere.sharding.algorithm.keygen.SnowflakeKeyGenerateAlgorithm#getWorkerId()
   shardingAlgorithms:
     alg_interval_database_0:
-      type: AUTO_INTERVAL
+      type: INTERVAL
       props:
         datetime-pattern: 'yyyy-MM-dd HH:mm:ss'
         datetime-lower: '2020-01-01 00:00:00'
@@ -100,11 +100,11 @@ rules:
         datetime-interval-unit: MONTHS
     ## @see:org.apache.shardingsphere.sharding.algorithm.sharding.datetime.IntervalShardingAlgorithm
     alg_auto_interval_table_0:
-      type: INTERVAL
+      type: AUTO_INTERVAL
       props:
         datetime-lower: '2020-01-01 00:00:00'
         datetime-upper: '2030-12-31 00:00:00'
-        sharding-seconds: 86400
+        sharding-seconds: '86400'
 
 ## @see:org.apache.shardingsphere.readwritesplitting.api.ReadwriteSplittingRuleConfiguration
 - !READWRITE_SPLITTING
