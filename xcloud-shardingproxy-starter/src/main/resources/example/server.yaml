@@ -36,10 +36,10 @@ rules:
 - !AUTHORITY
   users: # Notice: it will cover the account number of the real database!!!
     - root@:123456
-    - userdb_admin0@:123456
-    - warehousedb_admin0@:123456
-    - paymentdb_admin0@:123456
-    - orderdb_admin0@:123456
+    - user_ops0@:123456
+    - warehouse_ops0@:123456
+    - payment_ops0@:123456
+    - order_ops0@:123456
   provider:
     type: SCHEMA_PRIVILEGES_PERMITTED # ALL_PRIVILEGES_PERMITTED|SCHEMA_PRIVILEGES_PERMITTED|NATIVE(5.x@deprecated)
     props:
@@ -48,17 +48,17 @@ rules:
          root@=warehousedb,\
          root@=paymentdb,\
          root@=orderdb,\
-         userdb_admin0@=userdb,\
-         warehousedb_admin0@=warehousedb,\
-         paymentdb_admin0@=paymentdb,\
-         orderdb_admin0@=orderdb"
+         user_ops0@=userdb,\
+         warehouse_ops0@=warehousedb,\
+         payment_ops0@=paymentdb,\
+         order_ops0@=orderdb"
       user-object-privileges: |-
         {
           "granted": {
-            "userdb_admin0": "default_ddl_safety, base_dml_safety",
-            "warehousedb_admin0": "default_ddl_safety, base_dml_safety, slight_strict_dml_safety",
-            "paymentdb_admin0": "default_ddl_safety, base_dml_safety, slight_strict_dml_safety, general_strict_dml_safety",
-            "orderdb_admin0": "default_ddl_safety, base_dml_safety, slight_strict_dml_safety"
+            "user_ops0": "default_ddl_safety, base_dml_safety",
+            "warehouse_ops0": "default_ddl_safety, base_dml_safety, slight_strict_dml_safety",
+            "payment_ops0": "default_ddl_safety, base_dml_safety, slight_strict_dml_safety, general_strict_dml_safety",
+            "order_ops0": "default_ddl_safety, base_dml_safety, slight_strict_dml_safety"
           },
           "privileges": {
             "default_ddl_safety": [{
@@ -82,7 +82,7 @@ rules:
             }],
             "general_strict_dml_safety": [{
               "select": {
-                "anyDenied": true
+                "requiredWhereCondidtion": true
               }
             }]
           }

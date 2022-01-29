@@ -34,47 +34,47 @@ extensionDefaultDataSource:
 dataSources:
   ## MGR cluster 0
   ## Instance 0
-  ds_orderdb_r0z0mgr0i0_db0:
+  ds_orderdb_r0z0mgr0i0db0:
     url: 'jdbc:mysql://n0.rds.local:3306/orderdb_r0z0mgr0db0?serverTimezone=UTC&useSSL=false&allowMultiQueries=true&characterEncoding=utf-8'
-  ds_orderdb_r0z0mgr0i0_db1:
+  ds_orderdb_r0z0mgr0i0db1:
     url: 'jdbc:mysql://n0.rds.local:3306/orderdb_r0z0mgr0db0?serverTimezone=UTC&useSSL=false&allowMultiQueries=true&characterEncoding=utf-8'
   ## Instance 1
-  ds_orderdb_r0z0mgr0i1_db0:
+  ds_orderdb_r0z0mgr0i1db0:
     url: 'jdbc:mysql://n1.rds.local:3306/orderdb_r0z0mgr0db0?serverTimezone=UTC&useSSL=false&allowMultiQueries=true&characterEncoding=utf-8'
-  ds_orderdb_r0z0mgr0i1_db1:
+  ds_orderdb_r0z0mgr0i1db1:
     url: 'jdbc:mysql://n1.rds.local:3306/orderdb_r0z0mgr0db1?serverTimezone=UTC&useSSL=false&allowMultiQueries=true&characterEncoding=utf-8'
   ## Instance 2
-  ds_orderdb_r0z0mgr0i2_db0:
+  ds_orderdb_r0z0mgr0i2db0:
     url: 'jdbc:mysql://n2.rds.local:3306/orderdb_r0z0mgr0db0?serverTimezone=UTC&useSSL=false&allowMultiQueries=true&characterEncoding=utf-8'
-  ds_orderdb_r0z0mgr0i2_db1:
+  ds_orderdb_r0z0mgr0i2db1:
     url: 'jdbc:mysql://n2.rds.local:3306/orderdb_r0z0mgr0db1?serverTimezone=UTC&useSSL=false&allowMultiQueries=true&characterEncoding=utf-8'
   ## MGR cluster 1
   ## Instance 0
-  ds_orderdb_r0z0mgr1i0_db0:
+  ds_orderdb_r0z0mgr1i0db0:
     url: 'jdbc:mysql://n0.rds.local:3306/orderdb_r0z0mgr1db0?serverTimezone=UTC&useSSL=false&allowMultiQueries=true&characterEncoding=utf-8'
-  ds_orderdb_r0z0mgr1i0_db1:
+  ds_orderdb_r0z0mgr1i0db1:
     url: 'jdbc:mysql://n0.rds.local:3306/orderdb_r0z0mgr1db1?serverTimezone=UTC&useSSL=false&allowMultiQueries=true&characterEncoding=utf-8'
-  ds_orderdb_r0z0mgr1i0_db2:
+  ds_orderdb_r0z0mgr1i0db2:
     url: 'jdbc:mysql://n0.rds.local:3306/orderdb_r0z0mgr1db2?serverTimezone=UTC&useSSL=false&allowMultiQueries=true&characterEncoding=utf-8'
-  ds_orderdb_r0z0mgr1i0_db3:
+  ds_orderdb_r0z0mgr1i0db3:
     url: 'jdbc:mysql://n0.rds.local:3306/orderdb_r0z0mgr1db3?serverTimezone=UTC&useSSL=false&allowMultiQueries=true&characterEncoding=utf-8'
   ## Instance 1
-  ds_orderdb_r0z0mgr1i1_db0:
+  ds_orderdb_r0z0mgr1i1db0:
     url: 'jdbc:mysql://n1.rds.local:3306/orderdb_r0z0mgr1db0?serverTimezone=UTC&useSSL=false&allowMultiQueries=true&characterEncoding=utf-8'
-  ds_orderdb_r0z0mgr1i1_db1:
+  ds_orderdb_r0z0mgr1i1db1:
     url: 'jdbc:mysql://n1.rds.local:3306/orderdb_r0z0mgr1db1?serverTimezone=UTC&useSSL=false&allowMultiQueries=true&characterEncoding=utf-8'
-  ds_orderdb_r0z0mgr1i1_db2:
+  ds_orderdb_r0z0mgr1i1db2:
     url: 'jdbc:mysql://n1.rds.local:3306/orderdb_r0z0mgr1db2?serverTimezone=UTC&useSSL=false&allowMultiQueries=true&characterEncoding=utf-8'
-  ds_orderdb_r0z0mgr1i1_db3:
+  ds_orderdb_r0z0mgr1i1db3:
     url: 'jdbc:mysql://n1.rds.local:3306/orderdb_r0z0mgr1db3?serverTimezone=UTC&useSSL=false&allowMultiQueries=true&characterEncoding=utf-8'
   ## Instance 2
-  ds_orderdb_r0z0mgr1i2_db0:
+  ds_orderdb_r0z0mgr1i2db0:
     url: 'jdbc:mysql://n2.rds.local:3306/orderdb_r0z0mgr1db0?serverTimezone=UTC&useSSL=false&allowMultiQueries=true&characterEncoding=utf-8'
-  ds_orderdb_r0z0mgr1i2_db1:
+  ds_orderdb_r0z0mgr1i2db1:
     url: 'jdbc:mysql://n2.rds.local:3306/orderdb_r0z0mgr1db1?serverTimezone=UTC&useSSL=false&allowMultiQueries=true&characterEncoding=utf-8'
-  ds_orderdb_r0z0mgr1i2_db2:
+  ds_orderdb_r0z0mgr1i2db2:
     url: 'jdbc:mysql://n2.rds.local:3306/orderdb_r0z0mgr1db2?serverTimezone=UTC&useSSL=false&allowMultiQueries=true&characterEncoding=utf-8'
-  ds_orderdb_r0z0mgr1i2_db3:
+  ds_orderdb_r0z0mgr1i2db3:
     url: 'jdbc:mysql://n2.rds.local:3306/orderdb_r0z0mgr1db3?serverTimezone=UTC&useSSL=false&allowMultiQueries=true&characterEncoding=utf-8'
   ## MGR cluster single (no-sharding)
   ds_orderdb_r0z0mgr2_single:
@@ -95,7 +95,7 @@ rules:
     t_order:
       ## The union set definition of all available actual dataSources.(Notice: dataSource sharding based on advanced heterogeneous grouping algorithm)
       ## @see:org.apache.shardingsphere.sharding.rule.TableRule#TableRule()
-      actualDataNodes: rw_orderdb_r0z0mgr0_db${0..1}.t_order_${0..3},rw_orderdb_r0z0mgr1_db${0..3}.t_order_${0..7}
+      actualDataNodes: rw_orderdb_r0z0mgr0db${0..1}.t_order_${0..3},rw_orderdb_r0z0mgr1db${0..3}.t_order_${0..7}
       #databaseStrategy:
       tableStrategy:
         standard:
@@ -126,7 +126,7 @@ rules:
             "id": [{
                 "lowerClose": 0,
                 "upperOpen": 40000000,
-                "prefixStr": "rw_orderdb_r0z0mgr0_db",
+                "prefixStr": "rw_orderdb_r0z0mgr0db",
                 "suffixExpr": "${(id % 8) as int}",
                 "resultMapping": {
                   "0": [0, 1, 2, 3],
@@ -135,7 +135,7 @@ rules:
             }, {
                 "lowerClose": 40000000,
                 "upperOpen": 200000000,
-                "prefixStr": "rw_orderdb_r0z0mgr1_db",
+                "prefixStr": "rw_orderdb_r0z0mgr1db",
                 "suffixExpr": "${(id % 32) as int}",
                 "resultMapping": {
                   "0": [0, 1, 2, 3, 4, 5, 6, 7],
@@ -214,47 +214,45 @@ rules:
             }]
           }
 
-## @see:org.apache.shardingsphere.readwritesplitting.api.ReadwriteSplittingRuleConfiguration
+## @see:org.apache.shardingsphere.readwritesplitting.yaml.config.rule.YamlReadwriteSplittingDataSourceRuleConfiguration
+## @see:org.apache.shardingsphere.readwritesplitting.yaml.config.YamlReadwriteSplittingRuleConfiguration
 - !READWRITE_SPLITTING
   dataSources:
-    ## MGR cluster 0
-    rw_orderdb_r0z0mgr0_db0:
-      type: Static
+    rw_orderdb_r0z0mgr0db0:
+      writeDataSourceName: ds_orderdb_r0z0mgr0i1db0
+      readDataSourceNames:
+        - ds_orderdb_r0z0mgr0i1db0
+        - ds_orderdb_r0z0mgr0i2db0
       loadBalancerName: r_lb_0
-      props:
-        write-data-source-name: ds_orderdb_r0z0mgr0i1_db0
-        read-data-source-names: ds_orderdb_r0z0mgr0i1_db0,ds_orderdb_r0z0mgr0i2_db0
-    rw_orderdb_r0z0mgr0_db1:
-      type: Static
+    rw_orderdb_r0z0mgr0db1:
+      writeDataSourceName: ds_orderdb_r0z0mgr0i1db1
+      readDataSourceNames:
+        - ds_orderdb_r0z0mgr0i1db1
+        - ds_orderdb_r0z0mgr0i2db1
       loadBalancerName: r_lb_0
-      props:
-        write-data-source-name: ds_orderdb_r0z0mgr0i1_db1
-        read-data-source-names: ds_orderdb_r0z0mgr0i1_db1,ds_orderdb_r0z0mgr0i2_db1
-    ## MGR cluster 1
-    rw_orderdb_r0z0mgr1_db0:
-      type: Static
+    rw_orderdb_r0z0mgr1db0:
+      writeDataSourceName: ds_orderdb_r0z0mgr1i1db0
+      readDataSourceNames:
+        - ds_orderdb_r0z0mgr1i1db0
+        - ds_orderdb_r0z0mgr1i2db0
+    rw_orderdb_r0z0mgr1db1:
+      writeDataSourceName: ds_orderdb_r0z0mgr1i1db1
+      readDataSourceNames:
+        - ds_orderdb_r0z0mgr1i1db1
+        - ds_orderdb_r0z0mgr1i2db1
       loadBalancerName: r_lb_0
-      props:
-        write-data-source-name: ds_orderdb_r0z0mgr1i1_db0
-        read-data-source-names: ds_orderdb_r0z0mgr1i1_db0,ds_orderdb_r0z0mgr1i2_db0
-    rw_orderdb_r0z0mgr1_db1:
-      type: Static
+    rw_orderdb_r0z0mgr1db2:
+      writeDataSourceName: ds_orderdb_r0z0mgr1i1db2
+      readDataSourceNames:
+        - ds_orderdb_r0z0mgr1i1db2
+        - ds_orderdb_r0z0mgr1i2db2
       loadBalancerName: r_lb_0
-      props:
-        write-data-source-name: ds_orderdb_r0z0mgr1i1_db1
-        read-data-source-names: ds_orderdb_r0z0mgr1i1_db1,ds_orderdb_r0z0mgr1i2_db1
-    rw_orderdb_r0z0mgr1_db2:
-      type: Static
+    rw_orderdb_r0z0mgr1db3:
+      writeDataSourceName: ds_orderdb_r0z0mgr1i1db3
+      readDataSourceNames:
+        - ds_orderdb_r0z0mgr1i1db3
+        - ds_orderdb_r0z0mgr1i2db3
       loadBalancerName: r_lb_0
-      props:
-        write-data-source-name: ds_orderdb_r0z0mgr1i1_db2
-        read-data-source-names: ds_orderdb_r0z0mgr1i1_db2,ds_orderdb_r0z0mgr1i2_db2
-    rw_orderdb_r0z0mgr1_db3:
-      type: Static
-      loadBalancerName: r_lb_0
-      props:
-        write-data-source-name: ds_orderdb_r0z0mgr1i1_db3
-        read-data-source-names: ds_orderdb_r0z0mgr1i1_db3,ds_orderdb_r0z0mgr1i2_db3
   loadBalancers:
     r_lb_0:
       type: RANDOM
@@ -267,30 +265,30 @@ rules:
        discoveryHeartbeatName: default_mgr_heartbeat
        dataSourceNames:
          # Instance 0
-         - ds_orderdb_r0z0mgr0i0_db0
-         - ds_orderdb_r0z0mgr0i0_db1
+         - ds_orderdb_r0z0mgr0i0db0
+         - ds_orderdb_r0z0mgr0i0db1
          # Instance 1
-         - ds_orderdb_r0z0mgr0i1_db0
-         - ds_orderdb_r0z0mgr0i1_db1
+         - ds_orderdb_r0z0mgr0i1db0
+         - ds_orderdb_r0z0mgr0i1db1
          # Instance 2
-         - ds_orderdb_r0z0mgr0i2_db0
-         - ds_orderdb_r0z0mgr0i2_db1
+         - ds_orderdb_r0z0mgr0i2db0
+         - ds_orderdb_r0z0mgr0i2db1
      ha_orderdb_r0z0mgr1:
        discoveryTypeName: default_dis_mgr
        discoveryHeartbeatName: default_mgr_heartbeat
        dataSourceNames:
          # Instance 0
-         - ds_orderdb_r0z0mgr1i0_db0
-         - ds_orderdb_r0z0mgr1i0_db1
-         - ds_orderdb_r0z0mgr1i0_db2
+         - ds_orderdb_r0z0mgr1i0db0
+         - ds_orderdb_r0z0mgr1i0db1
+         - ds_orderdb_r0z0mgr1i0db2
          # Instance 1
-         - ds_orderdb_r0z0mgr1i1_db0
-         - ds_orderdb_r0z0mgr1i1_db1
-         - ds_orderdb_r0z0mgr1i1_db2
+         - ds_orderdb_r0z0mgr1i1db0
+         - ds_orderdb_r0z0mgr1i1db1
+         - ds_orderdb_r0z0mgr1i1db2
          # Instance 2
-         - ds_orderdb_r0z0mgr1i2_db0
-         - ds_orderdb_r0z0mgr1i2_db1
-         - ds_orderdb_r0z0mgr1i2_db2
+         - ds_orderdb_r0z0mgr1i2db0
+         - ds_orderdb_r0z0mgr1i2db1
+         - ds_orderdb_r0z0mgr1i2db2
    discoveryHeartbeats:
      default_mgr_heartbeat:
        props:

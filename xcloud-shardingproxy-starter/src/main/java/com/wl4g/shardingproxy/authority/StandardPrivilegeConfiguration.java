@@ -18,14 +18,13 @@ package com.wl4g.shardingproxy.authority;
 import static com.wl4g.component.common.collection.CollectionUtils2.safeList;
 import static com.wl4g.component.common.collection.CollectionUtils2.safeMap;
 import static com.wl4g.component.common.serialize.JacksonUtils.parseJSON;
-import static java.util.stream.Collectors.toSet;
+import static java.util.stream.Collectors.toList;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import com.google.common.base.Splitter;
 
@@ -54,7 +53,7 @@ public class StandardPrivilegeConfiguration {
     @Getter
     private final Map<String, List<String>> mergedGranted = new HashMap<>();
     @Getter
-    private final Map<String, Set<PrivilegeSpec>> mergedPrivileges = new HashMap<>();
+    private final Map<String, List<PrivilegeSpec>> mergedPrivileges = new HashMap<>();
 
     public static StandardPrivilegeConfiguration build(final String json) {
         if (isBlank(json)) {
@@ -67,12 +66,13 @@ public class StandardPrivilegeConfiguration {
         // Merging privileges collection.
         safeMap(that.getMergedGranted()).forEach((username, privilegeNames) -> that.getMergedPrivileges().put(username,
                 safeMap(that.getPrivileges()).entrySet().stream().filter(s -> safeList(privilegeNames).contains(s.getKey()))
-                        .map(e -> e.getValue()).flatMap(s -> s.stream()).collect(toSet())));
+                        .map(e -> e.getValue()).flatMap(s -> s.stream()).collect(toList())));
         return that;
     }
 
     @Getter
     @Setter
+    @ToString
     public static class PrivilegeSpec {
         private SelectSpec select = SelectSpec.EMPTY;
         private InsertSpec insert = InsertSpec.EMPTY;

@@ -108,7 +108,7 @@ rules:
     alg_database_inline_g0_0:
       type: INLINE
       props:
-        algorithm-expression: rw_userdb_db${(id % 4) as int}
+        algorithm-expression: rw_userdb_r0z0mgrdb${(id % 4) as int}
         allow-range-query-with-inline-sharding: true
     ## @see:org.apache.shardingsphere.sharding.algorithm.sharding.range.VolumeBasedRangeShardingAlgorithm
     #alg_table_volume_range_g0_0:
@@ -144,30 +144,29 @@ rules:
 ## @see:org.apache.shardingsphere.readwritesplitting.yaml.config.YamlReadwriteSplittingRuleConfiguration
 - !READWRITE_SPLITTING
   dataSources:
-    rw_userdb_r0z0mgr0db0:
-      type: Static
+    rw_userdb_r0z0mgrdb0:
+      writeDataSourceName: ds_userdb_r0z0mgr0db0i0
+      readDataSourceNames:
+        - ds_userdb_r0z0mgr0db0i1
+        - ds_userdb_r0z0mgr0db0i2
       loadBalancerName: r_lb_0
-      props:
-        write-data-source-name: ds_userdb_r0z0mgr0db0i0
-        read-data-source-names: ds_userdb_r0z0mgr0db0i1,ds_userdb_r0z0mgr0db0i2
-    rw_userdb_r0z0mgr0db1:
-      type: Static
+    rw_userdb_r0z0mgrdb1:
+      writeDataSourceName: ds_userdb_r0z0mgr0db1i0
+      readDataSourceNames:
+        - ds_userdb_r0z0mgr0db1i1
+        - ds_userdb_r0z0mgr0db1i2
       loadBalancerName: r_lb_0
-      props:
-        write-data-source-name: ds_userdb_r0z0mgr0db1i0
-        read-data-source-names: ds_userdb_r0z0mgr0db1i1,ds_userdb_r0z0mgr0db1i2
-    rw_userdb_r0z0mgr1db2:
-      type: Static
+    rw_userdb_r0z0mgrdb2:
+      writeDataSourceName: ds_userdb_r0z0mgr1db2i0
+      readDataSourceNames:
+        - ds_userdb_r0z0mgr1db2i1
+        - ds_userdb_r0z0mgr1db2i2
+    rw_userdb_r0z0mgrdb3:
+      writeDataSourceName: ds_userdb_r0z0mgr1db3i0
+      readDataSourceNames:
+        - ds_userdb_r0z0mgr1db3i1
+        - ds_userdb_r0z0mgr1db3i2
       loadBalancerName: r_lb_0
-      props:
-        write-data-source-name: ds_userdb_r0z0mgr1db2i0
-        read-data-source-names: ds_userdb_r0z0mgr1db2i1,ds_userdb_r0z0mgr1db2i2
-    rw_userdb_r0z0mgr1db3:
-      type: Static
-      loadBalancerName: r_lb_0
-      props:
-        write-data-source-name: ds_userdb_r0z0mgr1db3i0
-        read-data-source-names: ds_userdb_r0z0mgr1db3i1,ds_userdb_r0z0mgr1db3i2
   loadBalancers:
     r_lb_0:
       type: RANDOM
