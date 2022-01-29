@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 #
 # Licensed to the Apache Software Foundation (ASF) under one or more
 # contributor license agreements.  See the NOTICE file distributed with
@@ -37,19 +36,31 @@ rules:
 - !AUTHORITY
   users: # Notice: it will cover the account number of the real database!!!
     - root@:123456
-    - orderdb@:123456
-    - userdb@:123456
+    - user_ops0@:123456
+    - warehouse_ops0@:123456
+    - payment_ops0@:123456
+    - order_ops0@:123456
   provider:
     type: SCHEMA_PRIVILEGES_PERMITTED # ALL_PRIVILEGES_PERMITTED|SCHEMA_PRIVILEGES_PERMITTED|NATIVE(5.x@deprecated)
     props:
-      user-schema-mappings: root@=orderdb,root@=userdb,orderdb@=orderdb,userdb@=userdb
+      user-schema-mappings: "\
+         root@=userdb,\
+         root@=warehousedb,\
+         root@=paymentdb,\
+         root@=orderdb,\
+         user_ops0@=userdb,\
+         warehouse_ops0@=warehousedb,\
+         payment_ops0@=paymentdb,\
+         order_ops0@=orderdb"
       user-object-privileges: |-
         {
           "granted": {
-            "orderdb": ["default_ddl_safety", "base_dml_safety", "slight_strict_dml_safety"],
-            "userdb": ["default_ddl_safety", "base_dml_safety"]
+            "user_ops0": "default_ddl_safety, base_dml_safety",
+            "warehouse_ops0": "default_ddl_safety, base_dml_safety, slight_strict_dml_safety",
+            "payment_ops0": "default_ddl_safety, base_dml_safety, slight_strict_dml_safety, general_strict_dml_safety",
+            "order_ops0": "default_ddl_safety, base_dml_safety, slight_strict_dml_safety"
           },
-          "strategy": {
+          "privileges": {
             "default_ddl_safety": [{
               "anyBlacklistSQLs": [
                 "(.*)drop(\\s+)schema(\\s+)(.+)",
@@ -66,6 +77,11 @@ rules:
             }],
             "slight_strict_dml_safety": [{
               "update": {
+                "requiredWhereCondidtion": true
+              }
+            }],
+            "general_strict_dml_safety": [{
+              "select": {
                 "requiredWhereCondidtion": true
               }
             }]
@@ -107,6 +123,3 @@ props:
   proxy-backend-executor-suitable: OLAP
   proxy-frontend-max-connections: 0 # Less than or equal to 0 means no limitation.
   #lock-wait-timeout-milliseconds: 50000 # The maximum time to wait for a lock
-=======
-../server.yaml
->>>>>>> refs/heads/2.2.1_5.1.0
