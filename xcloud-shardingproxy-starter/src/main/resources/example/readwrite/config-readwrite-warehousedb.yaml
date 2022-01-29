@@ -40,15 +40,16 @@ dataSources:
 
 # Schema rules configuration.
 rules:
-## @see:org.apache.shardingsphere.readwritesplitting.api.ReadwriteSplittingRuleConfiguration
+## @see:org.apache.shardingsphere.readwritesplitting.yaml.config.rule.YamlReadwriteSplittingDataSourceRuleConfiguration
+## @see:org.apache.shardingsphere.readwritesplitting.yaml.config.YamlReadwriteSplittingRuleConfiguration
 - !READWRITE_SPLITTING
   dataSources:
     rw_warehousedb_r0z0mgr0:
-      type: Static
+      writeDataSourceName: ds_warehousedb_r0z0mgr0i0
+      readDataSourceNames:
+        - ds_warehousedb_r0z0mgr0i1
+        - ds_warehousedb_r0z0mgr0i2
       loadBalancerName: r_lb_0
-      props:
-        write-data-source-name: ds_warehousedb_r0z0mgr0i0
-        read-data-source-names: ds_warehousedb_r0z0mgr0i1,ds_warehousedb_r0z0mgr0i2
   loadBalancers:
     r_lb_0:
       type: RANDOM

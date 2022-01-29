@@ -124,7 +124,7 @@ wl4g/shardingproxy:latest
   - Select operation. (Simulate 100 this query operation and observe the Tracing UI)
 
   ```bash
-  for i in `seq 1 100`; do echo 'use userdb; select * from t_user' | mysql -h127.0.0.1 -P3308 -uuser_admin0 -p123456; done
+  for i in `seq 1 100`; do echo 'use userdb; select * from t_user' | mysql -h127.0.0.1 -P3308 -uuser_ops0 -p123456; done
   ```
 
   - Update operation
@@ -135,7 +135,7 @@ wl4g/shardingproxy:latest
   insert into t_user (id, name) VALUES (10000000, 'user(insert) 10000000');
   update t_user set name='user(update) 10000002' WHERE id=10000000;
   delete from t_user WHERE id=10000000;
-  " | mysql -h127.0.0.1 -P3308 -uuser_admin0 -p123456
+  " | mysql -h127.0.0.1 -P3308 -uuser_ops0 -p123456
   ```
 
 - Testing scrape prometheus metrics

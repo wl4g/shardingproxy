@@ -214,47 +214,45 @@ rules:
             }]
           }
 
-## @see:org.apache.shardingsphere.readwritesplitting.api.ReadwriteSplittingRuleConfiguration
+## @see:org.apache.shardingsphere.readwritesplitting.yaml.config.rule.YamlReadwriteSplittingDataSourceRuleConfiguration
+## @see:org.apache.shardingsphere.readwritesplitting.yaml.config.YamlReadwriteSplittingRuleConfiguration
 - !READWRITE_SPLITTING
   dataSources:
-    ## MGR cluster 0
     rw_orderdb_r0z0mgr0_db0:
-      type: Static
+      writeDataSourceName: ds_orderdb_r0z0mgr0i1_db0
+      readDataSourceNames:
+        - ds_orderdb_r0z0mgr0i1_db0
+        - ds_orderdb_r0z0mgr0i2_db0
       loadBalancerName: r_lb_0
-      props:
-        write-data-source-name: ds_orderdb_r0z0mgr0i1_db0
-        read-data-source-names: ds_orderdb_r0z0mgr0i1_db0,ds_orderdb_r0z0mgr0i2_db0
     rw_orderdb_r0z0mgr0_db1:
-      type: Static
+      writeDataSourceName: ds_orderdb_r0z0mgr0i1_db1
+      readDataSourceNames:
+        - ds_orderdb_r0z0mgr0i1_db1
+        - ds_orderdb_r0z0mgr0i2_db1
       loadBalancerName: r_lb_0
-      props:
-        write-data-source-name: ds_orderdb_r0z0mgr0i1_db1
-        read-data-source-names: ds_orderdb_r0z0mgr0i1_db1,ds_orderdb_r0z0mgr0i2_db1
-    ## MGR cluster 1
     rw_orderdb_r0z0mgr1_db0:
-      type: Static
-      loadBalancerName: r_lb_0
-      props:
-        write-data-source-name: ds_orderdb_r0z0mgr1i1_db0
-        read-data-source-names: ds_orderdb_r0z0mgr1i1_db0,ds_orderdb_r0z0mgr1i2_db0
+      writeDataSourceName: ds_orderdb_r0z0mgr1i1_db0
+      readDataSourceNames:
+        - ds_orderdb_r0z0mgr1i1_db0
+        - ds_orderdb_r0z0mgr1i2_db0
     rw_orderdb_r0z0mgr1_db1:
-      type: Static
+      writeDataSourceName: ds_orderdb_r0z0mgr1i1_db1
+      readDataSourceNames:
+        - ds_orderdb_r0z0mgr1i1_db1
+        - ds_orderdb_r0z0mgr1i2_db1
       loadBalancerName: r_lb_0
-      props:
-        write-data-source-name: ds_orderdb_r0z0mgr1i1_db1
-        read-data-source-names: ds_orderdb_r0z0mgr1i1_db1,ds_orderdb_r0z0mgr1i2_db1
     rw_orderdb_r0z0mgr1_db2:
-      type: Static
+      writeDataSourceName: ds_orderdb_r0z0mgr1i1_db2
+      readDataSourceNames:
+        - ds_orderdb_r0z0mgr1i1_db2
+        - ds_orderdb_r0z0mgr1i2_db2
       loadBalancerName: r_lb_0
-      props:
-        write-data-source-name: ds_orderdb_r0z0mgr1i1_db2
-        read-data-source-names: ds_orderdb_r0z0mgr1i1_db2,ds_orderdb_r0z0mgr1i2_db2
     rw_orderdb_r0z0mgr1_db3:
-      type: Static
+      writeDataSourceName: ds_orderdb_r0z0mgr1i1_db3
+      readDataSourceNames:
+        - ds_orderdb_r0z0mgr1i1_db3
+        - ds_orderdb_r0z0mgr1i2_db3
       loadBalancerName: r_lb_0
-      props:
-        write-data-source-name: ds_orderdb_r0z0mgr1i1_db3
-        read-data-source-names: ds_orderdb_r0z0mgr1i1_db3,ds_orderdb_r0z0mgr1i2_db3
   loadBalancers:
     r_lb_0:
       type: RANDOM

@@ -106,22 +106,22 @@ rules:
         datetime-upper: '2030-12-31 00:00:00'
         sharding-seconds: '86400'
 
-## @see:org.apache.shardingsphere.readwritesplitting.api.ReadwriteSplittingRuleConfiguration
+## @see:org.apache.shardingsphere.readwritesplitting.yaml.config.rule.YamlReadwriteSplittingDataSourceRuleConfiguration
+## @see:org.apache.shardingsphere.readwritesplitting.yaml.config.YamlReadwriteSplittingRuleConfiguration
 - !READWRITE_SPLITTING
   dataSources:
     rw_paymentdb_r0z0mgr0_db0:
-      type: Static
-      loadBalancerName: r_lb_0
-      props:
-        write-data-source-name: ds_paymentdb_r0z0mgr0i1_db0
-        read-data-source-names: ds_paymentdb_r0z0mgr0i1_db0,ds_paymentdb_r0z0mgr0i2_db0
+      writeDataSourceName: ds_paymentdb_r0z0mgr0i1_db0
+      readDataSourceNames:
+        - ds_paymentdb_r0z0mgr0i1_db0
+        - ds_paymentdb_r0z0mgr0i2_db0
       loadBalancerName: r_lb_0
     rw_paymentdb_r0z0mgr0_db1:
-      type: Static
+      writeDataSourceName: ds_paymentdb_r0z0mgr0i1_db1
+      readDataSourceNames:
+        - ds_paymentdb_r0z0mgr0i1_db1
+        - ds_paymentdb_r0z0mgr0i2_db1
       loadBalancerName: r_lb_0
-      props:
-        write-data-source-name: ds_paymentdb_r0z0mgr0i1_db1
-        read-data-source-names: ds_paymentdb_r0z0mgr0i1_db1,ds_paymentdb_r0z0mgr0i2_db1
   loadBalancers:
     r_lb_0:
       type: RANDOM
