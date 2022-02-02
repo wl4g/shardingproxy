@@ -41,27 +41,26 @@ Notice: All the following example cases are for reference only in the production
 
 ```bash
 cd $PROJECT_HOME/xcloud-shardingproxy-starter/src/main/resources/example/
-echo "source readwrite/readwrite-warehousedb.sql" | mysql -h172.8.8.111 -P3306 -uroot -p123456
+echo "source readwrite-warehousedb.sql" | mysql -h172.8.8.111 -P3306 -uroot -p123456
 ```
 
-- **Case 2:** **Sharding example of based auto interval** (recommended for general developers)
+- **Case 2:** **Sharding example of uniform modulo matrix** (recommended for general developers)
 
 ```bash
-echo "source interval-sharding-readwrite/interval-sharding-readwrite-paymentdb.sql" | mysql -h172.8.8.111 -P3306 -uroot -p123456
+echo "source mod-sharding-readwrite-userdb.sql" | mysql -h172.8.8.111 -P3306 -uroot -p123456
 ```
 
-- **Case 3:** **Sharding example of uniform matrix** (recommended for general developers)
+- **Case 3:** **Sharding example of based date interval** (recommended for general developers)
 
 ```bash
-echo "source mod-sharding-readwrite/mod-sharding-readwrite-userdb.sql" | mysql -h172.8.8.111 -P3306 -uroot -p123456
+echo "source interval-sharding-readwrite-paymentdb.sql" | mysql -h172.8.8.111 -P3306 -uroot -p123456
 ```
 
-- **Case 4:** **Sharding example of non-uniform(heter) group matrix** (recommended for advanced developers)
+- **Case 4:** **Sharding example of non-uniform(heter) group modulo matrix** (recommended for advanced developers)
 
 ```bash
-echo "source group-sharding-readwrite/group-sharding-readwrite-orderdb.sql" | mysql -h172.8.8.111 -P3306 -uroot -p123456
+echo "source group-sharding-readwrite-orderdb.sql" | mysql -h172.8.8.111 -P3306 -uroot -p123456
 ```
-
 
 ### 1.3 Deploy on Docker (Testing recommend)
 
@@ -97,7 +96,7 @@ sudo chmod -R 777 /mnt/disk1/shardingproxy
 
 # Prepare a example sharding configuration.
 cp xcloud-shardingproxy-starter/src/main/resources/agent/conf/agent.yaml /mnt/disk1/shardingproxy/ext-lib/agentlib/conf/
-cp xcloud-shardingproxy-starter/src/main/resources/example/sharding-readwrite/*.yaml /mnt/disk1/shardingproxy/conf/
+cp xcloud-shardingproxy-starter/src/main/resources/example/*.yaml /mnt/disk1/shardingproxy/conf/
 
 # The MySQL group replication network for demonstration. see: https://blogs.wl4g.com/archives/2477
 #docker network create --subnet=172.8.8.0/24 mysqlnet
@@ -124,11 +123,10 @@ wl4g/shardingproxy:latest
   - Select operation. (Simulate 100 this query operation and observe the Tracing UI)
 
   ```bash
-<<<<<<< HEAD
-  for i in `seq 1 100`; do echo 'use userdb; select * from t_user' | mysql -h127.0.0.1 -P3308 -uuser_admin0 -p123456; done
-=======
+  for i in `seq 1 100`; do echo 'use warehousedb; select * from t_goods' | mysql -h127.0.0.1 -P3308 -uwarehouse_ops0 -p123456; done
   for i in `seq 1 100`; do echo 'use userdb; select * from t_user' | mysql -h127.0.0.1 -P3308 -uuser_ops0 -p123456; done
->>>>>>> refs/heads/2.2.1_5.1.0
+  for i in `seq 1 100`; do echo 'use paymentdb; select * from t_bill' | mysql -h127.0.0.1 -P3308 -upayment_ops0 -p123456; done
+  for i in `seq 1 100`; do echo 'use orderdb; select * from t_order' | mysql -h127.0.0.1 -P3308 -uorder_ops0 -p123456; done
   ```
 
   - Update operation
@@ -139,11 +137,7 @@ wl4g/shardingproxy:latest
   insert into t_user (id, name) VALUES (10000000, 'user(insert) 10000000');
   update t_user set name='user(update) 10000002' WHERE id=10000000;
   delete from t_user WHERE id=10000000;
-<<<<<<< HEAD
-  " | mysql -h127.0.0.1 -P3308 -uuser_admin0 -p123456
-=======
   " | mysql -h127.0.0.1 -P3308 -uuser_ops0 -p123456
->>>>>>> refs/heads/2.2.1_5.1.0
   ```
 
 - Testing scrape prometheus metrics
@@ -195,7 +189,7 @@ EOF
 
 - Then need to modify the test configuration follows
 
-> Extension database discovery configuration refer to example: [config-sharding-readwrite-userdb.yaml](xcloud-shardingproxy-starter/src/main/resources/example/sharding-readwrite/server.yaml), The prefix of the following key names is : `rules.discoveryTypes.<myDiscoveryName>.props.`
+> Extension database discovery configuration refer to example: [config-sharding-readwrite-userdb.yaml](xcloud-shardingproxy-starter/src/main/resources/example/server.yaml), The prefix of the following key names is : `rules.discoveryTypes.<myDiscoveryName>.props.`
 
 | Attribute | Description |
 |-|-|
@@ -274,7 +268,7 @@ mysql>
 
 ### 2.6 Configuring encryption column (Optional)
 
-- [example auditing config-sharding-readwrite-userdb.yaml](xcloud-shardingproxy-starter/src/main/resources/example/sharding-readwrite/config-sharding-readwrite-userdb.yaml)
+- [example auditing config-sharding-readwrite-userdb.yaml](xcloud-shardingproxy-starter/src/main/resources/example/config-mod-sharding-readwrite-userdb.yaml)
 
 - Testing effect
 
@@ -349,7 +343,7 @@ mvn clean install -DskipTests -Dmaven.test.skip=true -T 2C
 ```bash
 export SP_BASE_DIR=/opt/xcloud-shardingproxy
 export SP_VERSION='2.2.0_5.1.0'
-export SP_CONF_DIR=${SP_BASE_DIR}/xcloud-shardingproxy-starter/src/main/resources/example/sharding-readwrite/
+export SP_CONF_DIR=${SP_BASE_DIR}/xcloud-shardingproxy-starter/src/main/resources/example/
 export SP_JAVAAGENT=${SP_BASE_DIR}/xcloud-shardingproxy-agent-bootstrap/target/xcloud-shardingproxy-agent-bootstrap-${SP_VERSION}.jar
 
 ## Sets agent jar path.
@@ -491,4 +485,4 @@ Under the same schemaName, multiple sharding databases must be the same. See sou
 
 - Recommended naming spec: `ds_<dbSchema>_<regionNumber><zoneNumber><dbClusterNumber><instanceNumber>`, &nbsp; For example the abbreviation is named: `ds_userdb_r0z1mgr2i2`, &nbsp; This means: Instance 2 belongs to MySQL group replication cluster 2 under Availability Zone 1 under Data Center(Region) 0.
 
-- See example configuration: [config-sharding-readwrite-userdb.yaml](xcloud-shardingproxy-starter/src/main/resources/example/sharding-readwrite/server.yaml)
+- See example configuration: [config-sharding-readwrite-userdb.yaml](xcloud-shardingproxy-starter/src/main/resources/example/server.yaml)

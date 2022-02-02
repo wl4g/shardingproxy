@@ -18,4 +18,5 @@
 # @see:https://github1s.com/Ahoo-Wang/CosId/blob/HEAD/cosid-shardingsphere/src/main/java/me/ahoo/cosid/shardingsphere/sharding/interval/CosIdSnowflakeIntervalShardingAlgorithm.java#L44
 # @see:https://github1s.com/Ahoo-Wang/CosId/blob/HEAD/cosid-shardingsphere/src/test/java/me/ahoo/cosid/shardingsphere/sharding/interval/SnowflakeIntervalShardingAlgorithmTest.java
 # @see:https://github.com/apache/shardingsphere/pull/14132
-
+#
+# TODO

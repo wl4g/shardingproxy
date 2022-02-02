@@ -32,7 +32,7 @@ import org.junit.Test;
 public class AutoIntervalShardingAlgorithmTests {
 
     @Test
-    public void testManualCalcAutoTablesAmount() {
+    public void testCalcAutoTablesAmount() {
         String lower = "2020-01-01 00:00:00";
         String upper = "2025-12-31 00:00:00";
         String shardingSec = "604800";// 1d(86400)|7d(604800)|31d(2678400)
