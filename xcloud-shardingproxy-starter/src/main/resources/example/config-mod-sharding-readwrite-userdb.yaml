@@ -82,7 +82,7 @@ rules:
   tables:
     t_user:
       # Union collection definition of all available actual dataSources.
-      actualDataNodes: rw_userdb_r0z0mgr0db${0..1}.t_user_${0..3},rw_userdb_r0z0mgr1db${2..3}.t_user_${0..3}
+      actualDataNodes: rw_userdb_r0z0mgrdb${0..3}.t_user_${0..3}
       #databaseStrategy:
       tableStrategy:
         standard:

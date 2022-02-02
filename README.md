@@ -383,83 +383,134 @@ Under the same schemaName, multiple sharding databases must be the same. See sou
   - for example zookeeper storage data directories.
 
   ```bash
-  /cn_south1_a1_shardingproxy_0/MGR-ha_orderdb_
-/cn_south1_a1_shardingproxy_0/MGR-ha_userdb_r0z0mgr0
-/cn_south1_a1_shardingproxy_0/MGR-ha_userdb_r0z0mgr1
-/cn_south1_a1_shardingproxy_0/lock
-/cn_south1_a1_shardingproxy_0/metadata
-/cn_south1_a1_shardingproxy_0/props
-/cn_south1_a1_shardingproxy_0/rules
-/cn_south1_a1_shardingproxy_0/scaling
-/cn_south1_a1_shardingproxy_0/status
-/cn_south1_a1_shardingproxy_0/MGR-ha_orderdb_/config
-/cn_south1_a1_shardingproxy_0/MGR-ha_orderdb_/instances
-/cn_south1_a1_shardingproxy_0/MGR-ha_orderdb_/leader
-/cn_south1_a1_shardingproxy_0/MGR-ha_orderdb_/servers
-/cn_south1_a1_shardingproxy_0/MGR-ha_orderdb_/sharding
-/cn_south1_a1_shardingproxy_0/MGR-ha_orderdb_/instances/10.0.0.114@-@124420
-/cn_south1_a1_shardingproxy_0/MGR-ha_orderdb_/leader/election
-/cn_south1_a1_shardingproxy_0/MGR-ha_orderdb_/leader/sharding
-/cn_south1_a1_shardingproxy_0/MGR-ha_orderdb_/leader/election/instance
-/cn_south1_a1_shardingproxy_0/MGR-ha_orderdb_/servers/10.0.0.114
-/cn_south1_a1_shardingproxy_0/MGR-ha_orderdb_/sharding/0
-/cn_south1_a1_shardingproxy_0/MGR-ha_orderdb_/sharding/0/instance
-/cn_south1_a1_shardingproxy_0/MGR-ha_userdb_r0z0mgr0/config
-/cn_south1_a1_shardingproxy_0/MGR-ha_userdb_r0z0mgr0/instances
-/cn_south1_a1_shardingproxy_0/MGR-ha_userdb_r0z0mgr0/leader
-/cn_south1_a1_shardingproxy_0/MGR-ha_userdb_r0z0mgr0/servers
-/cn_south1_a1_shardingproxy_0/MGR-ha_userdb_r0z0mgr0/sharding
-/cn_south1_a1_shardingproxy_0/MGR-ha_userdb_r0z0mgr0/instances/10.0.0.114@-@124420
-/cn_south1_a1_shardingproxy_0/MGR-ha_userdb_r0z0mgr0/leader/election
-/cn_south1_a1_shardingproxy_0/MGR-ha_userdb_r0z0mgr0/leader/sharding
-/cn_south1_a1_shardingproxy_0/MGR-ha_userdb_r0z0mgr0/leader/election/instance
-/cn_south1_a1_shardingproxy_0/MGR-ha_userdb_r0z0mgr0/servers/10.0.0.114
-/cn_south1_a1_shardingproxy_0/MGR-ha_userdb_r0z0mgr0/sharding/0
-/cn_south1_a1_shardingproxy_0/MGR-ha_userdb_r0z0mgr0/sharding/0/instance
-/cn_south1_a1_shardingproxy_0/MGR-ha_userdb_r0z0mgr1/config
-/cn_south1_a1_shardingproxy_0/MGR-ha_userdb_r0z0mgr1/instances
-/cn_south1_a1_shardingproxy_0/MGR-ha_userdb_r0z0mgr1/leader
-/cn_south1_a1_shardingproxy_0/MGR-ha_userdb_r0z0mgr1/servers
-/cn_south1_a1_shardingproxy_0/MGR-ha_userdb_r0z0mgr1/sharding
-/cn_south1_a1_shardingproxy_0/MGR-ha_userdb_r0z0mgr1/instances/10.0.0.114@-@124420
-/cn_south1_a1_shardingproxy_0/MGR-ha_userdb_r0z0mgr1/leader/election
-/cn_south1_a1_shardingproxy_0/MGR-ha_userdb_r0z0mgr1/leader/sharding
-/cn_south1_a1_shardingproxy_0/MGR-ha_userdb_r0z0mgr1/leader/election/instance
-/cn_south1_a1_shardingproxy_0/MGR-ha_userdb_r0z0mgr1/servers/10.0.0.114
-/cn_south1_a1_shardingproxy_0/MGR-ha_userdb_r0z0mgr1/sharding/0
-/cn_south1_a1_shardingproxy_0/MGR-ha_userdb_r0z0mgr1/sharding/0/instance
-/cn_south1_a1_shardingproxy_0/lock/ack
-/cn_south1_a1_shardingproxy_0/lock/locks
-/cn_south1_a1_shardingproxy_0/metadata/orderdb
-/cn_south1_a1_shardingproxy_0/metadata/userdb
-/cn_south1_a1_shardingproxy_0/metadata/orderdb/dataSources
-/cn_south1_a1_shardingproxy_0/metadata/orderdb/rules
-/cn_south1_a1_shardingproxy_0/metadata/orderdb/tables
-/cn_south1_a1_shardingproxy_0/metadata/orderdb/tables/t_order
-/cn_south1_a1_shardingproxy_0/metadata/userdb/dataSources
-/cn_south1_a1_shardingproxy_0/metadata/userdb/rules
-/cn_south1_a1_shardingproxy_0/metadata/userdb/tables
-/cn_south1_a1_shardingproxy_0/metadata/userdb/tables/t_user
-/cn_south1_a1_shardingproxy_0/scaling/_finished_check
-/cn_south1_a1_shardingproxy_0/scaling/_finished_check/config
-/cn_south1_a1_shardingproxy_0/scaling/_finished_check/instances
-/cn_south1_a1_shardingproxy_0/scaling/_finished_check/leader
-/cn_south1_a1_shardingproxy_0/scaling/_finished_check/servers
-/cn_south1_a1_shardingproxy_0/scaling/_finished_check/sharding
-/cn_south1_a1_shardingproxy_0/scaling/_finished_check/instances/10.0.0.114@-@124420
-/cn_south1_a1_shardingproxy_0/scaling/_finished_check/leader/election
-/cn_south1_a1_shardingproxy_0/scaling/_finished_check/leader/sharding
-/cn_south1_a1_shardingproxy_0/scaling/_finished_check/leader/election/instance
-/cn_south1_a1_shardingproxy_0/scaling/_finished_check/servers/10.0.0.114
-/cn_south1_a1_shardingproxy_0/scaling/_finished_check/sharding/0
-/cn_south1_a1_shardingproxy_0/scaling/_finished_check/sharding/0/instance
-/cn_south1_a1_shardingproxy_0/status/compute_nodes
-/cn_south1_a1_shardingproxy_0/status/storage_nodes
-/cn_south1_a1_shardingproxy_0/status/compute_nodes/online
-/cn_south1_a1_shardingproxy_0/status/compute_nodes/online/172.8.8.1@3308
-/cn_south1_a1_shardingproxy_0/status/storage_nodes/primary
-/cn_south1_a1_shardingproxy_0/status/storage_nodes/primary/orderdb.ha_orderdb_
-/cn_south1_a1_shardingproxy_0/status/storage_nodes/primary/userdb.ha_userdb_r0z0mgr0
+  /cn_south1_a1_shardingproxy_0/MGR-ha_orderdb_r0z0mgr0
+  /cn_south1_a1_shardingproxy_0/MGR-ha_orderdb_r0z0mgr1
+  /cn_south1_a1_shardingproxy_0/MGR-ha_paymentdb_r0z0mgr0
+  /cn_south1_a1_shardingproxy_0/MGR-ha_userdb_mgr0
+  /cn_south1_a1_shardingproxy_0/MGR-ha_userdb_mgr1
+  /cn_south1_a1_shardingproxy_0/MGR-ha_warehousedb_r0z0mgr0
+  /cn_south1_a1_shardingproxy_0/lock
+  /cn_south1_a1_shardingproxy_0/metadata
+  /cn_south1_a1_shardingproxy_0/props
+  /cn_south1_a1_shardingproxy_0/rules
+  /cn_south1_a1_shardingproxy_0/scaling
+  /cn_south1_a1_shardingproxy_0/status
+  /cn_south1_a1_shardingproxy_0/MGR-ha_orderdb_r0z0mgr0/config
+  /cn_south1_a1_shardingproxy_0/MGR-ha_orderdb_r0z0mgr0/instances
+  /cn_south1_a1_shardingproxy_0/MGR-ha_orderdb_r0z0mgr0/leader
+  /cn_south1_a1_shardingproxy_0/MGR-ha_orderdb_r0z0mgr0/servers
+  /cn_south1_a1_shardingproxy_0/MGR-ha_orderdb_r0z0mgr0/sharding
+  /cn_south1_a1_shardingproxy_0/MGR-ha_orderdb_r0z0mgr0/instances/192.168.1.5@-@20562
+  /cn_south1_a1_shardingproxy_0/MGR-ha_orderdb_r0z0mgr0/leader/election
+  /cn_south1_a1_shardingproxy_0/MGR-ha_orderdb_r0z0mgr0/leader/sharding
+  /cn_south1_a1_shardingproxy_0/MGR-ha_orderdb_r0z0mgr0/leader/election/instance
+  /cn_south1_a1_shardingproxy_0/MGR-ha_orderdb_r0z0mgr0/servers/192.168.1.5
+  /cn_south1_a1_shardingproxy_0/MGR-ha_orderdb_r0z0mgr0/sharding/0
+  /cn_south1_a1_shardingproxy_0/MGR-ha_orderdb_r0z0mgr0/sharding/0/instance
+  /cn_south1_a1_shardingproxy_0/MGR-ha_orderdb_r0z0mgr1/config
+  /cn_south1_a1_shardingproxy_0/MGR-ha_orderdb_r0z0mgr1/instances
+  /cn_south1_a1_shardingproxy_0/MGR-ha_orderdb_r0z0mgr1/leader
+  /cn_south1_a1_shardingproxy_0/MGR-ha_orderdb_r0z0mgr1/servers
+  /cn_south1_a1_shardingproxy_0/MGR-ha_orderdb_r0z0mgr1/sharding
+  /cn_south1_a1_shardingproxy_0/MGR-ha_orderdb_r0z0mgr1/instances/192.168.1.5@-@20562
+  /cn_south1_a1_shardingproxy_0/MGR-ha_orderdb_r0z0mgr1/leader/election
+  /cn_south1_a1_shardingproxy_0/MGR-ha_orderdb_r0z0mgr1/leader/sharding
+  /cn_south1_a1_shardingproxy_0/MGR-ha_orderdb_r0z0mgr1/leader/election/instance
+  /cn_south1_a1_shardingproxy_0/MGR-ha_orderdb_r0z0mgr1/servers/192.168.1.5
+  /cn_south1_a1_shardingproxy_0/MGR-ha_orderdb_r0z0mgr1/sharding/0
+  /cn_south1_a1_shardingproxy_0/MGR-ha_orderdb_r0z0mgr1/sharding/0/instance
+  /cn_south1_a1_shardingproxy_0/MGR-ha_paymentdb_r0z0mgr0/config
+  /cn_south1_a1_shardingproxy_0/MGR-ha_paymentdb_r0z0mgr0/instances
+  /cn_south1_a1_shardingproxy_0/MGR-ha_paymentdb_r0z0mgr0/leader
+  /cn_south1_a1_shardingproxy_0/MGR-ha_paymentdb_r0z0mgr0/servers
+  /cn_south1_a1_shardingproxy_0/MGR-ha_paymentdb_r0z0mgr0/sharding
+  /cn_south1_a1_shardingproxy_0/MGR-ha_paymentdb_r0z0mgr0/instances/192.168.1.5@-@20562
+  /cn_south1_a1_shardingproxy_0/MGR-ha_paymentdb_r0z0mgr0/leader/election
+  /cn_south1_a1_shardingproxy_0/MGR-ha_paymentdb_r0z0mgr0/leader/sharding
+  /cn_south1_a1_shardingproxy_0/MGR-ha_paymentdb_r0z0mgr0/leader/election/instance
+  /cn_south1_a1_shardingproxy_0/MGR-ha_paymentdb_r0z0mgr0/servers/192.168.1.5
+  /cn_south1_a1_shardingproxy_0/MGR-ha_paymentdb_r0z0mgr0/sharding/0
+  /cn_south1_a1_shardingproxy_0/MGR-ha_paymentdb_r0z0mgr0/sharding/0/instance
+  /cn_south1_a1_shardingproxy_0/MGR-ha_userdb_mgr0/config
+  /cn_south1_a1_shardingproxy_0/MGR-ha_userdb_mgr0/instances
+  /cn_south1_a1_shardingproxy_0/MGR-ha_userdb_mgr0/leader
+  /cn_south1_a1_shardingproxy_0/MGR-ha_userdb_mgr0/servers
+  /cn_south1_a1_shardingproxy_0/MGR-ha_userdb_mgr0/sharding
+  /cn_south1_a1_shardingproxy_0/MGR-ha_userdb_mgr0/instances/192.168.1.5@-@20562
+  /cn_south1_a1_shardingproxy_0/MGR-ha_userdb_mgr0/leader/election
+  /cn_south1_a1_shardingproxy_0/MGR-ha_userdb_mgr0/leader/sharding
+  /cn_south1_a1_shardingproxy_0/MGR-ha_userdb_mgr0/leader/election/instance
+  /cn_south1_a1_shardingproxy_0/MGR-ha_userdb_mgr0/servers/192.168.1.5
+  /cn_south1_a1_shardingproxy_0/MGR-ha_userdb_mgr0/sharding/0
+  /cn_south1_a1_shardingproxy_0/MGR-ha_userdb_mgr0/sharding/0/instance
+  /cn_south1_a1_shardingproxy_0/MGR-ha_userdb_mgr1/config
+  /cn_south1_a1_shardingproxy_0/MGR-ha_userdb_mgr1/instances
+  /cn_south1_a1_shardingproxy_0/MGR-ha_userdb_mgr1/leader
+  /cn_south1_a1_shardingproxy_0/MGR-ha_userdb_mgr1/servers
+  /cn_south1_a1_shardingproxy_0/MGR-ha_userdb_mgr1/sharding
+  /cn_south1_a1_shardingproxy_0/MGR-ha_userdb_mgr1/instances/192.168.1.5@-@20562
+  /cn_south1_a1_shardingproxy_0/MGR-ha_userdb_mgr1/leader/election
+  /cn_south1_a1_shardingproxy_0/MGR-ha_userdb_mgr1/leader/sharding
+  /cn_south1_a1_shardingproxy_0/MGR-ha_userdb_mgr1/leader/election/instance
+  /cn_south1_a1_shardingproxy_0/MGR-ha_userdb_mgr1/servers/192.168.1.5
+  /cn_south1_a1_shardingproxy_0/MGR-ha_userdb_mgr1/sharding/0
+  /cn_south1_a1_shardingproxy_0/MGR-ha_userdb_mgr1/sharding/0/instance
+  /cn_south1_a1_shardingproxy_0/MGR-ha_warehousedb_r0z0mgr0/config
+  /cn_south1_a1_shardingproxy_0/MGR-ha_warehousedb_r0z0mgr0/instances
+  /cn_south1_a1_shardingproxy_0/MGR-ha_warehousedb_r0z0mgr0/leader
+  /cn_south1_a1_shardingproxy_0/MGR-ha_warehousedb_r0z0mgr0/servers
+  /cn_south1_a1_shardingproxy_0/MGR-ha_warehousedb_r0z0mgr0/sharding
+  /cn_south1_a1_shardingproxy_0/MGR-ha_warehousedb_r0z0mgr0/instances/192.168.1.5@-@20562
+  /cn_south1_a1_shardingproxy_0/MGR-ha_warehousedb_r0z0mgr0/leader/election
+  /cn_south1_a1_shardingproxy_0/MGR-ha_warehousedb_r0z0mgr0/leader/sharding
+  /cn_south1_a1_shardingproxy_0/MGR-ha_warehousedb_r0z0mgr0/leader/election/instance
+  /cn_south1_a1_shardingproxy_0/MGR-ha_warehousedb_r0z0mgr0/servers/192.168.1.5
+  /cn_south1_a1_shardingproxy_0/MGR-ha_warehousedb_r0z0mgr0/sharding/0
+  /cn_south1_a1_shardingproxy_0/MGR-ha_warehousedb_r0z0mgr0/sharding/0/instance
+  /cn_south1_a1_shardingproxy_0/lock/ack
+  /cn_south1_a1_shardingproxy_0/lock/locks
+  /cn_south1_a1_shardingproxy_0/metadata/orderdb
+  /cn_south1_a1_shardingproxy_0/metadata/paymentdb
+  /cn_south1_a1_shardingproxy_0/metadata/userdb
+  /cn_south1_a1_shardingproxy_0/metadata/warehousedb
+  /cn_south1_a1_shardingproxy_0/metadata/orderdb/dataSources
+  /cn_south1_a1_shardingproxy_0/metadata/orderdb/rules
+  /cn_south1_a1_shardingproxy_0/metadata/orderdb/tables
+  /cn_south1_a1_shardingproxy_0/metadata/orderdb/tables/t_order
+  /cn_south1_a1_shardingproxy_0/metadata/paymentdb/dataSources
+  /cn_south1_a1_shardingproxy_0/metadata/paymentdb/rules
+  /cn_south1_a1_shardingproxy_0/metadata/paymentdb/tables
+  /cn_south1_a1_shardingproxy_0/metadata/paymentdb/tables/t_bill
+  /cn_south1_a1_shardingproxy_0/metadata/userdb/dataSources
+  /cn_south1_a1_shardingproxy_0/metadata/userdb/rules
+  /cn_south1_a1_shardingproxy_0/metadata/userdb/tables
+  /cn_south1_a1_shardingproxy_0/metadata/userdb/tables/t_user
+  /cn_south1_a1_shardingproxy_0/metadata/warehousedb/dataSources
+  /cn_south1_a1_shardingproxy_0/metadata/warehousedb/rules
+  /cn_south1_a1_shardingproxy_0/metadata/warehousedb/tables
+  /cn_south1_a1_shardingproxy_0/metadata/warehousedb/tables/t_goods
+  /cn_south1_a1_shardingproxy_0/scaling/_finished_check
+  /cn_south1_a1_shardingproxy_0/scaling/_finished_check/config
+  /cn_south1_a1_shardingproxy_0/scaling/_finished_check/instances
+  /cn_south1_a1_shardingproxy_0/scaling/_finished_check/leader
+  /cn_south1_a1_shardingproxy_0/scaling/_finished_check/servers
+  /cn_south1_a1_shardingproxy_0/scaling/_finished_check/sharding
+  /cn_south1_a1_shardingproxy_0/scaling/_finished_check/instances/192.168.1.5@-@20562
+  /cn_south1_a1_shardingproxy_0/scaling/_finished_check/leader/election
+  /cn_south1_a1_shardingproxy_0/scaling/_finished_check/leader/sharding
+  /cn_south1_a1_shardingproxy_0/scaling/_finished_check/leader/election/instance
+  /cn_south1_a1_shardingproxy_0/scaling/_finished_check/servers/192.168.1.5
+  /cn_south1_a1_shardingproxy_0/scaling/_finished_check/sharding/0
+  /cn_south1_a1_shardingproxy_0/scaling/_finished_check/sharding/0/instance
+  /cn_south1_a1_shardingproxy_0/status/compute_nodes
+  /cn_south1_a1_shardingproxy_0/status/storage_nodes
+  /cn_south1_a1_shardingproxy_0/status/compute_nodes/online
+  /cn_south1_a1_shardingproxy_0/status/compute_nodes/online/172.8.8.1@3308
+  /cn_south1_a1_shardingproxy_0/status/storage_nodes/primary
+  /cn_south1_a1_shardingproxy_0/status/storage_nodes/primary/orderdb.ha_orderdb_r0z0mgr1
+  /cn_south1_a1_shardingproxy_0/status/storage_nodes/primary/paymentdb.ha_paymentdb_r0z0mgr0
+  /cn_south1_a1_shardingproxy_0/status/storage_nodes/primary/userdb.ha_userdb_mgr0
+  /cn_south1_a1_shardingproxy_0/status/storage_nodes/primary/warehousedb.ha_warehousedb_r0z0mgr0
   ```
 
 ### 4.3 If you want to test native [apache/shardingsphere/shardingsphere-proxy](https://github.com/apache/shardingsphere/tree/master/shardingsphere-proxy)
