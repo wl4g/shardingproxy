@@ -34,11 +34,6 @@ shardingproxy:
     prometheus.io/scrape: "true"
     prometheus.io/port: "10108"
 
-  # Pod deployment policy
-  # value: OrderedReady | Parallel
-  # To redeploy a chart with existing PVC(s), the value must be set to Parallel to avoid deadlock
-  podManagementPolicy: Parallel
-
   persistence:
     enabled: false
     size: 20Mi
@@ -122,8 +117,8 @@ shardingproxy:
 
   ## ShardingProxy sharding configuration, example see: https://github.com/wl4g/xcloud-shardingproxy/blob/master/xcloud-shardingproxy-starter/src/main/resources/example/
   shardingConfigs:
-    - sharding_rw_userdb: |-
-      schemaName: userdb
+    - sharding_rw_warehousedb: |-
+      schemaName: warehousedb
       extensionDefaultDataSource:
         username: root
         password: 123456
@@ -133,127 +128,55 @@ shardingproxy:
         maxPoolSize: 50
         minPoolSize: 1
       dataSources:
-        ds_userdb_g0db0_0:
-          url: 'jdbc:mysql://mysql0.shardingproxy.svc.cluster.local:3306/userdb_g0db0?serverTimezone=UTC&useSSL=false&allowMultiQueries=true&characterEncoding=utf-8'
-        ds_userdb_g0db0_1:
-          url: 'jdbc:mysql://mysql1.shardingproxy.svc.cluster.local:3306/userdb_g0db0?serverTimezone=UTC&useSSL=false&allowMultiQueries=true&characterEncoding=utf-8'
-        ds_userdb_g0db0_2:
-          url: 'jdbc:mysql://mysql2.shardingproxy.svc.cluster.local:3306/userdb_g0db0?serverTimezone=UTC&useSSL=false&allowMultiQueries=true&characterEncoding=utf-8'
-        ds_userdb_g0db1_0:
-          url: 'jdbc:mysql://mysql0.shardingproxy.svc.cluster.local:3306/userdb_g0db1?serverTimezone=UTC&useSSL=false&allowMultiQueries=true&characterEncoding=utf-8'
-        ds_userdb_g0db1_1:
-          url: 'jdbc:mysql://mysql1.shardingproxy.svc.cluster.local:3306/userdb_g0db1?serverTimezone=UTC&useSSL=false&allowMultiQueries=true&characterEncoding=utf-8'
-        ds_userdb_g0db1_2:
-          url: 'jdbc:mysql://mysql2.shardingproxy.svc.cluster.local:3306/userdb_g0db1?serverTimezone=UTC&useSSL=false&allowMultiQueries=true&characterEncoding=utf-8'
-        ds_userdb_g0db2_0:
-          url: 'jdbc:mysql://mysql0.shardingproxy.svc.cluster.local:3306/userdb_g0db2?serverTimezone=UTC&useSSL=false&allowMultiQueries=true&characterEncoding=utf-8'
-        ds_userdb_g0db2_1:
-          url: 'jdbc:mysql://mysql1.shardingproxy.svc.cluster.local:3306/userdb_g0db2?serverTimezone=UTC&useSSL=false&allowMultiQueries=true&characterEncoding=utf-8'
-        ds_userdb_g0db2_2:
-          url: 'jdbc:mysql://mysql2.shardingproxy.svc.cluster.local:3306/userdb_g0db2?serverTimezone=UTC&useSSL=false&allowMultiQueries=true&characterEncoding=utf-8'
+        ds_warehousedb_r0z0mgr0i0:
+          url: 'jdbc:mysql://n0.rds.local:3306/warehousedb?serverTimezone=UTC&useSSL=false&allowMultiQueries=true&characterEncoding=utf-8'
+        ds_warehousedb_r0z0mgr0i1:
+          url: 'jdbc:mysql://n1.rds.local:3306/warehousedb?serverTimezone=UTC&useSSL=false&allowMultiQueries=true&characterEncoding=utf-8'
+        ds_warehousedb_r0z0mgr0i2:
+          url: 'jdbc:mysql://n2.rds.local:3306/warehousedb?serverTimezone=UTC&useSSL=false&allowMultiQueries=true&characterEncoding=utf-8'
       rules:
-       - !SHARDING
-        tables:
-          t_user:
-            actualDataNodes: rw_userdb_g0db${0..2}.t_user_${0..2}
-            tableStrategy:
-              standard:
-                shardingColumn: id
-                shardingAlgorithmName: alg_table_volume_range_g0_0
-            keyGenerateStrategy:
-              column: id
-              keyGeneratorName: gen_snowflake0
-        bindingTables:
-          - t_user
-        defaultDatabaseStrategy:
-          standard:
-            shardingColumn: id
-            shardingAlgorithmName: alg_database_inline_g0_0
-        defaultTableStrategy:
-        shardingAlgorithms:
-          alg_database_inline_g0_0:
-            type: INLINE
-            props:
-              algorithm-expression: rw_userdb_g0db${(id % 9) as int}
-          alg_table_volume_range_g0_0:
-            type: VOLUME_RANGE2
-            props:
-              range-lower: '0'
-              range-upper: '40000000'
-              sharding-volume: '10000000'
-        keyGenerators:
-          gen_snowflake0:
-            type: SNOWFLAKE
-            props:
-              worker-id: '1'
-       - !READWRITE_SPLITTING
+      - !READWRITE_SPLITTING
         dataSources:
-          rw_userdb_g0db0:
-            writeDataSourceName: ds_userdb_g0db0_1
+          rw_warehousedb_r0z0mgr0:
+            writeDataSourceName: ds_warehousedb_r0z0mgr0i0
             readDataSourceNames:
-              - ds_userdb_g0db0_1
-              - ds_userdb_g0db0_2
-            loadBalancerName: r_lb_0
-          rw_userdb_g0db1:
-            writeDataSourceName: ds_userdb_g0db1_1
-            readDataSourceNames:
-              - ds_userdb_g0db1_1
-              - ds_userdb_g0db1_2
-            loadBalancerName: r_lb_0
-          rw_userdb_g0db2:
-            writeDataSourceName: ds_userdb_g0db2_1
-            readDataSourceNames:
-              - ds_userdb_g0db2_1
-              - ds_userdb_g0db2_2
+              - ds_warehousedb_r0z0mgr0i1
+              - ds_warehousedb_r0z0mgr0i2
             loadBalancerName: r_lb_0
         loadBalancers:
           r_lb_0:
             type: RANDOM
-       - !DB_DISCOVERY
+      - !DB_DISCOVERY
          dataSources:
-           ha_userdb_g0db0:
-             discoveryTypeName: cn_south1_a1_mgr_g0_0
-             discoveryHeartbeatName: mgr_heartbeat_0
+           ha_warehousedb_r0z0mgr0:
+             discoveryTypeName: default_dis_mgr
+             discoveryHeartbeatName: default_mgr_heartbeat
              dataSourceNames:
-               - ds_userdb_g0db0_0
-               - ds_userdb_g0db0_1
-               - ds_userdb_g0db0_2
-           ha_userdb_g0db1:
-             discoveryTypeName: cn_south1_a1_mgr_g0_0
-             discoveryHeartbeatName: mgr_heartbeat_0
-             dataSourceNames:
-               - ds_userdb_g0db1_0
-               - ds_userdb_g0db1_1
-               - ds_userdb_g0db1_2
-           ha_userdb_g0db2:
-             discoveryTypeName: cn_south1_a1_mgr_g0_0
-             discoveryHeartbeatName: mgr_heartbeat_0
-             dataSourceNames:
-               - ds_userdb_g0db2_0
-               - ds_userdb_g0db2_1
-               - ds_userdb_g0db2_2
+               - ds_warehousedb_r0z0mgr0i0
+               - ds_warehousedb_r0z0mgr0i1
+               - ds_warehousedb_r0z0mgr0i2
          discoveryHeartbeats:
-           mgr_heartbeat_0:
+           default_mgr_heartbeat:
              props:
                keep-alive-cron: '0/5 * * * * ?'
          discoveryTypes:
-           cn_south1_a1_mgr_g0_0:
+           default_dis_mgr:
              type: MGR
              props:
                group-name: 5db40c3c-180c-11e9-afbf-005056ac6820
                extensionDiscoveryConfigJson: |-
                  {
                    "memberHostMappings": [{
-                       "mysql0:3306": [
-                           "mysql0.shardingproxy.svc.cluster.local:3306"
+                       "rds-mgr-0:3306": [
+                           "n0.rds.local:3306"
                        ]
                    }, {
-                       "mysql1:3306": [
-                           "mysql1.shardingproxy.svc.cluster.local:3306"
+                       "rds-mgr-1:3306": [
+                           "n1.rds.local:3306"
                        ]
                    }, {
-                       "mysql2:3306": [
-                           "mysql2.shardingproxy.svc.cluster.local:3306"
+                       "rds-mgr-2:3306": [
+                           "n2.rds.local:3306"
                        ]
                    }]
                  }
@@ -302,7 +225,7 @@ shardingproxy:
     ## ingress for ShardingProxy Dashboard
     dashboard:
       enabled: false
-      # ingressClassName: nginx
+      ingressClassName: nginx
       annotations: {}
         # kubernetes.io/ingress.class: nginx
         # kubernetes.io/tls-acme: "true"
@@ -314,7 +237,7 @@ shardingproxy:
     ## ingress for ShardingProxy prometheus API
     prometheus:
       enabled: false
-      # ingressClassName: nginx
+      ingressClassName: nginx
       annotations: {}
         # kubernetes.io/ingress.class: nginx
         # kubernetes.io/tls-acme: "true"
