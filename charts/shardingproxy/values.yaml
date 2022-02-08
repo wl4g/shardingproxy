@@ -3,7 +3,7 @@ shardingproxy:
   # ========================================== Begin ShardingProxy Deployment ================================================
   image:
     repository: wl4g/shardingproxy
-    # tag: latest
+    tag: latest
     pullPolicy: IfNotPresent
     ## Optionally specify an array of imagePullSecrets.
     ## Secrets must be manually created in the namespace.
