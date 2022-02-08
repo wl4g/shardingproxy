@@ -35,7 +35,7 @@ data:
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: server-shardingproxy-configmap
+  name: core-shardingproxy-configmap
   namespace: {{ .Release.Namespace }}
   labels:
     app.kubernetes.io/name: {{ include "shardingproxy.name" . }}
@@ -43,21 +43,6 @@ metadata:
     app.kubernetes.io/managed-by: {{ .Release.Service }}
     helm.sh/chart: {{ include "shardingproxy.chart" . }}
 data:
-  server.config: {{ toYaml .Values.shardingproxy.serverConfig | indent 2 }}
-
----
-
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: rules-shardingproxy-configmap
-  namespace: {{ .Release.Namespace }}
-  labels:
-    app.kubernetes.io/name: {{ include "shardingproxy.name" . }}
-    app.kubernetes.io/instance: {{ .Release.Name }}
-    app.kubernetes.io/managed-by: {{ .Release.Service }}
-    helm.sh/chart: {{ include "shardingproxy.chart" . }}
-data:
-{{- range $index, $value := .Values.shardingproxy.ruleConfigs}}
-  {{ $index }}: {{ toYaml $value | indent 2 }}
+{{- range $index, $value := .Values.shardingproxy.coreConfigs}}
+  {{ $index }}.config: {{ toYaml $value | indent 2 }}
 {{- end}}

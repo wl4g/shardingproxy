@@ -60,29 +60,23 @@ spec:
       {{- end }}
 
       volumes:
-      ## javaagent configuration.
+      ## agent configuration.
       - name: agentconfig-volume
         configMap:
           name: agent-shardingproxy-configmap
           items:
           - key: agent.config
             path: agent.yaml
-      ## server configuration.
-      - name: serverconfig-volume
+      ## sharding server and rules configuration.
+      ## see:https://kubernetes.io/docs/tasks/configure-pod-container/configure-pod-configmap/#add-configmap-data-to-a-specific-path-in-the-volume
+      - name: coreconfig-volume
         configMap:
-          name: server-shardingproxy-configmap
+          name: core-shardingproxy-configmap
           items:
-          - key: server.config
-            path: server.yaml
-      ## sharding rules configuration.
-      {{- range $index, $value := .Values.shardingproxy.ruleConfigs}}
-      - name: ruleconfig-{{$index}}-volume
-        configMap:
-          name: rules-shardingproxy-configmap
-          items:
-          - key: {{$index}}
-            path: config-{{$index}}.yaml
-      {{- end}}
+          {{- range $index, $value := .Values.shardingproxy.coreConfigs}}
+          - key: {{$index}}.config
+            path: {{$index}}
+          {{- end}}
       ## data(transactions).
       - name: shardingdata-volume
       {{- if not .Values.shardingproxy.persistence.enabled }}
@@ -134,14 +128,10 @@ spec:
           - name: agentconfig-volume
             mountPath: "/opt/shardingproxy/ext-lib/agentlib/conf/"
           volumeMounts:
-          ## server configuration.
-          - name: serverconfig-volume
+          ## sharding server and rules configuration.
+          ## see:https://kubernetes.io/docs/tasks/configure-pod-container/configure-pod-configmap/#add-configmap-data-to-a-specific-path-in-the-volume
+          - name: coreconfig-volume
             mountPath: "/opt/shardingproxy/conf/"
-          ## sharding rules configuration.
-          {{- range $index, $value := .Values.shardingproxy.ruleConfigs}}
-          - name: ruleconfig-{{$index}}-volume
-            mountPath: "/opt/shardingproxy/conf/"
-          {{- end}}
           ## datadir.
           - name: shardingdata-volume
             mountPath: "/opt/shardingproxy/data/"
