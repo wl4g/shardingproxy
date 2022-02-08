@@ -83,7 +83,7 @@ shardingproxy:
   # ========================================== End ShardingProxy Deployment ================================================
 
   # ========================================== Begin ShardingProxy ConfigMap ===============================================
-  ## ShardingProxy agent configuration, see: https://github.com/wl4g/xcloud-shardingproxy/blob/master/xcloud-shardingproxy-starter/src/main/resources/agent/conf/agent.yaml
+  ## ShardingProxy agent configuration, example see:https://github.com/wl4g/xcloud-shardingproxy/blob/master/xcloud-shardingproxy-starter/src/main/resources/agent/conf/agent.yaml
   agentConfig: |-
     applicationName: cn_south1_a1_shardingproxy_0
     ignoredPluginNames:
@@ -115,8 +115,92 @@ shardingproxy:
           otel.exporter.jaeger.endpoint: "http://jaeger.shardingproxy.svc.cluster.local:14250"
           otel.exporter.jaeger.timeout: "10000"
 
-  ## ShardingProxy sharding configuration, example see: https://github.com/wl4g/xcloud-shardingproxy/blob/master/xcloud-shardingproxy-starter/src/main/resources/example/
-  shardingConfigs:
+  ## ShardingProxy server configuration, example see:https://github.com/wl4g/xcloud-shardingproxy/blob/master/xcloud-shardingproxy-starter/src/main/resources/example/server.yaml
+  serverConfig: |-
+    mode:
+      type: Cluster
+      repository:
+        type: ZooKeeper
+        props:
+          namespace: cn_south1_a1_shardingproxy_0
+          server-lists: localhost:2181
+          retryIntervalMilliseconds: 500
+          timeToLiveSeconds: 60
+          maxRetries: 3
+          operationTimeoutMilliseconds: 500
+      overwrite: false
+    rules:
+    - !AUTHORITY
+      users:
+        - root@:123456
+        - user_ops0@:123456
+        - warehouse_ops0@:123456
+        - payment_ops0@:123456
+        - order_ops0@:123456
+      provider:
+        type: SCHEMA_PRIVILEGES_PERMITTED
+        props:
+          user-schema-mappings: "\
+             root@=userdb,\
+             root@=warehousedb,\
+             root@=paymentdb,\
+             root@=orderdb,\
+             user_ops0@=userdb,\
+             warehouse_ops0@=warehousedb,\
+             payment_ops0@=paymentdb,\
+             order_ops0@=orderdb"
+          user-object-privileges: |-
+            {
+              "granted": {
+                "user_ops0": "default_ddl_safety, base_dml_safety",
+                "warehouse_ops0": "default_ddl_safety, base_dml_safety, slight_strict_dml_safety",
+                "payment_ops0": "default_ddl_safety, base_dml_safety, slight_strict_dml_safety, general_strict_dml_safety",
+                "order_ops0": "default_ddl_safety, base_dml_safety, slight_strict_dml_safety"
+              },
+              "privileges": {
+                "default_ddl_safety": [{
+                  "anyBlacklistSQLs": [
+                    "(.*)drop(\\s+)schema(\\s+)(.+)",
+                    "(.*)drop(\\s+)database(\\s+)(.+)",
+                    "(.*)drop(\\s+)table(\\s+)(.+)",
+                    "(.*)alert(\\s+)database(\\s+)(.+)",
+                    "(.*)alert(\\s+)table(\\s+)(.+)"
+                  ]
+                }],
+                "base_dml_safety": [{
+                  "delete": {
+                    "requiredWhereCondidtion": true
+                  }
+                }],
+                "slight_strict_dml_safety": [{
+                  "update": {
+                    "requiredWhereCondidtion": true
+                  }
+                }],
+                "general_strict_dml_safety": [{
+                  "select": {
+                    "requiredWhereCondidtion": true
+                  }
+                }]
+              }
+            }
+    props:
+      max-connections-size-per-query: 1
+      kernel-executor-size: 16
+      proxy-frontend-flush-threshold: 128
+      proxy-opentracing-enabled: false
+      proxy-hint-enabled: false
+      sql-show: true
+      check-table-metadata-enabled: false
+      show-process-list-enabled: false
+      proxy-backend-query-fetch-size: -1
+      check-duplicate-table-enabled: false
+      proxy-frontend-executor-size: 0
+      proxy-backend-executor-suitable: OLAP
+      proxy-frontend-max-connections: 0
+
+  ## ShardingProxy sharding configuration, example see:https://github.com/wl4g/xcloud-shardingproxy/blob/master/xcloud-shardingproxy-starter/src/main/resources/example/
+  ruleConfigs:
     readwrite-warehousedb: |-
       schemaName: warehousedb
       extensionDefaultDataSource:

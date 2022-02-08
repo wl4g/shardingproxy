@@ -67,8 +67,15 @@ spec:
           items:
           - key: agent.config
             path: agent.yaml
+      ## server configuration.
+      - name: serverconfig-volume
+        configMap:
+          name: server-shardingproxy-configmap
+          items:
+          - key: server.config
+            path: server.yaml
       ## sharding rules configuration.
-      {{- range $index, $value := .Values.shardingproxy.shardingConfigs}}
+      {{- range $index, $value := .Values.shardingproxy.ruleConfigs}}
       - name: ruleconfig-{{$index}}-volume
         configMap:
           name: rules-shardingproxy-configmap
@@ -126,8 +133,12 @@ spec:
           ## javaagent configuration.
           - name: agentconfig-volume
             mountPath: "/opt/shardingproxy/ext-lib/agentlib/conf/"
+          volumeMounts:
+          ## server configuration.
+          - name: serverconfig-volume
+            mountPath: "/opt/shardingproxy/conf/"
           ## sharding rules configuration.
-          {{- range $index, $value := .Values.shardingproxy.shardingConfigs}}
+          {{- range $index, $value := .Values.shardingproxy.ruleConfigs}}
           - name: ruleconfig-{{$index}}-volume
             mountPath: "/opt/shardingproxy/conf/"
           {{- end}}
