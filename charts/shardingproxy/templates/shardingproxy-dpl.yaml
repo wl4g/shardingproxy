@@ -1,3 +1,4 @@
+# see:https://kubernetes.io/zh/docs/concepts/workloads/controllers/deployment/
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -34,21 +35,22 @@ spec:
         {{- toYaml . | nindent 8 }}
       {{- end }}
       labels:
-        app: {{ include "shardingproxy.name" . }}
-        version: {{ .Chart.AppVersion }}
+        app.kubernetes.io/component: application
         app.kubernetes.io/name: {{ include "shardingproxy.name" . }}
         app.kubernetes.io/instance: {{ .Release.Name }}
+        app.kubernetes.io/version: {{ .Chart.AppVersion }}
 
     spec:
       {{- if .Values.initContainers }}
       initContainers:
-{{ toYaml .Values.initContainers | indent 8 }}
+{{ toYaml .Values.shardingproxy.initContainers | indent 8 }}
       {{- end }}
 
       {{- if .Values.shardingproxy.image.pullSecrets }}
       imagePullSecrets:
         {{- range .Values.shardingproxy.image.pullSecrets }}
         - name: {{ . }}
+        {{- end }}
       {{- end }}
 
       serviceAccountName: {{ include "shardingproxy.fullname" . }}
@@ -58,20 +60,24 @@ spec:
       {{- end }}
 
       volumes:
-      ## javaagent configuration volume.
-      - name: agentConfig
+      ## javaagent configuration.
+      - name: agentconfig-volume
         configMap:
-          name: {{ include "shardingproxy.fullname" . }}-agentConfig
-
-      ## sharding rules configuration volume.
-      {{- range $index, $value := .Values.shardingConfigs}}
-      - name: {{$index}}
+          name: agent-shardingproxy-configmap
+          items:
+          - key: agent.config
+            path: agent.yaml
+      ## sharding rules configuration.
+      {{- range $index, $value := .Values.shardingproxy.shardingConfigs}}
+      - name: ruleconfig-{{$index}}-volume
         configMap:
-          name: {{ include "shardingproxy.fullname" . }}-{{$index}}
+          name: rules-shardingproxy-configmap
+          items:
+          - key: {{$index}}
+            path: config-{{$index}}.yaml
       {{- end}}
-
-      ## sharding data(transactions) volume.
-      - name: shardingData
+      ## data(transactions).
+      - name: shardingdata-volume
       {{- if not .Values.shardingproxy.persistence.enabled }}
         emptyDir: {}
       {{- else if .Values.shardingproxy.persistence.existingClaim }}
@@ -80,10 +86,11 @@ spec:
           claimName: {{ tpl . $ }}
         {{- end }}
       {{- end }}
-
-      ## sharding log volume.
-      - name: shardingLog
+      ## log.
+      - name: shardinglog-volume
         emptyDir: {}
+
+      restartPolicy: Always
 
       containers:
         - name: {{ .Chart.Name }}
@@ -92,6 +99,7 @@ spec:
           {{- end }}
           image: "{{ .Values.shardingproxy.image.repository }}:{{ .Values.shardingproxy.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.shardingproxy.image.pullPolicy }}
+          #command: [ "/bin/sh", "-c", "env" ]
           ports:
             - name: proxy
               containerPort: 3308
@@ -100,32 +108,34 @@ spec:
               containerPort: 10108
               protocol: TCP
 
-          env:
-          - name: SHARDINGPROXY_NAME
-            value: {{ .Release.Name }}
-          - name: JAVA_OPTS
-            value: '-Djava.awt.headless=true'
-          - name: SHARDING_PORT
-            value: 3308
+          ## see:https://kubernetes.io/docs/tasks/inject-data-application/define-environment-variable-container/
+          #env:
+          #- name: SHARDINGPROXY_NAME
+          #  value: {{ .Release.Name }}
+          #- name: JAVA_OPTS
+          #  value: "-Djava.awt.headless=true"
+          #- name: SHARDING_PORT
+          #  value: '3308'
 
-          #envFrom:
-          #- configMapRef:
-          #  name: {{ include "shardingproxy.fullname" . }}-env
+          ## see:https://kubernetes.io/docs/tasks/configure-pod-container/configure-pod-configmap/
+          envFrom:
+          - configMapRef:
+              name: env-shardingproxy-configmap
 
           volumeMounts:
-          ## javaagent configuration volume.
-          - name: agentConfig
-            mountPath: "/opt/shardingproxy/ext-lib/agentlib/conf/agent.yaml"
-          ## sharding rules configuration volume.
-          {{- range $index, $value := .Values.shardingConfigs}}
-          - name: {{$index}}
-            mountPath: "/opt/shardingproxy/conf/config-{{$index}}.yaml"
+          ## javaagent configuration.
+          - name: agentconfig-volume
+            mountPath: "/opt/shardingproxy/ext-lib/agentlib/conf/"
+          ## sharding rules configuration.
+          {{- range $index, $value := .Values.shardingproxy.shardingConfigs}}
+          - name: ruleconfig-{{$index}}-volume
+            mountPath: "/opt/shardingproxy/conf/"
           {{- end}}
-          ## sharding rules volume.
-          - name: shardingData
+          ## datadir.
+          - name: shardingdata-volume
             mountPath: "/opt/shardingproxy/data/"
-          ## sharding log volume.
-          - name: shardingLog
+          ## logdir.
+          - name: shardinglog-volume
             mountPath: "/opt/shardingproxy/log/"
 
           livenessProbe:

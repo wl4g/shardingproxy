@@ -18,14 +18,14 @@ To install the chart with the release name `shardingproxy`:
 ```bash
 git clone https://github.com/wl4g/xcloud-shardingproxy.git
 cd xcloud-shardingproxy/charts/shardingproxy/
-helm install shardingproxy .
+helm -n app-rds install shardingproxy .
 ```
 
 + or, From chart repos
 
 ```bash
 helm repo add shardingproxy https://helm-repo.wl4g.io/charts
-helm install shardingproxy wl4g/shardingproxy
+helm -n app-rds install shardingproxy wl4g/shardingproxy
 ```
 
 > If you want to install an unstable version, you need to add `--devel` when you execute the `helm install` command.
@@ -38,7 +38,7 @@ To uninstall/delete the `shardingproxy` deployment:
 helm del shardingproxy
 ```
 
-## Configuration
+## Configurable
 
 The following table lists the configurable parameters of the shardingproxy chart and their default values.
 
@@ -96,3 +96,9 @@ The following table lists the configurable parameters of the shardingproxy chart
 | `ingress.prometheus.hosts` | Ingress hosts for shardingproxy prometheus API |  prometheus.shardingproxy.local |
 | `ingress.prometheus.tls` | Ingress tls for shardingproxy prometheus API |  [] |
 | `ingress.prometheus.annotations` | Ingress annotations for shardingproxy prometheus API | {} |
+
+## FAQ
+
+### How to troubleshoot Pods that are missing os tools
+
+- Use ephemeral containers to debug running or crashed Pods: [kubernetes.io/docs/tasks/debug-application-cluster/debug-running-pod](https://kubernetes.io/docs/tasks/debug-application-cluster/debug-running-pod/)

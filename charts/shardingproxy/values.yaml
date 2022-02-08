@@ -9,7 +9,7 @@ shardingproxy:
     ## Secrets must be manually created in the namespace.
     ## ref: https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/
     ##
-    # pullSecrets:
+    pullSecrets:
     # - myRegistryKeySecretName
 
   ## It is recommended to have odd number of nodes in a cluster, otherwise the shardingproxy cluster cannot be automatically healed in case of net-split.
@@ -44,7 +44,7 @@ shardingproxy:
     ## Existing PersistentVolumeClaims
     ## The value is evaluated as a template
     ## So, for example, the name can depend on .Release or .Chart
-    # existingClaim: ""
+    existingClaim: ""
 
   resources:
     enabled: false
@@ -117,7 +117,7 @@ shardingproxy:
 
   ## ShardingProxy sharding configuration, example see: https://github.com/wl4g/xcloud-shardingproxy/blob/master/xcloud-shardingproxy-starter/src/main/resources/example/
   shardingConfigs:
-    - sharding_rw_warehousedb: |-
+    readwrite-warehousedb: |-
       schemaName: warehousedb
       extensionDefaultDataSource:
         username: root

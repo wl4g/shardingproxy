@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: {{ include "shardingproxy.fullname" . }}-agentConfig
+  name: agent-shardingproxy-configmap
   namespace: {{ .Release.Namespace }}
   labels:
     app.kubernetes.io/name: {{ include "shardingproxy.name" . }}
@@ -9,21 +9,40 @@ metadata:
     app.kubernetes.io/managed-by: {{ .Release.Service }}
     helm.sh/chart: {{ include "shardingproxy.chart" . }}
 data:
-{{ toYaml .Values.shardingproxy.agentConfig | indent 2 }}
+  agent.config: {{ toYaml .Values.shardingproxy.agentConfig | indent 2 }}
 
 ---
 
-{{- range $index, $value := .Values.shardingConfigs}}
----
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: {{ include "shardingproxy.fullname" . }}-{{$index}}
+  name: env-shardingproxy-configmap
   namespace: {{ .Release.Namespace }}
   labels:
     app.kubernetes.io/name: {{ include "shardingproxy.name" . }}
     app.kubernetes.io/instance: {{ .Release.Name }}
     app.kubernetes.io/managed-by: {{ .Release.Service }}
     helm.sh/chart: {{ include "shardingproxy.chart" . }}
-data: "{{ $value }}"
+data:
+  ## NOTES: Environment variable values must use double or single quotes.
+  ## see:https://stackoverflow.com/questions/59354115/helm-upgrade-fails-with-error-expects-or-n-but-found-t
+  SHARDINGPROXY_NAME: {{ .Release.Name }}
+  JAVA_OPTS: "-Djava.awt.headless=true"
+  SHARDING_PORT: "3308"
+
+---
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: rules-shardingproxy-configmap
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app.kubernetes.io/name: {{ include "shardingproxy.name" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+    helm.sh/chart: {{ include "shardingproxy.chart" . }}
+data:
+{{- range $index, $value := .Values.shardingproxy.shardingConfigs}}
+  {{ $index }}: {{ toYaml $value | indent 2 }}
 {{- end}}
