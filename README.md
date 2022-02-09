@@ -1,4 +1,4 @@
-# An cloud-native db-sharding service based on [shardingsphere-proxy](https://github.com/apache/shardingsphere/tree/master/shardingsphere-proxy)
+# Cloud-native enterprise distribution edition based on apache [shardingsphere-proxy](https://github.com/apache/shardingsphere/tree/master/shardingsphere-proxy)
 
 > It's an enhanced package that integrates shardingsphere-proxy and shardingsphere-scaling
 
