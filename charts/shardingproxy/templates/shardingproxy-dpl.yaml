@@ -6,9 +6,9 @@ metadata:
   namespace: {{ .Release.Namespace }}
   labels:
     app.kubernetes.io/name: {{ include "shardingproxy.name" . }}
-    helm.sh/chart: {{ include "shardingproxy.chart" . }}
     app.kubernetes.io/instance: {{ .Release.Name }}
     app.kubernetes.io/managed-by: {{ .Release.Service }}
+    helm.sh/chart: {{ include "shardingproxy.chart" . }}
 
 spec:
   {{- if .Values.shardingproxy.autoscaling.enabled }}

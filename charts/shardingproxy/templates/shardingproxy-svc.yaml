@@ -1,3 +1,4 @@
+## see:https://kubernetes.io/zh/docs/concepts/services-networking/service/#discovering-services
 apiVersion: v1
 kind: Service
 metadata:
@@ -5,9 +6,9 @@ metadata:
   namespace: {{ .Release.Namespace }}
   labels:
     app.kubernetes.io/name: {{ include "shardingproxy.name" . }}
-    helm.sh/chart: {{ include "shardingproxy.chart" . }}
     app.kubernetes.io/instance: {{ .Release.Name }}
     app.kubernetes.io/managed-by: {{ .Release.Service }}
+    helm.sh/chart: {{ include "shardingproxy.chart" . }}
   {{- if .Values.shardingproxy.service.annotations }}
   annotations:
 {{ toYaml .Values.shardingproxy.service.annotations | indent 4 }}
@@ -16,13 +17,13 @@ metadata:
 spec:
   type: {{ .Values.shardingproxy.service.type }}
   {{- if eq .Values.shardingproxy.service.type "LoadBalancer" }}
-  {{- if .Values.shardingproxy.service.loadBalancerIP }}
+  {{- if not (empty .Values.shardingproxy.service.loadBalancerIP) }}
   loadBalancerIP: {{ .Values.shardingproxy.service.loadBalancerIP }}
   {{- end }}
-  {{- if .Values.shardingproxy.service.loadBalancerSourceRanges }}
+  {{- if not (empty .Values.shardingproxy.service.loadBalancerSourceRanges) }}
   loadBalancerSourceRanges: {{- toYaml .Values.shardingproxy.service.loadBalancerSourceRanges | nindent 4 }}
   {{- end }}
-  {{- if .Values.shardingproxy.service.externalIPs }}
+  {{- if not (empty .Values.shardingproxy.service.externalIPs) }}
   externalIPs: {{- toYaml .Values.shardingproxy.service.externalIPs | nindent 4 }}
   {{- end }}
   {{- end }}
@@ -64,6 +65,8 @@ spec:
     app.kubernetes.io/instance: {{ .Release.Name }}
 
 ---
+
+## see:https://kubernetes.io/zh/docs/concepts/services-networking/service/#headless-services
 apiVersion: v1
 kind: Service
 metadata:
@@ -71,9 +74,9 @@ metadata:
   namespace: {{ .Release.Namespace }}
   labels:
     app.kubernetes.io/name: {{ include "shardingproxy.name" . }}
-    helm.sh/chart: {{ include "shardingproxy.chart" . }}
     app.kubernetes.io/instance: {{ .Release.Name }}
     app.kubernetes.io/managed-by: {{ .Release.Service }}
+    helm.sh/chart: {{ include "shardingproxy.chart" . }}
 spec:
   type: ClusterIP
   sessionAffinity: None
@@ -94,7 +97,3 @@ spec:
     port: {{ .Values.shardingproxy.service.prometheus | default 10108 }}
     protocol: TCP
     targetPort: prometheus
-
-  selector:
-    app.kubernetes.io/name: {{ include "shardingproxy.name" . }}
-    app.kubernetes.io/instance: {{ .Release.Name }}
