@@ -276,7 +276,7 @@ shardingproxy:
     ## Port for dashboard
     dashboard: 8080
     ## Port for prometheus API
-    prometheus: 8081
+    prometheus: 10108
     ## Specify the nodePort(s) value for the LoadBalancer and NodePort service types.
     ## see:https://kubernetes.io/docs/concepts/services-networking/service/#type-nodeport
     nodePorts:
