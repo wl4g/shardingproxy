@@ -277,7 +277,7 @@ shardingproxy:
     proxy: 3308
     ## Port for dashboard
     ##
-    dashboard: 18083
+    dashboard: 8080
     ## Port for prometheus API
     ##
     prometheus: 8081
