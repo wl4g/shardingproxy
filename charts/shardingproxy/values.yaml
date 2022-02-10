@@ -1,6 +1,6 @@
 ## This is the spec definition of ShardingProxy instance deployed in Kubernetes.
 shardingproxy:
-  # ========================================== Begin ShardingProxy Deployment ================================================
+  ## ========================================== Begin ShardingProxy Deployment ================================================
   image:
     repository: wl4g/shardingproxy
     tag: latest
@@ -80,9 +80,9 @@ shardingproxy:
 
   affinity: {}
 
-  # ========================================== End ShardingProxy Deployment ================================================
+  ## ========================================== End ShardingProxy Deployment ================================================
 
-  # ========================================== Begin ShardingProxy ConfigMap ===============================================
+  ## ========================================== Begin ShardingProxy ConfigMap ===============================================
   ## ShardingProxy agent configuration, example see:https://github.com/wl4g/xcloud-shardingproxy/blob/master/xcloud-shardingproxy-starter/src/main/resources/agent/conf/agent.yaml
   agentConfig: |-
     applicationName: cn_south1_a1_shardingproxy_0
@@ -112,7 +112,7 @@ shardingproxy:
           otel.bsp.max.queue.size: "2048"
           otel.bsp.max.export.batch.size: "512"
           otel.bsp.export.timeout: "30000"
-          otel.exporter.jaeger.endpoint: "http://jaeger.shardingproxy.svc.cluster.local:14250"
+          otel.exporter.jaeger.endpoint: "http://jaeger.default.svc.cluster.local:14250"
           otel.exporter.jaeger.timeout: "10000"
 
   ## ShardingProxy sharding configuration, example see:https://github.com/wl4g/xcloud-shardingproxy/blob/master/xcloud-shardingproxy-starter/src/main/resources/example/
@@ -125,7 +125,7 @@ shardingproxy:
           type: ZooKeeper
           props:
             namespace: cn_south1_a1_shardingproxy_0
-            server-lists: localhost:2181
+            server-lists: zookeeper-shardingproxy-headless.default.svc.cluster.local:2181
             retryIntervalMilliseconds: 500
             timeToLiveSeconds: 60
             maxRetries: 3
@@ -214,11 +214,11 @@ shardingproxy:
         minPoolSize: 1
       dataSources:
         ds_warehousedb_r0z0mgr0i0:
-          url: 'jdbc:mysql://n0.rds.local:3306/warehousedb?serverTimezone=UTC&useSSL=false&allowMultiQueries=true&characterEncoding=utf-8'
+          url: 'jdbc:mysql://mysql0.shardingproxy.default.svc.cluster.local:3306/warehousedb?serverTimezone=UTC&useSSL=false&allowMultiQueries=true&characterEncoding=utf-8'
         ds_warehousedb_r0z0mgr0i1:
-          url: 'jdbc:mysql://n1.rds.local:3306/warehousedb?serverTimezone=UTC&useSSL=false&allowMultiQueries=true&characterEncoding=utf-8'
+          url: 'jdbc:mysql://mysql1.shardingproxy.default.svc.cluster.local:3306/warehousedb?serverTimezone=UTC&useSSL=false&allowMultiQueries=true&characterEncoding=utf-8'
         ds_warehousedb_r0z0mgr0i2:
-          url: 'jdbc:mysql://n2.rds.local:3306/warehousedb?serverTimezone=UTC&useSSL=false&allowMultiQueries=true&characterEncoding=utf-8'
+          url: 'jdbc:mysql://mysql2.shardingproxy.default.svc.cluster.local:3306/warehousedb?serverTimezone=UTC&useSSL=false&allowMultiQueries=true&characterEncoding=utf-8'
       rules:
       - !READWRITE_SPLITTING
         dataSources:
@@ -253,21 +253,21 @@ shardingproxy:
                  {
                    "memberHostMappings": [{
                        "rds-mgr-0:3306": [
-                           "n0.rds.local:3306"
+                           "mysql0.shardingproxy.default.svc.cluster.local:3306"
                        ]
                    }, {
                        "rds-mgr-1:3306": [
-                           "n1.rds.local:3306"
+                           "mysql1.shardingproxy.default.svc.cluster.local:3306"
                        ]
                    }, {
                        "rds-mgr-2:3306": [
-                           "n2.rds.local:3306"
+                           "mysql2.shardingproxy.default.svc.cluster.local:3306"
                        ]
                    }]
                  }
-  # ========================================== End ShardingProxy ConfigMap ===============================================
+  ## ========================================== End ShardingProxy ConfigMap ===============================================
 
-  # ========================================== Begin ShardingProxy Service ===============================================
+  ## ========================================== Begin ShardingProxy Service ===============================================
   service:
     ## Service type
     type: ClusterIP
@@ -292,6 +292,7 @@ shardingproxy:
     #- 10.10.10.0/24
     ##
     ## Set the ExternalIPs
+    ## see:https://kubernetes.io/zh/docs/concepts/services-networking/service/#external-ips
     externalIPs: []
     ## Provide any additional annotations which may be required. Evaluated as a template
     annotations: {}
@@ -306,7 +307,7 @@ shardingproxy:
         # kubernetes.io/tls-acme: "true"
       path: /
       hosts:
-      - dashboard.shardingproxy.svc.cluster.local
+      - dashboard.default.svc.cluster.local
       tls: []
 
     ## ingress for ShardingProxy prometheus API
@@ -318,7 +319,7 @@ shardingproxy:
         # kubernetes.io/tls-acme: "true"
       path: /
       hosts:
-      - prometheus.shardingproxy.svc.cluster.local
+      - prometheus.default.svc.cluster.local
       tls: []
 
-  # ========================================== End ShardingProxy Service ===============================================
+  ## ========================================== End ShardingProxy Service ===============================================

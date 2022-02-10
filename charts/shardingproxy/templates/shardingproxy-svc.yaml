@@ -1,3 +1,4 @@
+## ========================================== Begin ShardingProxy frontend Service ================================================
 ## see:https://kubernetes.io/zh/docs/concepts/services-networking/service/#discovering-services
 apiVersion: v1
 kind: Service
@@ -24,6 +25,7 @@ spec:
   loadBalancerSourceRanges: {{- toYaml .Values.shardingproxy.service.loadBalancerSourceRanges | nindent 4 }}
   {{- end }}
   {{- if not (empty .Values.shardingproxy.service.externalIPs) }}
+  ## see:https://kubernetes.io/zh/docs/concepts/services-networking/service/#external-ips
   externalIPs: {{- toYaml .Values.shardingproxy.service.externalIPs | nindent 4 }}
   {{- end }}
   {{- end }}
@@ -63,14 +65,16 @@ spec:
   selector:
     app.kubernetes.io/name: {{ include "shardingproxy.name" . }}
     app.kubernetes.io/instance: {{ .Release.Name }}
+## ========================================== End ShardingProxy frontend Service ================================================
 
 ---
 
+## ========================================== Begin ShardingProxy backend Service ===============================================
 ## see:https://kubernetes.io/zh/docs/concepts/services-networking/service/#headless-services
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ include "shardingproxy.fullname" . }}-headless
+  name: mysql0-{{ include "shardingproxy.fullname" . }}-headless
   namespace: {{ .Release.Namespace }}
   labels:
     app.kubernetes.io/name: {{ include "shardingproxy.name" . }}
@@ -82,18 +86,181 @@ spec:
   sessionAffinity: None
   clusterIP: None
   publishNotReadyAddresses: true
+
+---
+
+## see:https://kubernetes.io/zh/docs/concepts/services-networking/service/#headless-services
+apiVersion: v1
+kind: Service
+metadata:
+  name: mysql1-{{ include "shardingproxy.fullname" . }}-headless
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app.kubernetes.io/name: {{ include "shardingproxy.name" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+    helm.sh/chart: {{ include "shardingproxy.chart" . }}
+spec:
+  type: ClusterIP
+  sessionAffinity: None
+  clusterIP: None
+  publishNotReadyAddresses: true
+
+---
+
+## see:https://kubernetes.io/zh/docs/concepts/services-networking/service/#headless-services
+apiVersion: v1
+kind: Service
+metadata:
+  name: mysql2-{{ include "shardingproxy.fullname" . }}-headless
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app.kubernetes.io/name: {{ include "shardingproxy.name" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+    helm.sh/chart: {{ include "shardingproxy.chart" . }}
+spec:
+  type: ClusterIP
+  sessionAffinity: None
+  clusterIP: None
+  publishNotReadyAddresses: true
+
+---
+
+## see:https://kubernetes.io/zh/docs/concepts/services-networking/service/#headless-services
+apiVersion: v1
+kind: Service
+metadata:
+  name: zookeeper-{{ include "shardingproxy.fullname" . }}-headless
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app.kubernetes.io/name: {{ include "shardingproxy.name" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+    helm.sh/chart: {{ include "shardingproxy.chart" . }}
+spec:
+  type: ClusterIP
+  sessionAffinity: None
+  clusterIP: None
+  publishNotReadyAddresses: true
+
+---
+
+## see:https://kubernetes.io/zh/docs/concepts/services-networking/service/#headless-services
+apiVersion: v1
+kind: Service
+metadata:
+  name: jaeger-{{ include "shardingproxy.fullname" . }}-headless
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app.kubernetes.io/name: {{ include "shardingproxy.name" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+    helm.sh/chart: {{ include "shardingproxy.chart" . }}
+spec:
+  type: ClusterIP
+  sessionAffinity: None
+  clusterIP: None
+  publishNotReadyAddresses: true
+
+---
+
+apiVersion: v1
+kind: Endpoints
+metadata:
+  name: mysql0-{{ include "shardingproxy.fullname" . }}-headless
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app.kubernetes.io/name: {{ include "shardingproxy.name" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+    helm.sh/chart: {{ include "shardingproxy.chart" . }}
+subsets:
+- addresses:
+  - ip: 10.0.0.10
   ports:
-  - name: proxy
-    port: {{ .Values.shardingproxy.service.proxyPort | default 3308 }}
+  - name: external-mysql0
+    port: 33060
     protocol: TCP
-    targetPort: proxy
 
-  - name: dashboard
-    port: {{ .Values.shardingproxy.service.dashboardPort | default 18083 }}
-    protocol: TCP
-    targetPort: dashboard
+---
 
-  - name: prometheus
-    port: {{ .Values.shardingproxy.service.prometheusPort | default 10108 }}
+apiVersion: v1
+kind: Endpoints
+metadata:
+  name: mysql1-{{ include "shardingproxy.fullname" . }}-headless
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app.kubernetes.io/name: {{ include "shardingproxy.name" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+    helm.sh/chart: {{ include "shardingproxy.chart" . }}
+subsets:
+- addresses:
+  - ip: 10.0.0.10
+  ports:
+  - name: external-mysql0
+    port: 33061
     protocol: TCP
-    targetPort: prometheus
+
+---
+
+apiVersion: v1
+kind: Endpoints
+metadata:
+  name: mysql2-{{ include "shardingproxy.fullname" . }}-headless
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app.kubernetes.io/name: {{ include "shardingproxy.name" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+    helm.sh/chart: {{ include "shardingproxy.chart" . }}
+subsets:
+- addresses:
+  - ip: 10.0.0.10
+  ports:
+  - name: external-mysql0
+    port: 33062
+    protocol: TCP
+
+---
+
+apiVersion: v1
+kind: Endpoints
+metadata:
+  name: zookeeper-{{ include "shardingproxy.fullname" . }}-headless
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app.kubernetes.io/name: {{ include "shardingproxy.name" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+    helm.sh/chart: {{ include "shardingproxy.chart" . }}
+subsets:
+- addresses:
+  - ip: 10.0.0.10
+  ports:
+  - name: external-zookeeper
+    port: 2181
+    protocol: TCP
+
+---
+
+apiVersion: v1
+kind: Endpoints
+metadata:
+  name: jaeger-{{ include "shardingproxy.fullname" . }}-headless
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app.kubernetes.io/name: {{ include "shardingproxy.name" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+    helm.sh/chart: {{ include "shardingproxy.chart" . }}
+subsets:
+- addresses:
+  - ip: 10.0.0.10
+  ports:
+  - name: external-jaeger
+    port: 14250
+    protocol: TCP
+
+## ========================================== E d ShardingProxy backend Service ===============================================
