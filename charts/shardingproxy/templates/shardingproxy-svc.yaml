@@ -29,7 +29,7 @@ spec:
   {{- end }}
   ports:
   - name: proxy
-    port: {{ .Values.shardingproxy.service.proxy | default 3308 }}
+    port: {{ .Values.shardingproxy.service.proxyPort | default 3308 }}
     protocol: TCP
     targetPort: proxy
     {{- if and (or (eq .Values.shardingproxy.service.type "NodePort") (eq .Values.shardingproxy.service.type "LoadBalancer")) (not (empty .Values.shardingproxy.service.nodePorts.proxy)) }}
@@ -39,7 +39,7 @@ spec:
     {{- end }}
 
   - name: dashboard
-    port: {{ .Values.shardingproxy.service.dashboard | default 18083 }}
+    port: {{ .Values.shardingproxy.service.dashboardPort | default 18083 }}
     protocol: TCP
     targetPort: dashboard
     {{- if and (or (eq .Values.shardingproxy.service.type "NodePort") (eq .Values.shardingproxy.service.type "LoadBalancer")) (not (empty .Values.shardingproxy.service.nodePorts.dashboard)) }}
@@ -48,9 +48,9 @@ spec:
     nodePort: null
     {{- end }}
 
-  {{- if not (empty .Values.shardingproxy.service.prometheus) }}
+  {{- if not (empty .Values.shardingproxy.service.prometheusPort) }}
   - name: prometheus
-    port: {{ .Values.shardingproxy.service.prometheus | default 10108 }}
+    port: {{ .Values.shardingproxy.service.prometheusPort | default 10108 }}
     protocol: TCP
     targetPort: prometheus
     {{- if and (or (eq .Values.shardingproxy.service.type "NodePort") (eq .Values.shardingproxy.service.type "LoadBalancer")) (not (empty .Values.shardingproxy.service.nodePorts.prometheus)) }}
@@ -84,16 +84,16 @@ spec:
   publishNotReadyAddresses: true
   ports:
   - name: proxy
-    port: {{ .Values.shardingproxy.service.proxy | default 3308 }}
+    port: {{ .Values.shardingproxy.service.proxyPort | default 3308 }}
     protocol: TCP
     targetPort: proxy
 
   - name: dashboard
-    port: {{ .Values.shardingproxy.service.dashboard | default 18083 }}
+    port: {{ .Values.shardingproxy.service.dashboardPort | default 18083 }}
     protocol: TCP
     targetPort: dashboard
 
   - name: prometheus
-    port: {{ .Values.shardingproxy.service.prometheus | default 10108 }}
+    port: {{ .Values.shardingproxy.service.prometheusPort | default 10108 }}
     protocol: TCP
     targetPort: prometheus

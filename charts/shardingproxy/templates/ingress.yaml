@@ -39,10 +39,10 @@ spec:
           service:
             name: {{ include "shardingproxy.fullname" $ }}
             port:
-              number: {{ $.Values.shardingproxy.service.dashboard }}
+              number: {{ $.Values.shardingproxy.service.dashboardPort }}
           {{- else }}
           serviceName: {{ include "shardingproxy.fullname" $ }}
-          servicePort: {{ $.Values.shardingproxy.service.dashboard }}
+          servicePort: {{ $.Values.shardingproxy.service.dashboardPort }}
           {{- end }}
   {{- end -}}
   {{- if .Values.shardingproxy.ingress.dashboard.tls }}
@@ -92,10 +92,10 @@ spec:
           service:
             name: {{ include "shardingproxy.fullname" $ }}
             port:
-              number: {{ $.Values.shardingproxy.service.prometheus }}
+              number: {{ $.Values.shardingproxy.service.prometheusPort }}
           {{- else }}
           serviceName: {{ include "shardingproxy.fullname" $ }}
-          servicePort: {{ $.Values.shardingproxy.service.prometheus }}
+          servicePort: {{ $.Values.shardingproxy.service.prometheusPort }}
           {{- end }}
   {{- end -}}
   {{- if .Values.shardingproxy.ingress.prometheus.tls }}

@@ -271,12 +271,12 @@ shardingproxy:
   service:
     ## Service type
     type: ClusterIP
-    ## Port for Proxy JDBC
-    proxy: 3308
-    ## Port for dashboard
-    dashboard: 8080
-    ## Port for prometheus API
-    prometheus: 10108
+    ## proxy JDBC
+    proxyPort: 3308
+    ## dashboard API
+    dashboardPort: 8080
+    ## prometheus API
+    prometheusPort: 10108
     ## Specify the nodePort(s) value for the LoadBalancer and NodePort service types.
     ## see:https://kubernetes.io/docs/concepts/services-networking/service/#type-nodeport
     nodePorts:

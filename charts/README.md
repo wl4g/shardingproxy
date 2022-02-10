@@ -74,9 +74,9 @@ The following table lists the configurable parameters of the shardingproxy chart
 | `affinity` | Map of node/pod affinities |`{}`|
 | `shardingConfigs`  | ShardingProxy sharding configuration. see the [example](https://github.com/wl4g/xcloud-shardingproxy/blob/master/xcloud-shardingproxy-starter/src/main/resources/example/)|`{}`|
 | `service.type`  | Kubernetes Service type. |ClusterIP|
-| `service.proxy`  | Port for proxy JDBC. |3308|
-| `service.dashboard`  | Port for dashboard. |18083|
-| `service.prometheus`  | Port for prometheus. |10108|
+| `service.proxyPortPort`  | Port for proxy JDBC. |3308|
+| `service.dashboardPortPort`  | Port for dashboard. |18083|
+| `service.prometheusPortPort`  | Port for prometheus. |10108|
 | `service.nodePorts.proxy`  | Kubernetes node port for proxy JDBC. |  nil  |
 | `service.nodePorts.dashboard`  | Kubernetes node port for dashboard. |  nil  |
 | `service.nodePorts.prometheus`  | Kubernetes node port for prometheus API. |  nil  |
