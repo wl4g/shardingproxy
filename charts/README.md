@@ -30,6 +30,54 @@ helm -n app-rds install shardingproxy wl4g/shardingproxy
 
 > If you want to install an unstable version, you need to add `--devel` when you execute the `helm install` command.
 
++ Veifying example
+
+```bash
+$ kind version
+kind v0.11.1 go1.16.4 linux/amd64
+
+$ kubectl get no,deploy,po,svc,ep -owide
+NAME                                 STATUS   ROLES                  AGE     VERSION   INTERNAL-IP   EXTERNAL-IP   OS-IMAGE       KERNEL-VERSION     CONTAINER-RUNTIME
+node/kind-kubernetes-control-plane   Ready    control-plane,master   4h17m   v1.21.1   172.18.0.2    <none>        Ubuntu 21.04   5.4.0-88-generic   containerd://1.5.2
+
+NAME                            READY   UP-TO-DATE   AVAILABLE   AGE   CONTAINERS      IMAGES                      SELECTOR
+deployment.apps/shardingproxy   2/2     2            2           12m   shardingproxy   wl4g/shardingproxy:latest   app.kubernetes.io/instance=shardingproxy,app.kubernetes.io/name=shardingproxy
+
+NAME                                 READY   STATUS    RESTARTS   AGE   IP            NODE                            NOMINATED NODE   READINESS GATES
+pod/shardingproxy-57b9c84888-4m45q   1/1     Running   0          12m   10.244.0.50   kind-kubernetes-control-plane   <none>           <none>
+pod/shardingproxy-57b9c84888-s8vcb   1/1     Running   0          12m   10.244.0.49   kind-kubernetes-control-plane   <none>           <none>
+
+NAME                                       TYPE        CLUSTER-IP    EXTERNAL-IP   PORT(S)                       AGE     SELECTOR
+service/jaeger-shardingproxy-headless      ClusterIP   None          <none>        <none>                        12m     <none>
+service/kubernetes                         ClusterIP   10.96.0.1     <none>        443/TCP                       4h17m   <none>
+service/mysql0-shardingproxy-headless      ClusterIP   None          <none>        <none>                        12m     <none>
+service/mysql1-shardingproxy-headless      ClusterIP   None          <none>        <none>                        12m     <none>
+service/mysql2-shardingproxy-headless      ClusterIP   None          <none>        <none>                        12m     <none>
+service/shardingproxy                      ClusterIP   10.96.77.82   <none>        3308/TCP,8080/TCP,10108/TCP   12m     app.kubernetes.io/instance=shardingproxy,app.kubernetes.io/name=shardingproxy
+service/zookeeper-shardingproxy-headless   ClusterIP   None          <none>        <none>                        12m     <none>
+
+NAME                                         ENDPOINTS                                                          AGE
+endpoints/jaeger-shardingproxy-headless      10.0.0.10:14250                                                    12m
+endpoints/kubernetes                         172.18.0.2:6443                                                    4h17m
+endpoints/mysql0-shardingproxy-headless      10.0.0.10:33060                                                    12m
+endpoints/mysql1-shardingproxy-headless      10.0.0.10:33061                                                    12m
+endpoints/mysql2-shardingproxy-headless      10.0.0.10:33062                                                    12m
+endpoints/shardingproxy                      10.244.0.49:10108,10.244.0.50:10108,10.244.0.49:3308 + 1 more...   12m
+endpoints/zookeeper-shardingproxy-headless   10.0.0.10:2181                                                     12m
+
+$ kubectl port-forward --address 0.0.0.0 service/shardingproxy 3308:3308 &
+Forwarding from 0.0.0.0:3308 -> 3308
+
+$ echo 'show databases;' | mysql -h10.0.0.150 -P3308 -uwarehouse_ops0 -p123456
+mysql: [Warning] Using a password on the command line interface can be insecure.
+schema_name
+warehousedb
+```
+
+> Tips: The above demo environment is a single cluster created by kind-v0.11.1, where `10.0.0.150` is the physical node IP.
+
+> The access network path for the mysql client to query the database is: `10.0.0.150(client nodeIP)` --> `shardingproxy service(clusterIP)` --> `shardingproxy Pods(podsIP)` --> `mysql-shardingproxy-headles service(externalIP)` --> `mysqld`
+
 ## Uninstalling the Chart
 
 To uninstall/delete the `shardingproxy` deployment:
