@@ -214,11 +214,11 @@ shardingproxy:
         minPoolSize: 1
       dataSources:
         ds_warehousedb_r0z0mgr0i0:
-          url: 'jdbc:mysql://mysql0.shardingproxy.default.svc.cluster.local:3306/warehousedb?serverTimezone=UTC&useSSL=false&allowMultiQueries=true&characterEncoding=utf-8'
+          url: 'jdbc:mysql://mysql0-shardingproxy-headless.default.svc.cluster.local:33060/warehousedb?serverTimezone=UTC&useSSL=false&allowMultiQueries=true&characterEncoding=utf-8'
         ds_warehousedb_r0z0mgr0i1:
-          url: 'jdbc:mysql://mysql1.shardingproxy.default.svc.cluster.local:3306/warehousedb?serverTimezone=UTC&useSSL=false&allowMultiQueries=true&characterEncoding=utf-8'
+          url: 'jdbc:mysql://mysql1-shardingproxy-headless.default.svc.cluster.local:33061/warehousedb?serverTimezone=UTC&useSSL=false&allowMultiQueries=true&characterEncoding=utf-8'
         ds_warehousedb_r0z0mgr0i2:
-          url: 'jdbc:mysql://mysql2.shardingproxy.default.svc.cluster.local:3306/warehousedb?serverTimezone=UTC&useSSL=false&allowMultiQueries=true&characterEncoding=utf-8'
+          url: 'jdbc:mysql://mysql2-shardingproxy-headless.default.svc.cluster.local:33062/warehousedb?serverTimezone=UTC&useSSL=false&allowMultiQueries=true&characterEncoding=utf-8'
       rules:
       - !READWRITE_SPLITTING
         dataSources:
@@ -253,15 +253,15 @@ shardingproxy:
                  {
                    "memberHostMappings": [{
                        "rds-mgr-0:3306": [
-                           "mysql0.shardingproxy.default.svc.cluster.local:3306"
+                           "mysql0-shardingproxy-headless.default.svc.cluster.local:33060"
                        ]
                    }, {
                        "rds-mgr-1:3306": [
-                           "mysql1.shardingproxy.default.svc.cluster.local:3306"
+                           "mysql1-shardingproxy-headless.default.svc.cluster.local:33061"
                        ]
                    }, {
                        "rds-mgr-2:3306": [
-                           "mysql2.shardingproxy.default.svc.cluster.local:3306"
+                           "mysql2-shardingproxy-headless.default.svc.cluster.local:33062"
                        ]
                    }]
                  }
