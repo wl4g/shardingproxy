@@ -112,8 +112,8 @@
 			<scope>runtime</scope>
 			<excludes>
 				<exclude>${groupId}:${artifactId}</exclude>
-				<exclude>${groupId}:xcloud-shardingproxy-agent-bootstrap</exclude>
-				<exclude>${groupId}:xcloud-shardingproxy-agent-extension</exclude>
+				<exclude>${groupId}:dopaas-shardingproxy-agent-bootstrap</exclude>
+				<exclude>${groupId}:dopaas-shardingproxy-agent-extension</exclude>
 				<exclude>org.apache.shardingsphere:shardingsphere-agent-api</exclude>
 				<exclude>org.apache.shardingsphere:shardingsphere-agent-core</exclude>
 				<exclude>org.apache.shardingsphere:shardingsphere-agent-bootstrap</exclude>
@@ -147,14 +147,14 @@
 			<outputDirectory>ext-lib/agentlib</outputDirectory>
 			<scope>runtime</scope>
 			<includes>
-				<include>${groupId}:xcloud-shardingproxy-agent-bootstrap</include>
+				<include>${groupId}:dopaas-shardingproxy-agent-bootstrap</include>
 			</includes>
 		</dependencySet>
 		<dependencySet>
 			<outputDirectory>ext-lib/agentlib/plugins</outputDirectory>
 			<scope>runtime</scope>
 			<includes>
-				<include>${groupId}:xcloud-shardingproxy-agent-extension</include>
+				<include>${groupId}:dopaas-shardingproxy-agent-extension</include>
 				<!-- logging -->
 				<include>org.apache.shardingsphere:shardingsphere-agent-logging-base</include>
 				<!-- prometheus -->

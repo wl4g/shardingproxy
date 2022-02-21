@@ -2,15 +2,15 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.wl4g</groupId>
-	<artifactId>xcloud-shardingproxy</artifactId>
-	<version>2.2.1_5.1.0</version>
+	<artifactId>dopaas-shardingproxy</artifactId>
+	<version>3.0.0_5.1.0</version>
 	<packaging>pom</packaging>
-	<name>XCloud ShardingProxy</name>
-	<url>http://xcloud.wl4g.com</url>
-	<description>A XCloud integration Shardingsphere proxy.</description>
+	<name>DoPaaS ShardingProxy</name>
+	<url>http://shardingproxy.dopaas.wl4g.com</url>
+	<description>A DoPaaS based on Shardingsphere proxy.</description>
 	<organization>
 		<name>wl4g</name>
-		<url>https://xcloud.wl4g.com</url>
+		<url>https://shardingproxy.dopaas.wl4g.com</url>
 	</organization>
 	<licenses>
 		<license>
@@ -53,9 +53,9 @@
 		</developer>
 	</developers>
 	<modules>
-		<module>xcloud-shardingproxy-agent-bootstrap</module>
-		<module>xcloud-shardingproxy-agent-extension</module>
-		<module>xcloud-shardingproxy-starter</module>
+		<module>dopaas-shardingproxy-agent-bootstrap</module>
+		<module>dopaas-shardingproxy-agent-extension</module>
+		<module>dopaas-shardingproxy-starter</module>
 	</modules>
 	<!-- <parent> -->
 	<!-- <groupId>org.apache.shardingsphere</groupId> -->

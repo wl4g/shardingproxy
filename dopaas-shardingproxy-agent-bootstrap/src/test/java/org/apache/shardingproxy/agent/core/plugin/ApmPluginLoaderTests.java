@@ -69,7 +69,7 @@ public class ApmPluginLoaderTests {
                 new File("ext-lib/agentlib/plugins/simpleclient-0.11.0.jar"),
                 new File("ext-lib/agentlib/plugins/opentelemetry-sdk-1.3.0.jar"),
                 new File("ext-lib/agentlib/plugins/opentracing-api-0.31.0.jar"),
-                new File("ext-lib/agentlib/plugins/xcloud-shardingproxy-agent-extension-5.1.0.jar"),
+                new File("ext-lib/agentlib/plugins/dopaas-shardingproxy-agent-extension-5.1.0.jar"),
                 new File("ext-lib/agentlib/plugins/opentracing-noop-0.31.0.jar"),
                 new File("ext-lib/agentlib/plugins/simpleclient_tracer_otel_agent-0.11.0.jar"),
                 new File("ext-lib/agentlib/plugins/jaeger-core-0.31.0.jar") };

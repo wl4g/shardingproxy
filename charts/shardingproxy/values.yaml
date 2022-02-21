@@ -83,7 +83,7 @@ shardingproxy:
   ## ========================================== End ShardingProxy Deployment ================================================
 
   ## ========================================== Begin ShardingProxy ConfigMap ===============================================
-  ## ShardingProxy agent configuration, example see:https://github.com/wl4g/xcloud-shardingproxy/blob/master/xcloud-shardingproxy-starter/src/main/resources/agent/conf/agent.yaml
+  ## ShardingProxy agent configuration, example see:https://github.com/wl4g/dopaas-shardingproxy/blob/master/dopaas-shardingproxy-starter/src/main/resources/agent/conf/agent.yaml
   agentConfig: |-
     applicationName: cn_south1_a1_shardingproxy_0
     ignoredPluginNames:
@@ -115,9 +115,9 @@ shardingproxy:
           otel.exporter.jaeger.endpoint: "http://jaeger.default.svc.cluster.local:14250"
           otel.exporter.jaeger.timeout: "10000"
 
-  ## ShardingProxy sharding configuration, example see:https://github.com/wl4g/xcloud-shardingproxy/blob/master/xcloud-shardingproxy-starter/src/main/resources/example/
+  ## ShardingProxy sharding configuration, example see:https://github.com/wl4g/dopaas-shardingproxy/blob/master/dopaas-shardingproxy-starter/src/main/resources/example/
   coreConfigs:
-    ## example see:https://github.com/wl4g/xcloud-shardingproxy/blob/master/xcloud-shardingproxy-starter/src/main/resources/example/server.yaml
+    ## example see:https://github.com/wl4g/dopaas-shardingproxy/blob/master/dopaas-shardingproxy-starter/src/main/resources/example/server.yaml
     server.yaml: |-
       mode:
         type: Cluster
@@ -201,7 +201,7 @@ shardingproxy:
         proxy-backend-executor-suitable: OLAP
         proxy-frontend-max-connections: 0
 
-    ## example see:https://github.com/wl4g/xcloud-shardingproxy/blob/master/xcloud-shardingproxy-starter/src/main/resources/example/config-readwrite-warehousedb.yaml
+    ## example see:https://github.com/wl4g/dopaas-shardingproxy/blob/master/dopaas-shardingproxy-starter/src/main/resources/example/config-readwrite-warehousedb.yaml
     config-readwrite-warehousedb.yaml: |-
       schemaName: warehousedb
       extensionDefaultDataSource:

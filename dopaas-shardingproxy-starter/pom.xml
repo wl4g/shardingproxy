@@ -1,14 +1,14 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<artifactId>xcloud-shardingproxy-starter</artifactId>
+	<artifactId>dopaas-shardingproxy-starter</artifactId>
 	<packaging>jar</packaging>
-	<name>XCloud ShardingProxy Starter</name>
-	<url>http://xcloud.wl4g.com</url>
-	<description>A XCloud Integration Shardingsphere Proxy.</description>
+	<name>DoPaaS ShardingProxy Starter</name>
+	<url>http://shardingproxy.dopaas.wl4g.com</url>
+	<description>A DoPaaS Shardingsphere Proxy.</description>
 	<organization>
 		<name>wl4g</name>
-		<url>https://xcloud.wl4g.com</url>
+		<url>https://shardingproxy.dopaas.wl4g.com</url>
 	</organization>
 	<licenses>
 		<license>
@@ -52,8 +52,8 @@
 	</developers>
 	<parent>
 		<groupId>com.wl4g</groupId>
-		<artifactId>xcloud-shardingproxy</artifactId>
-		<version>2.2.1_5.1.0</version>
+		<artifactId>dopaas-shardingproxy</artifactId>
+		<version>3.0.0_5.1.0</version>
 	</parent>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -128,12 +128,12 @@
 		<!-- The purpose of the following dependencies is to library packing to: ext-lib/agentlib/plugins. see:src/main/assemble/package.xml -->
 		<dependency>
 			<groupId>com.wl4g</groupId>
-			<artifactId>xcloud-shardingproxy-agent-bootstrap</artifactId>
+			<artifactId>dopaas-shardingproxy-agent-bootstrap</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>com.wl4g</groupId>
-			<artifactId>xcloud-shardingproxy-agent-extension</artifactId>
+			<artifactId>dopaas-shardingproxy-agent-extension</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>

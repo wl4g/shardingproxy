@@ -16,8 +16,8 @@ To install the chart with the release name `shardingproxy`:
 + From github
 
 ```bash
-git clone https://github.com/wl4g/xcloud-shardingproxy.git
-cd xcloud-shardingproxy/charts/shardingproxy/
+git clone https://github.com/wl4g/dopaas-shardingproxy.git
+cd dopaas-shardingproxy/charts/shardingproxy/
 helm -n app-rds install shardingproxy .
 ```
 
@@ -120,7 +120,7 @@ The following table lists the configurable parameters of the shardingproxy chart
 | `nodeSelector` | Node labels for pod assignment |`{}`|
 | `tolerations` | Toleration labels for pod assignment |`[]`|
 | `affinity` | Map of node/pod affinities |`{}`|
-| `shardingConfigs`  | ShardingProxy sharding configuration. see the [example](https://github.com/wl4g/xcloud-shardingproxy/blob/master/xcloud-shardingproxy-starter/src/main/resources/example/)|`{}`|
+| `shardingConfigs`  | ShardingProxy sharding configuration. see the [example](https://github.com/wl4g/dopaas-shardingproxy/blob/master/dopaas-shardingproxy-starter/src/main/resources/example/)|`{}`|
 | `service.type`  | Kubernetes Service type. |ClusterIP|
 | `service.proxyPortPort`  | Port for proxy JDBC. |3308|
 | `service.dashboardPortPort`  | Port for dashboard. |18083|
