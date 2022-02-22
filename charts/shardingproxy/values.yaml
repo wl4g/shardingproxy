@@ -17,15 +17,15 @@ shardingproxy:
     enabled: true
     replicaCount: 2
 
-  # The update strategy for deployments with persistent volumes(jobservice, registry
-  # and chartmuseum): "RollingUpdate" or "Recreate"
-  # Set it as "Recreate" when "RWM" for volumes isn't supported
+  ## The update strategy for deployments with persistent volumes(jobservice, registry
+  ## and chartmuseum): "RollingUpdate" or "Recreate"
+  ## Set it as "Recreate" when "RWM" for volumes isn't supported
   updateStrategy:
     type: RollingUpdate
 
-  # The name of a secret in the same kubernetes namespace which contains values to
-  # be added to the environment (must be manually created)
-  # This can be useful for passwords and logins, etc.
+  ## The name of a secret in the same kubernetes namespace which contains values to
+  ## be added to the environment (must be manually created)
+  ## This can be useful for passwords and logins, etc.
 
   # envFromSecret: "shardingproxy-secrets"
 
@@ -46,16 +46,17 @@ shardingproxy:
     ## So, for example, the name can depend on .Release or .Chart
     existingClaim: ""
 
+  ## see:https://blogs.wl4g.com/archives/2969
   resources:
     enabled: false
+    requests:
+      cpu: 100m
+      memory: 1024Mi
     limits:
       cpu: 500m
-      memory: 1024Mi
-    requests:
-      cpu: 500m
-      memory: 1024Mi
+      memory: 4096Mi
 
-  # Containers that run before the creation of ShardingProxy containers. They can contain utilities or setup scripts.
+  ## Containers that run before the creation of ShardingProxy containers. They can contain utilities or setup scripts.
   initContainers: {}
     # - name: mysql-probe
     #   image: alpine
