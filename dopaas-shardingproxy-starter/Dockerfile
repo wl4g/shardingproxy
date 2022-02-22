@@ -85,8 +85,6 @@ RUN mkdir -p ${SHARDING_HOME} ${SHARDING_DATA} ${SHARDING_LOG} && ln -snf ${SHAR
 && echo -e "#!/bin/bash" >>/docker-entrypoint.sh \
 && echo -e "\
 ## Define the mutable APP properties.\n\
-export SHARDING_NOHUP=\$(echo \$SHARDING_NOHUP|tr '[a-z]' '[A-Z]')\n\
-export SHARDING_DEBUG=\$(echo \$SHARDING_DEBUG|tr '[a-z]' '[A-Z]')\n\
 export SHARDING_PORT=\${SHARDING_PORT:-'3308'}\n\
 \
 ## Define the mutable JVM options.\n\
@@ -103,8 +101,8 @@ export JAVA_GC_OPTS=\${JAVA_GC_OPTS:-\${DEFAULT_JAVA_GC_OPTS}}\n\
 \
 export JAVA_TOOL_OPTIONS=\${JAVA_TOOL_OPTIONS:-}\n\
 \
-[ -n \$SHARDING_NOHUP ] && export CMD_NOHUP='nohup'\n\
-[ -n \$SHARDING_DEBUG ] && export JVM_DEBUG_OPTS='-Xdebug -Xrunjdwp:server=y,transport=dt_socket,address=8000,suspend=n'\n\
+[ -n \"\$SHARDING_NOHUP\" ] && export CMD_NOHUP='nohup'\n\
+[ -n \"\$SHARDING_DEBUG\" ] && export JVM_DEBUG_OPTS='-Xdebug -Xrunjdwp:server=y,transport=dt_socket,address=8000,suspend=n'\n\
 \
 ## Make run commands.\n\
 export CMD_EXEC=\"\${CMD_NOHUP} java -server \
@@ -117,7 +115,7 @@ export CMD_EXEC=\"\${CMD_NOHUP} java -server \
 2>\${SHARDING_LOG}/\${SHARDING_NAME}.stderr\"\n\
 \
 ## Print run commands.\n\
-[ -n \$SHARDING_DEBUG ] && echo \$CMD_EXEC\n\
+[ -n \"\$SHARDING_DEBUG\" ] && echo \$CMD_EXEC\n\
 \
 ## Execution.\n\
 echo \"Starting \${SHARDING_NAME}:\${SHARDING_VERSION} on \${SHARDING_PORT} ...\"\n\
