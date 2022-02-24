@@ -21,7 +21,7 @@
 //import org.apache.shardingsphere.infra.rule.event.impl.PrimaryDataSourceChangedEvent;
 //
 //import com.google.common.eventbus.Subscribe;
-//import com.wl4g.component.common.annotation.Reserved;
+//import com.wl4g.infra.common.annotation.Reserved;
 //
 //import lombok.Getter;
 //import lombok.extern.slf4j.Slf4j;

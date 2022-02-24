@@ -20,7 +20,7 @@
 //import org.apache.shardingsphere.agent.config.PluginConfiguration;
 //import org.apache.shardingsphere.agent.spi.boot.PluginBootService;
 //
-//import com.wl4g.component.common.annotation.Reserved;
+//import com.wl4g.infra.common.annotation.Reserved;
 //import com.wl4g.shardingproxy.agent.metrics.DbDiscoveryMetricsCollector;
 //
 //import lombok.extern.slf4j.Slf4j;

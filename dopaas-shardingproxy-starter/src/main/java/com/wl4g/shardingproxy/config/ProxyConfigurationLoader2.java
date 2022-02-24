@@ -18,7 +18,7 @@
 package com.wl4g.shardingproxy.config;
 
 import com.google.common.base.Preconditions;
-import com.wl4g.component.common.bean.BeanUtils2;
+import com.wl4g.infra.common.bean.BeanUtils2;
 
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;

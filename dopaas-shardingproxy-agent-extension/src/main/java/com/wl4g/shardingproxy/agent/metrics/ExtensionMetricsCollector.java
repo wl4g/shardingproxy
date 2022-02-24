@@ -15,8 +15,8 @@
  */
 package com.wl4g.shardingproxy.agent.metrics;
 
-import static com.wl4g.component.common.collection.CollectionUtils2.safeList;
-import static com.wl4g.component.common.collection.CollectionUtils2.safeMap;
+import static com.wl4g.infra.common.collection.CollectionUtils2.safeList;
+import static com.wl4g.infra.common.collection.CollectionUtils2.safeMap;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
 import static java.lang.System.currentTimeMillis;
@@ -54,7 +54,7 @@ import org.apache.shardingsphere.mode.metadata.persist.MetaDataPersistService;
 import org.apache.shardingsphere.proxy.backend.context.ProxyContext;
 
 import com.google.common.eventbus.Subscribe;
-//import com.wl4g.component.common.reflect.ReflectionUtils2;
+//import com.wl4g.infra.common.reflect.ReflectionUtils2;
 //import com.wl4g.shardingproxy.agent.event.DatabaseDiscoveryEventHandler;
 
 //import io.prometheus.client.Counter;

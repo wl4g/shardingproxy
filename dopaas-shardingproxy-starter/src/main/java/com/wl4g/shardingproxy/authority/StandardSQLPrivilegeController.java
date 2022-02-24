@@ -15,9 +15,9 @@
  */
 package com.wl4g.shardingproxy.authority;
 
-import static com.wl4g.component.common.collection.CollectionUtils2.safeList;
-import static com.wl4g.component.common.reflect.ReflectionUtils2.findFieldNullable;
-import static com.wl4g.component.common.reflect.ReflectionUtils2.getField;
+import static com.wl4g.infra.common.collection.CollectionUtils2.safeList;
+import static com.wl4g.infra.common.reflect.ReflectionUtils2.findFieldNullable;
+import static com.wl4g.infra.common.reflect.ReflectionUtils2.getField;
 import static java.lang.String.format;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 

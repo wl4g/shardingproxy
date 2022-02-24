@@ -15,8 +15,8 @@
  */
 package com.wl4g.shardingproxy.dbdiscovery;
 
-import static com.wl4g.component.common.collection.CollectionUtils2.safeList;
-import static com.wl4g.component.common.serialize.JacksonUtils.parseJSON;
+import static com.wl4g.infra.common.collection.CollectionUtils2.safeList;
+import static com.wl4g.infra.common.serialize.JacksonUtils.parseJSON;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.emptyMap;
 import static java.util.Objects.isNull;
@@ -26,7 +26,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.google.common.net.HostAndPort;
-import com.wl4g.component.common.lang.HostUtils;
+import com.wl4g.infra.common.lang.HostUtils;
 import com.wl4g.shardingproxy.util.JdbcUtil;
 import com.wl4g.shardingproxy.util.JdbcUtil.JdbcInformation;
 

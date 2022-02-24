@@ -15,10 +15,10 @@
  */
 package com.wl4g.shardingproxy.util;
 
-import static com.wl4g.component.common.lang.Assert2.isTrue;
-import static com.wl4g.component.common.lang.Assert2.notNull;
-import static com.wl4g.component.common.lang.StringUtils2.startsWithIgnoreCase;
-import static com.wl4g.component.common.lang.TypeConverts.parseIntOrDefault;
+import static com.wl4g.infra.common.lang.Assert2.isTrue;
+import static com.wl4g.infra.common.lang.Assert2.notNull;
+import static com.wl4g.infra.common.lang.StringUtils2.startsWithIgnoreCase;
+import static com.wl4g.infra.common.lang.TypeConverts.parseIntOrDefault;
 import static java.util.Objects.nonNull;
 import static org.apache.commons.lang3.StringUtils.containsIgnoreCase;
 import static org.apache.commons.lang3.StringUtils.split;

@@ -32,7 +32,7 @@
 		<appender-ref ref="console" />
 		<appender-ref ref="rollingFile" />
 	</logger>
-	<logger name="com.wl4g.component.integration.sharding" level="info" additivity="false">
+	<logger name="com.wl4g.infra.integration.sharding" level="info" additivity="false">
 		<appender-ref ref="console" />
 		<appender-ref ref="rollingFile" />
 	</logger>

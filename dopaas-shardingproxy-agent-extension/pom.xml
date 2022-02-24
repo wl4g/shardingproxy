@@ -63,7 +63,7 @@
 	<dependencies>
 		<dependency>
 			<groupId>com.wl4g</groupId>
-			<artifactId>xcloud-component-common</artifactId>
+			<artifactId>dopaas-infra-common</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.projectlombok</groupId>

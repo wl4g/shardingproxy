@@ -15,8 +15,8 @@
  */
 package com.wl4g.shardingproxy.agent.metrics;
 
-import static com.wl4g.component.common.reflect.ReflectionUtils2.findFieldNullable;
-import static com.wl4g.component.common.reflect.ReflectionUtils2.getField;
+import static com.wl4g.infra.common.reflect.ReflectionUtils2.findFieldNullable;
+import static com.wl4g.infra.common.reflect.ReflectionUtils2.getField;
 
 import java.lang.reflect.Field;
 import java.util.List;

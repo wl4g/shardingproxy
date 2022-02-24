@@ -32,8 +32,8 @@ import org.apache.shardingsphere.agent.metrics.api.MetricsWrapper;
 import org.apache.shardingsphere.agent.metrics.api.MetricsWrapperFactory;
 import org.yaml.snakeyaml.Yaml;
 
-import com.wl4g.component.common.resource.StreamResource;
-import com.wl4g.component.common.resource.resolver.ClassPathResourcePatternResolver;
+import com.wl4g.infra.common.resource.StreamResource;
+import com.wl4g.infra.common.resource.resolver.ClassPathResourcePatternResolver;
 
 import io.prometheus.client.Counter;
 import io.prometheus.client.Gauge;
