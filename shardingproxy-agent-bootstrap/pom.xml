@@ -1,14 +1,14 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<artifactId>dopaas-shardingproxy-agent-bootstrap</artifactId>
+	<artifactId>shardingproxy-agent-bootstrap</artifactId>
 	<packaging>jar</packaging>
-	<name>DoPaaS ShardingProxy Agent Bootstrap</name>
-	<url>http://shardingproxy.dopaas.wl4g.com</url>
-	<description>A DoPaaS Shardingsphere Agent Bootstrap.</description>
+	<name>ShardingProxy Agent Bootstrap</name>
+	<url>http://shardingproxy.wl4g.com</url>
+	<description>A Shardingsphere Agent Bootstrap.</description>
 	<organization>
 		<name>wl4g</name>
-		<url>https://shardingproxy.dopaas.wl4g.com</url>
+		<url>https://shardingproxy.wl4g.com</url>
 	</organization>
 	<licenses>
 		<license>
@@ -52,7 +52,7 @@
 	</developers>
 	<parent>
 		<groupId>com.wl4g</groupId>
-		<artifactId>dopaas-shardingproxy</artifactId>
+		<artifactId>shardingproxy</artifactId>
 		<version>3.0.0_5.1.0</version>
 	</parent>
 	<properties>

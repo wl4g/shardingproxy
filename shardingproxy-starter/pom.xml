@@ -1,14 +1,14 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<artifactId>dopaas-shardingproxy-starter</artifactId>
+	<artifactId>shardingproxy-starter</artifactId>
 	<packaging>jar</packaging>
-	<name>DoPaaS ShardingProxy Starter</name>
-	<url>http://shardingproxy.dopaas.wl4g.com</url>
-	<description>A DoPaaS Shardingsphere Proxy.</description>
+	<name>ShardingProxy Starter</name>
+	<url>http://shardingproxy.wl4g.com</url>
+	<description>A Shardingsphere Proxy.</description>
 	<organization>
 		<name>wl4g</name>
-		<url>https://shardingproxy.dopaas.wl4g.com</url>
+		<url>https://shardingproxy.wl4g.com</url>
 	</organization>
 	<licenses>
 		<license>
@@ -52,7 +52,7 @@
 	</developers>
 	<parent>
 		<groupId>com.wl4g</groupId>
-		<artifactId>dopaas-shardingproxy</artifactId>
+		<artifactId>shardingproxy</artifactId>
 		<version>3.0.0_5.1.0</version>
 	</parent>
 	<properties>
@@ -113,7 +113,7 @@
 	<dependencies>
 		<dependency>
 			<groupId>com.wl4g</groupId>
-			<artifactId>dopaas-infra-common</artifactId>
+			<artifactId>infra-common</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.yaml</groupId>
@@ -124,16 +124,15 @@
 			<artifactId>shardingsphere-proxy-bootstrap</artifactId>
 			<version>${shardingsphere.version}</version>
 		</dependency>
-
 		<!-- The purpose of the following dependencies is to library packing to: ext-lib/agentlib/plugins. see:src/main/assemble/package.xml -->
 		<dependency>
 			<groupId>com.wl4g</groupId>
-			<artifactId>dopaas-shardingproxy-agent-bootstrap</artifactId>
+			<artifactId>shardingproxy-agent-bootstrap</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>com.wl4g</groupId>
-			<artifactId>dopaas-shardingproxy-agent-extension</artifactId>
+			<artifactId>shardingproxy-agent-extension</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>
@@ -141,7 +140,6 @@
 			<artifactId>shardingsphere-agent-logging-base</artifactId>
 			<version>${shardingsphere.version}</version>
 		</dependency>
-
 		<!-- prometheus -->
 		<dependency>
 			<groupId>org.apache.shardingsphere</groupId>
@@ -156,12 +154,12 @@
 		<dependency>
 			<groupId>io.prometheus</groupId>
 			<artifactId>simpleclient</artifactId>
-			<version>${prometheus.version}</version>
+			<!-- <version>${prometheus.version}</version> -->
 		</dependency>
 		<dependency>
 			<groupId>io.prometheus</groupId>
 			<artifactId>simpleclient_hotspot</artifactId>
-			<version>${prometheus.version}</version>
+			<!-- <version>${prometheus.version}</version> -->
 		</dependency>
 		<dependency>
 			<groupId>io.prometheus.jmx</groupId>
@@ -171,7 +169,7 @@
 		<dependency>
 			<groupId>io.prometheus</groupId>
 			<artifactId>simpleclient_httpserver</artifactId>
-			<version>${prometheus.version}</version>
+			<!-- <version>${prometheus.version}</version> -->
 		</dependency>
 
 		<!-- jaeger / opentelemetry -->

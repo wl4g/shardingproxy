@@ -53,6 +53,7 @@ public final class PrometheusPluginBootService implements PluginBootService {
         MetricsPool.setMetricsFactory(new PrometheusWrapperFactory());
     }
 
+    @SuppressWarnings("deprecation")
     @Override
     public void close() {
         if (null != httpServer) {
