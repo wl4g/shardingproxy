@@ -366,7 +366,7 @@
 	</build>
 	<profiles>
 		<profile>
-			<id>mvnAssTar</id>
+			<id>build:tar</id>
 			<activation>
 				<activeByDefault>true</activeByDefault>
 			</activation>
@@ -396,7 +396,7 @@
 			</build>
 		</profile>
 		<profile>
-			<id>docker:build:mvnAssTar</id>
+			<id>build:tar:docker</id>
 			<build>
 				<plugins>
 					<plugin>
