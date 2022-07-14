@@ -106,7 +106,7 @@ export JAVA_TOOL_OPTIONS=\${JAVA_TOOL_OPTIONS:-}\n\
 \
 ## Make run commands.\n\
 export CMD_EXEC=\"\${CMD_NOHUP} java -server \
--javaagent:\${SHARDING_HOME}/ext-lib/agentlib/dopaas-shardingproxy-agent-bootstrap-\${SHARDING_VERSION}.jar \
+-javaagent:\${SHARDING_HOME}/ext-lib/agentlib/shardingproxy-agent-bootstrap-\${SHARDING_VERSION}.jar \
 \${JAVA_OPTS} \${JAVA_HEAP_OPTS} \${JAVA_DUMP_OPTS} \${JAVA_GC_OPTS} \${JVM_DEBUG_OPTS} \
 -Djava.net.preferIPv4Stack=true -Djava.awt.headless=true -Dfile.encoding=UTF-8 -Djava.security.egd=file:/dev/./urandom -cp \
 .:\${SHARDING_HOME}/conf:\${SHARDING_EXT_CLASSPATH}:\${SHARDING_HOME}/ext-lib/*:\${SHARDING_HOME}/lib/* \${SHARDING_MAINCLASS} \
