@@ -94,6 +94,7 @@ mkdir -p /mnt/disk1/log/shardingproxy/
 
 # Need to grant ownership because wl4g/shardingproxy is a rootless container
 sudo chmod -R 777 /mnt/disk1/shardingproxy
+sudo chmod -R 777 /mnt/disk1/log/shardingproxy/
 
 # Prepare a example sharding configuration.
 cp shardingproxy-starter/src/main/resources/agent/conf/agent.yaml /mnt/disk1/shardingproxy/ext-lib/agentlib/conf/
