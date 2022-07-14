@@ -40,7 +40,7 @@ Notice: All the following example cases are for reference only in the production
 - **Case 1:** **Readwrite example and no-sharding** (recommended for getting started developers)
 
 ```bash
-cd $PROJECT_HOME/dopaas-shardingproxy-starter/src/main/resources/example/
+cd $PROJECT_HOME/shardingproxy-starter/src/main/resources/example/
 echo "source readwrite-warehousedb.sql" | mysql -h172.8.8.111 -P3306 -uroot -p123456
 ```
 
@@ -69,8 +69,8 @@ echo "source group-sharding-readwrite-orderdb.sql" | mysql -h172.8.8.111 -P3306 
 ```bash
 docker run -d \
 --name zk1 \
+--restart always \
 --net host \
---restart no \
 -e JVMFLAGS="-Djava.net.preferIPv4Stack=true -Xmx512m" \
 -e ZOO_MAX_CLIENT_CNXNS=60 \
 zookeeper:3.6.0
@@ -81,6 +81,7 @@ zookeeper:3.6.0
 ```bash
 docker run -d \
 --name jaeger1 \
+--restart always \
 --net host \
 jaegertracing/all-in-one:1.30
 ```
@@ -95,16 +96,16 @@ mkdir -p /mnt/disk1/log/shardingproxy/
 sudo chmod -R 777 /mnt/disk1/shardingproxy
 
 # Prepare a example sharding configuration.
-cp dopaas-shardingproxy-starter/src/main/resources/agent/conf/agent.yaml /mnt/disk1/shardingproxy/ext-lib/agentlib/conf/
-cp dopaas-shardingproxy-starter/src/main/resources/example/*.yaml /mnt/disk1/shardingproxy/conf/
+cp shardingproxy-starter/src/main/resources/agent/conf/agent.yaml /mnt/disk1/shardingproxy/ext-lib/agentlib/conf/
+cp shardingproxy-starter/src/main/resources/example/*.yaml /mnt/disk1/shardingproxy/conf/
 
 # The MySQL group replication network for demonstration. see: https://blogs.wl4g.com/archives/2477
 #docker network create --subnet=172.8.8.0/24 mysqlnet
 
 docker run -d \
 --name sp1 \
+--restart always \
 --net host \
---restart no \
 --add-host n0.rds.local:172.8.8.111 \
 --add-host n1.rds.local:172.8.8.112 \
 --add-host n2.rds.local:172.8.8.113 \
@@ -189,7 +190,7 @@ EOF
 
 - Then need to modify the test configuration follows
 
-> Extension database discovery configuration refer to example: [config-sharding-readwrite-userdb.yaml](dopaas-shardingproxy-starter/src/main/resources/example/server.yaml), The prefix of the following key names is : `rules.discoveryTypes.<myDiscoveryName>.props.`
+> Extension database discovery configuration refer to example: [config-sharding-readwrite-userdb.yaml](shardingproxy-starter/src/main/resources/example/server.yaml), The prefix of the following key names is : `rules.discoveryTypes.<myDiscoveryName>.props.`
 
 | Attribute | Description |
 |-|-|
@@ -208,7 +209,7 @@ EOF
 
 - Example configuration:
 
-  - [example metrics plugin agent.yaml](https://github.com/wl4g/dopaas-shardingproxy/blob/master/dopaas-shardingproxy-starter/src/main/resources/agent/conf/agent.yaml)
+  - [example metrics plugin agent.yaml](https://github.com/wl4g/shardingproxy/blob/master/shardingproxy-starter/src/main/resources/agent/conf/agent.yaml)
 
   - [example prometheus alerting shardingproxy-alert-rules.yml](prometheus/shardingproxy-alert-rules.yml)
 
@@ -223,7 +224,7 @@ EOF
 
 - Example configuration:
 
-  - [example tracing plugin agent.yaml](https://github.com/wl4g/dopaas-shardingproxy/blob/master/dopaas-shardingproxy-starter/src/main/resources/agent/conf/agent.yaml)
+  - [example tracing plugin agent.yaml](https://github.com/wl4g/shardingproxy/blob/master/shardingproxy-starter/src/main/resources/agent/conf/agent.yaml)
 
 - Jaeger UI: [http://localhost:16686/search](http://localhost:16686/search)
 
@@ -233,7 +234,7 @@ EOF
 
 ### 2.5 Configuring SQLs privilege (Optional)
 
-- [example privilege server.yaml#rules.provider.props.user-admission-strategy](dopaas-shardingproxy-starter/src/main/resources/example/server.yaml)
+- [example privilege server.yaml#rules.provider.props.user-admission-strategy](shardingproxy-starter/src/main/resources/example/server.yaml)
 
 - Testing effect
 
@@ -268,7 +269,7 @@ mysql>
 
 ### 2.6 Configuring encryption column (Optional)
 
-- [example auditing config-sharding-readwrite-userdb.yaml](dopaas-shardingproxy-starter/src/main/resources/example/config-mod-sharding-readwrite-userdb.yaml)
+- [example auditing config-sharding-readwrite-userdb.yaml](shardingproxy-starter/src/main/resources/example/config-mod-sharding-readwrite-userdb.yaml)
 
 - Testing effect
 
@@ -330,9 +331,9 @@ mysql>
 
 ```bash
 cd /opt/
-# git clone https://github.com/wl4g/dopaas-shardingproxy.git # (Upstream is newer)
-git clone https://gitee.com/wl4g/dopaas-shardingproxy.git # (Domestic faster)
-cd dopaas-shardingproxy
+# git clone https://github.com/wl4g/shardingproxy.git # (Upstream is newer)
+git clone https://gitee.com/wl4g/shardingproxy.git # (Domestic faster)
+cd shardingproxy
 mvn clean install -DskipTests -Dmaven.test.skip=true -T 2C
 ```
 
@@ -341,19 +342,19 @@ mvn clean install -DskipTests -Dmaven.test.skip=true -T 2C
 > The following is the schematic configuration of the example, please  correct configure it in eclipse and idea development tools.
 
 ```bash
-export SP_BASE_DIR=/opt/dopaas-shardingproxy
+export SP_BASE_DIR=/opt/shardingproxy
 export SP_VERSION='2.2.0_5.1.0'
-export SP_CONF_DIR=${SP_BASE_DIR}/dopaas-shardingproxy-starter/src/main/resources/example/
-export SP_JAVAAGENT=${SP_BASE_DIR}/dopaas-shardingproxy-agent-bootstrap/target/dopaas-shardingproxy-agent-bootstrap-${SP_VERSION}.jar
+export SP_CONF_DIR=${SP_BASE_DIR}/shardingproxy-starter/src/main/resources/example/
+export SP_JAVAAGENT=${SP_BASE_DIR}/shardingproxy-agent-bootstrap/target/shardingproxy-agent-bootstrap-${SP_VERSION}.jar
 
 ## Sets agent jar path.
-export AGENT_PATH=${SP_BASE_DIR}/dopaas-shardingproxy-starter/src/main/resources/agent
+export AGENT_PATH=${SP_BASE_DIR}/shardingproxy-starter/src/main/resources/agent
 
 ## Sets the dir for more plugins.
-export PLUGINS_PATH=${SP_BASE_DIR}/dopaas-shardingproxy-starter/target/shardingproxy-${SP_VERSION}-bin/ext-lib/agentlib/plugins
+export PLUGINS_PATH=${SP_BASE_DIR}/shardingproxy-starter/target/shardingproxy-${SP_VERSION}-bin/ext-lib/agentlib/plugins
 
 ## Or, only set the target dir of the extension plugin jar.
-#export PLUGINS_PATH=${SP_BASE_DIR}/dopaas-shardingproxy-agent-extension/target/
+#export PLUGINS_PATH=${SP_BASE_DIR}/shardingproxy-agent-extension/target/
 
 java \
 -Djava.net.preferIPv4Stack=true ${SP_JAVAAGENT} \
@@ -536,4 +537,4 @@ Under the same schemaName, multiple sharding databases must be the same. See sou
 
 - Recommended naming spec: `ds_<dbSchema>_<regionNumber><zoneNumber><dbClusterNumber><instanceNumber>`, &nbsp; For example the abbreviation is named: `ds_userdb_r0z1mgr2i2`, &nbsp; This means: Instance 2 belongs to MySQL group replication cluster 2 under Availability Zone 1 under Data Center(Region) 0.
 
-- See example configuration: [config-sharding-readwrite-userdb.yaml](dopaas-shardingproxy-starter/src/main/resources/example/server.yaml)
+- See example configuration: [config-sharding-readwrite-userdb.yaml](shardingproxy-starter/src/main/resources/example/server.yaml)
