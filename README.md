@@ -539,3 +539,10 @@ Under the same schemaName, multiple sharding databases must be the same. See sou
 - Recommended naming spec: `ds_<dbSchema>_<regionNumber><zoneNumber><dbClusterNumber><instanceNumber>`, &nbsp; For example the abbreviation is named: `ds_userdb_r0z1mgr2i2`, &nbsp; This means: Instance 2 belongs to MySQL group replication cluster 2 under Availability Zone 1 under Data Center(Region) 0.
 
 - See example configuration: [config-sharding-readwrite-userdb.yaml](shardingproxy-starter/src/main/resources/example/server.yaml)
+
+### 4.5 Modified configuration files does not always take effect?
+
+You should be aware that shardingproxy will first load the configuration from the register center
+(if `mode.overwrite=false` is configured), so you should clean the registry's configuration data,
+for example: `echo 'deleteall /cn_south1_sz1_shardingproxy_0' | zkCli.sh`
+

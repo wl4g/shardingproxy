@@ -25,6 +25,7 @@
 			<outputDirectory>conf</outputDirectory>
 			<excludes>
 				<exclude>conf/**</exclude>
+				<exclude>example/**</exclude>
 				<exclude>script/**</exclude>
 				<exclude>static/**</exclude>
 				<exclude>META-INF/**</exclude>

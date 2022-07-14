@@ -17,20 +17,8 @@
 
 package com.wl4g.shardingproxy.config;
 
-import com.google.common.base.Preconditions;
-import com.wl4g.infra.common.bean.BeanUtils2;
-
-import lombok.AccessLevel;
-import lombok.NoArgsConstructor;
-import lombok.SneakyThrows;
-import org.apache.shardingsphere.authority.yaml.config.YamlAuthorityRuleConfiguration;
-import org.apache.shardingsphere.infra.yaml.config.pojo.YamlRuleConfiguration;
-import org.apache.shardingsphere.infra.yaml.engine.YamlEngine;
-import org.apache.shardingsphere.proxy.config.YamlProxyConfiguration;
-import org.apache.shardingsphere.proxy.config.yaml.YamlDataSourceParameter;
-import org.apache.shardingsphere.proxy.config.yaml.YamlProxyRuleConfiguration;
-import org.apache.shardingsphere.proxy.config.yaml.YamlProxyServerConfiguration;
-
+import static com.wl4g.infra.common.log.SmartLoggerFactory.getLogger;
+import static java.util.Arrays.asList;
 import static java.util.Objects.nonNull;
 
 import java.io.File;
@@ -45,11 +33,29 @@ import java.util.Optional;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
+import org.apache.shardingsphere.authority.yaml.config.YamlAuthorityRuleConfiguration;
+import org.apache.shardingsphere.infra.yaml.config.pojo.YamlRuleConfiguration;
+import org.apache.shardingsphere.infra.yaml.engine.YamlEngine;
+import org.apache.shardingsphere.proxy.config.YamlProxyConfiguration;
+import org.apache.shardingsphere.proxy.config.yaml.YamlDataSourceParameter;
+import org.apache.shardingsphere.proxy.config.yaml.YamlProxyRuleConfiguration;
+import org.apache.shardingsphere.proxy.config.yaml.YamlProxyServerConfiguration;
+import org.slf4j.Logger;
+
+import com.google.common.base.Preconditions;
+import com.wl4g.infra.common.bean.BeanUtils2;
+
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
+import lombok.SneakyThrows;
+
 /**
  * Proxy configuration loader.
  */
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class ProxyConfigurationLoader2 {
+
+    private static final Logger log = getLogger(ProxyConfigurationLoader2.class);
 
     private static final String SERVER_CONFIG_FILE = "server.yaml";
 
@@ -85,8 +91,11 @@ public final class ProxyConfigurationLoader2 {
         Preconditions.checkNotNull(result, "Server configuration file `%s` is invalid.", yamlFile.getName());
         // TODO use SPI with pluggable
         boolean containsGovernance = null != result.getMode() && "Cluster".equals(result.getMode().getType());
-        YamlRuleConfiguration authorityRuleConfig = result.getRules().stream()
-                .filter(ruleConfig -> ruleConfig instanceof YamlAuthorityRuleConfiguration).findAny().orElse(null);
+        YamlRuleConfiguration authorityRuleConfig = result.getRules()
+                .stream()
+                .filter(ruleConfig -> ruleConfig instanceof YamlAuthorityRuleConfiguration)
+                .findAny()
+                .orElse(null);
         Preconditions.checkState(containsGovernance || null != authorityRuleConfig, "Authority configuration is invalid.");
         return result;
     }
@@ -132,6 +141,11 @@ public final class ProxyConfigurationLoader2 {
     }
 
     private static File[] findRuleConfigurationFiles(final File path) {
-        return path.listFiles(each -> RULE_CONFIG_FILE_PATTERN.matcher(each.getName()).matches());
+        File[] list = path.listFiles(each -> RULE_CONFIG_FILE_PATTERN.matcher(each.getName()).matches());
+        //
+        // FEATURES add logs.
+        //
+        log.info("Found rules configFile: {} of '{}'", asList(list), path);
+        return list;
     }
 }
