@@ -80,11 +80,18 @@ zookeeper:3.6.0
 
 ```bash
 docker run -d \
+--ulimit nofile=1024 \
+--ulimit memlock=-1 \
+--memory=512M \
+--memory-swap=-1 \
+--cpuset-cpus='0' \
 --name jaeger1 \
 --restart always \
 --net host \
 jaegertracing/all-in-one:1.30
 ```
+
+> More see: https://blogs.wl4g.com/archives/3421
 
 - Run [shardingproxy](https://hub.docker.com/r/wl4g/shardingproxy) single container
 
